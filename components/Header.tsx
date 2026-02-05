@@ -25,6 +25,7 @@ const Header: React.FC<HeaderProps> = ({
   categories
 }) => {
   const [isDark, setIsDark] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -60,7 +61,7 @@ const Header: React.FC<HeaderProps> = ({
           <div className="bg-primary text-black size-12 rounded-2xl flex items-center justify-center font-black group-hover:rotate-[15deg] transition-all shadow-xl shadow-primary/20">
             BE
           </div>
-          <div>
+          <div className="hidden sm:block">
             <h1 className="text-xl font-black uppercase tracking-tighter leading-none mb-0.5">
               Brilho <span className="text-primary italic">Essenza</span>
             </h1>
@@ -119,9 +120,44 @@ const Header: React.FC<HeaderProps> = ({
                 </span>
               )}
             </button>
+            {/* Mobile Menu Toggle */}
+            <button
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="size-10 flex lg:hidden items-center justify-center hover:bg-primary/10 rounded-full transition-all text-gray-500 dark:text-gray-400"
+            >
+              <span className="material-symbols-outlined !text-2xl">{isMenuOpen ? 'close' : 'menu'}</span>
+            </button>
           </div>
         </div>
       </div>
+
+      {/* Mobile Menu Overlay */}
+      {isMenuOpen && (
+        <div className="lg:hidden fixed inset-0 top-[88px] z-40 bg-white dark:bg-[#0c0b06] animate-in fade-in slide-in-from-top duration-300">
+          <nav className="flex flex-col p-8 gap-6">
+            {menuItems.map((item) => (
+              <button
+                key={item.value}
+                onClick={() => {
+                  ensureHomeAndAction(() => onCategoryChange(item.value));
+                  setIsMenuOpen(false);
+                }}
+                className={`text-sm font-black uppercase tracking-widest text-left py-4 border-b border-gray-100 dark:border-white/5 ${selectedCategory === item.value ? 'text-primary' : 'text-gray-500'
+                  }`}
+              >
+                {item.label}
+              </button>
+            ))}
+            <Link
+              to="/admin"
+              onClick={() => setIsMenuOpen(false)}
+              className="text-sm font-black uppercase tracking-widest text-primary pt-4"
+            >
+              Mesa de Gestão
+            </Link>
+          </nav>
+        </div>
+      )}
     </header>
   );
 };
