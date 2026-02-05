@@ -1,0 +1,427 @@
+
+import { createClient } from '@supabase/supabase-js';
+import { Product, Order, Category, Slide } from '../types';
+
+// @ts-ignore
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+// @ts-ignore
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+// --- Authentication ---
+
+export const signIn = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+    });
+    if (error) throw error;
+    return data;
+};
+
+export const signUp = async (email: string, password: string) => {
+    const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+    });
+    if (error) throw error;
+    return data;
+};
+
+export const signOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) throw error;
+};
+
+export const getCurrentUser = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.user || null;
+};
+
+// ... types and imports
+// removed extra createClient
+
+// ... existing client setup
+
+// --- Team & Permissions ---
+
+export interface UserPermissions {
+    orders?: boolean;
+    products?: boolean;
+    finance?: boolean;
+    settings?: boolean;
+}
+
+export interface UserProfile {
+    id: string;
+    email: string;
+    full_name?: string;
+    role: 'admin' | 'employee';
+    permissions: UserPermissions;
+    is_first_login: boolean;
+    is_active?: boolean;
+}
+
+// Access Control helper
+export const fetchProfile = async (userId: string) => {
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single();
+
+    if (error) {
+        console.warn("Profile fetch error (might be first login):", error);
+        return null;
+    }
+    return data as UserProfile;
+};
+
+// Admin function to create employee
+export const createEmployee = async (email: string, password: string, name: string, permissions: UserPermissions) => {
+    // 1. Create a temporary client to sign up the user WITHOUT logging out the admin
+    const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+            persistSession: false, // Don't save this session to localStorage
+            autoRefreshToken: false,
+            detectSessionInUrl: false
+        }
+    });
+
+    // 2. SignUp the new user
+    // We catch the error to check if user already exists
+    let userId = '';
+
+    try {
+        const { data: authData, error: authError } = await tempClient.auth.signUp({
+            email,
+            password,
+            options: {
+                data: { full_name: name } // metadata
+            }
+        });
+
+        if (authError) {
+            // Check if user already exists
+            if (authError.message.includes("already registered") || authError.status === 422) {
+                console.warn("User already exists, attempting to recover/create profile for them...");
+                // Note: We cannot get the ID of an existing user easily via client API without logging in.
+                // However, if we are Admin, we might assume the previous creation succeeded in Auth but failed in Profile.
+                // WE CANNOT GET THE ID OF THE EXISTING USER TO REPAIR IT IF WE DON'T KNOW IT.
+                // Strategy: We can't actually repair "User A" without their ID.
+                throw new Error("Este email já está cadastrado no sistema. Por favor, peça para o funcionário fazer login. Se o erro 'Perfil não encontrado' persistir, exclua o funcionário da lista (se visível) ou contate o suporte.");
+            }
+            throw authError;
+        }
+
+        if (!authData.user) throw new Error("Falha ao criar usuário (sem dados retornados)");
+        userId = authData.user.id;
+
+    } catch (err: any) {
+        if (err.message.includes("already registered")) {
+            throw new Error("Funcionário já existe! Tente excluí-lo da lista (se aparecer) ou use outro email.");
+        }
+        throw err;
+    }
+
+    // 3. Create the Profile link
+    // Only proceeds if we have a valid NEW userId
+    const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([{
+            id: userId,
+            email: email,
+            full_name: name,
+            role: 'employee',
+            permissions: permissions,
+            is_first_login: true
+        }]);
+
+    if (profileError) {
+        console.error("Profile creation error:", profileError);
+        throw new Error("Usuário criado, mas falha ao criar perfil: " + profileError.message);
+    }
+
+    return { id: userId, email };
+};
+
+export const fetchTeam = async () => {
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data as UserProfile[];
+};
+
+export const updateEmployeeProfile = async (userId: string, updates: Partial<UserProfile>) => {
+    const { error } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', userId);
+
+    if (error) throw error;
+};
+
+// ... existing helper
+export const updateEmployeePermissions = async (userId: string, permissions: UserPermissions) => {
+    await updateEmployeeProfile(userId, { permissions });
+};
+
+// Mark Helper
+export const markFirstLoginComplete = async (userId: string) => {
+    const { error } = await supabase
+        .from('profiles')
+        .update({ is_first_login: false })
+        .eq('id', userId);
+
+    if (error) throw error;
+};
+
+export const deleteEmployee = async (userId: string) => {
+    const { error } = await supabase
+        .from('profiles')
+        .delete()
+        .eq('id', userId);
+
+    if (error) throw error;
+};
+
+export const updateUserPassword = async (password: string) => {
+    const { data, error } = await supabase.auth.updateUser({ password });
+    if (error) throw error;
+    return data;
+};
+
+// --- Products ---
+
+export const fetchProducts = async (): Promise<Product[]> => {
+    const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching products:', error);
+        return [];
+    }
+
+    // Map snake_case database fields to camelCase application interface if needed.
+    // Assuming 1:1 mapping for now based on the migration, except specific fields.
+    return data.map((p: any) => ({
+        ...p,
+        costPrice: p.cost_price,
+        reviewsCount: p.reviews_count,
+        subCategory: p.sub_category,
+        bestSeller: p.best_seller
+    }));
+};
+
+export const addProduct = async (product: Omit<Product, 'id'>) => {
+    // Convert application camelCase to database snake_case
+    const dbProduct = {
+        name: product.name,
+        price: product.price,
+        cost_price: product.costPrice,
+        rating: product.rating,
+        reviews_count: product.reviewsCount,
+        category: product.category,
+        sub_category: product.subCategory,
+        image: product.image,
+        description: product.description,
+        stock: product.stock,
+        best_seller: product.bestSeller,
+        created_by_name: product.created_by_name,
+        notes: product.notes
+    };
+
+    const { data, error } = await supabase
+        .from('products')
+        .insert([dbProduct])
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+};
+
+export const updateProduct = async (id: string, product: Partial<Product>) => {
+    // Convert application camelCase to database snake_case
+    const dbProduct: any = {};
+    if (product.name !== undefined) dbProduct.name = product.name;
+    if (product.price !== undefined) dbProduct.price = product.price;
+    if (product.costPrice !== undefined) dbProduct.cost_price = product.costPrice;
+    if (product.category !== undefined) dbProduct.category = product.category;
+    if (product.subCategory !== undefined) dbProduct.sub_category = product.subCategory;
+    if (product.image !== undefined) dbProduct.image = product.image;
+    if (product.description !== undefined) dbProduct.description = product.description;
+    if (product.stock !== undefined) dbProduct.stock = product.stock;
+    if (product.bestSeller !== undefined) dbProduct.best_seller = product.bestSeller;
+    if (product.created_by_name !== undefined) dbProduct.created_by_name = product.created_by_name;
+    if (product.notes !== undefined) dbProduct.notes = product.notes;
+
+    const { error } = await supabase
+        .from('products')
+        .update(dbProduct)
+        .eq('id', id);
+
+    if (error) throw error;
+};
+
+export const deleteProduct = async (id: string) => {
+    const { error } = await supabase
+        .from('products')
+        .delete()
+        .eq('id', id);
+
+    if (error) throw error;
+};
+
+// --- Orders ---
+
+export const fetchOrders = async (): Promise<Order[]> => {
+    const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching orders:', error);
+        return [];
+    }
+    return data;
+};
+
+export const createOrder = async (order: Order) => {
+    const { data, error } = await supabase
+        .from('orders')
+        .insert([order])
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+};
+
+export const updateOrder = async (id: string, updates: Partial<Order>) => {
+    const { error } = await supabase
+        .from('orders')
+        .update(updates)
+        .eq('id', id);
+
+    if (error) throw error;
+};
+
+// --- Categories ---
+
+export const fetchCategories = async (): Promise<Category[]> => {
+    const { data, error } = await supabase
+        .from('categories')
+        .select('*')
+        .order('name', { ascending: true });
+
+    if (error) {
+        console.error('Error fetching categories:', error);
+        return [];
+    }
+    return data;
+};
+
+export const createCategory = async (category: Omit<Category, 'id' | 'count'>) => {
+    const { data, error } = await supabase
+        .from('categories')
+        .insert([category])
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+};
+
+export const updateCategory = async (id: string, updates: Partial<Category>) => {
+    const { error } = await supabase
+        .from('categories')
+        .update(updates)
+        .eq('id', id);
+
+    if (error) throw error;
+};
+
+export const deleteCategory = async (id: string) => {
+    const { error } = await supabase
+        .from('categories')
+        .delete()
+        .eq('id', id);
+
+    if (error) throw error;
+};
+
+// --- Slides ---
+
+export const fetchSlides = async (): Promise<Slide[]> => {
+    const { data, error } = await supabase
+        .from('slides')
+        .select('*')
+        .order('order_index', { ascending: true });
+
+    if (error) {
+        console.error('Error fetching slides:', error);
+        return [];
+    }
+    return data;
+};
+
+export const addSlide = async (slide: Omit<Slide, 'id'>) => {
+    const { data, error } = await supabase
+        .from('slides')
+        .insert([slide])
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+};
+
+export const updateSlide = async (id: string, updates: Partial<Slide>) => {
+    const { error } = await supabase
+        .from('slides')
+        .update(updates)
+        .eq('id', id);
+
+    if (error) throw error;
+};
+
+export const deleteSlide = async (id: string) => {
+    const { error } = await supabase
+        .from('slides')
+        .delete()
+        .eq('id', id);
+
+    if (error) throw error;
+};
+
+// --- Storage / Upload ---
+
+export const uploadImage = async (file: File, bucket: string = 'slides'): Promise<string> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+    const filePath = fileName;
+
+    const { error: uploadError } = await supabase.storage
+        .from(bucket)
+        .upload(filePath, file);
+
+    if (uploadError) {
+        console.error('Upload Error:', uploadError);
+        throw uploadError;
+    }
+
+    const { data } = supabase.storage
+        .from(bucket)
+        .getPublicUrl(filePath);
+
+    return data.publicUrl;
+};
+
