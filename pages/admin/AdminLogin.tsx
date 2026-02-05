@@ -38,37 +38,6 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
     }
   };
 
-  const handleInitialSetup = async () => {
-    if (!window.confirm("Confirmar criação do Administrador Principal (admin@brilho.com)?")) return;
-
-    setLoading(true);
-    setInfoMessage('');
-    setErrorMessage('');
-
-    const email = "admin@brilho.com";
-    const pass = "brilho123456";
-
-    try {
-      const { signUp } = await import('../../services/supabase');
-      const { data } = await signUp(email, pass);
-
-      setUsername(email);
-      setPassword(pass);
-
-      if (data.session) {
-        setInfoMessage(`✅ Conta criada e logada!\nClique em "Autenticar" se não entrar automaticamente.`);
-      } else if (data.user && !data.session) {
-        setInfoMessage(`⚠️ Conta criada, mas requer confirmação de email (Verifique o Supabase).`);
-      } else {
-        setInfoMessage(`✅ Admin criado!\nUser: ${email}\nSenha: ${pass}`);
-      }
-
-    } catch (err: any) {
-      setErrorMessage("Erro ao criar: " + (err.message || err));
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-[#0f0e08] flex items-center justify-center p-6 relative overflow-hidden">
@@ -149,14 +118,8 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             </button>
           </form>
 
+
           <div className="mt-12 text-center flex flex-col gap-4 border-t border-white/5 pt-8">
-            <button
-              type="button"
-              onClick={handleInitialSetup}
-              className="bg-white/5 hover:bg-white/10 text-white font-black py-3 rounded-xl uppercase tracking-widest text-[10px] transition-all border border-white/10"
-            >
-              ⚠️ Primeiro Acesso: Criar Admin
-            </button>
             <Link to="/" className="text-[10px] font-black text-primary/60 uppercase tracking-[0.2em] hover:text-primary transition-colors">
               Ir para Vitrine Pública
             </Link>
