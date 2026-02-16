@@ -13,6 +13,8 @@ export interface Product {
   stock: number;
   bestSeller?: boolean;
   created_by_name?: string;
+  createdAt?: string;
+  salePrice?: number;
   notes?: {
     top: string;
     heart: string;

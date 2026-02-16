@@ -24,6 +24,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
     category: 'Fragrâncias',
     subCategory: '',
     price: 0,
+    salePrice: 0,
     costPrice: 0,
     stock: 0,
     image: '',
@@ -45,6 +46,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
           category: product.category,
           subCategory: product.subCategory || '',
           price: product.price,
+          salePrice: product.salePrice || 0,
           costPrice: product.costPrice || 0,
           stock: product.stock,
           image: product.image,
@@ -169,6 +171,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
               <div className="flex flex-col gap-2">
                 <label className="text-[9px] font-black uppercase text-gray-400">Preço Venda (Kz)</label>
                 <input type="number" value={formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} className="bg-gray-50 dark:bg-[#0f0e08] p-4 rounded-xl font-black text-xl outline-none" required />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label className="text-[9px] font-black uppercase text-gray-400">Preço Promocional (Opcional)</label>
+                <input type="number" value={formData.salePrice} onChange={e => setFormData({ ...formData, salePrice: Number(e.target.value) })} className="bg-gray-50 dark:bg-[#0f0e08] p-4 rounded-xl font-black text-xl outline-none text-red-500" placeholder="0" />
               </div>
               <div className="flex flex-col gap-2">
                 <label className="text-[9px] font-black uppercase text-gray-400">Preço de Custo (Kz)</label>
