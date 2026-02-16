@@ -71,30 +71,7 @@ const Header: React.FC<HeaderProps> = ({
 
         {/* Curator Navigation */}
         <nav className="hidden lg:flex items-center gap-10">
-          <button
-            onClick={() => ensureHomeAndAction(() => onCategoryChange('Novidades'))}
-            className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all relative py-2 ${selectedCategory === 'Novidades'
-              ? 'text-primary'
-              : 'text-gray-500 dark:text-gray-400 hover:text-primary'
-              }`}
-          >
-            Novidades
-            {selectedCategory === 'Novidades' && (
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span>
-            )}
-          </button>
-          <button
-            onClick={() => ensureHomeAndAction(() => onCategoryChange('Ofertas'))}
-            className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all relative py-2 ${selectedCategory === 'Ofertas'
-              ? 'text-primary'
-              : 'text-gray-500 dark:text-gray-400 hover:text-primary'
-              }`}
-          >
-            Ofertas
-            {selectedCategory === 'Ofertas' && (
-              <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span>
-            )}
-          </button>
+
 
           {menuItems.map((item) => (
             <button
@@ -160,26 +137,7 @@ const Header: React.FC<HeaderProps> = ({
       {isMenuOpen && (
         <div className="lg:hidden fixed inset-x-0 top-[88px] bottom-0 z-[100] bg-white dark:bg-[#0c0b06] animate-in fade-in slide-in-from-top-10 duration-300 border-t border-gray-100 dark:border-white/5 shadow-2xl overflow-y-auto">
           <nav className="flex flex-col p-8 gap-6 min-h-full pb-32 bg-white dark:bg-[#0c0b06]">
-            <button
-              onClick={() => {
-                ensureHomeAndAction(() => onCategoryChange('Novidades'));
-                setIsMenuOpen(false);
-              }}
-              className={`text-sm font-black uppercase tracking-widest text-left py-4 border-b border-gray-100 dark:border-white/5 ${selectedCategory === 'Novidades' ? 'text-primary' : 'text-gray-500'
-                }`}
-            >
-              Novidades
-            </button>
-            <button
-              onClick={() => {
-                ensureHomeAndAction(() => onCategoryChange('Ofertas'));
-                setIsMenuOpen(false);
-              }}
-              className={`text-sm font-black uppercase tracking-widest text-left py-4 border-b border-gray-100 dark:border-white/5 ${selectedCategory === 'Ofertas' ? 'text-primary' : 'text-gray-500'
-                }`}
-            >
-              Ofertas
-            </button>
+
             {menuItems.map((item) => (
               <button
                 key={item.value}
