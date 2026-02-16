@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Category } from '../types';
+import { UserProfile } from '../services/supabase';
 
 interface HeaderProps {
   cartCount: number;
@@ -12,6 +13,9 @@ interface HeaderProps {
   onCategoryChange: (category: string | null) => void;
   onReset: () => void;
   categories: Category[];
+  isAuthenticated?: boolean;
+  userProfile?: UserProfile | null;
+  onLogout?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -22,7 +26,10 @@ const Header: React.FC<HeaderProps> = ({
   selectedCategory,
   onCategoryChange,
   onReset,
-  categories
+  categories,
+  isAuthenticated,
+  userProfile,
+  onLogout
 }) => {
   const [isDark, setIsDark] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -115,6 +122,32 @@ const Header: React.FC<HeaderProps> = ({
             />
           </div>
           <div className="flex items-center gap-4 shrink-0">
+            {/* Session Indicator */}
+            {isAuthenticated && userProfile && (
+              <div className="hidden sm:flex items-center gap-3 bg-primary/10 pl-2 pr-1 py-1 rounded-2xl border border-primary/20">
+                <div className="flex flex-col items-end">
+                  <span className="text-[9px] font-black uppercase text-primary leading-none">Sessão Ativa</span>
+                  <span className="text-[10px] font-bold text-gray-500 truncate max-w-[80px]">{userProfile.full_name?.split(' ')[0]}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <Link
+                    to="/admin"
+                    className="size-8 bg-primary/20 hover:bg-primary/40 rounded-xl flex items-center justify-center transition-all group"
+                    title="Ir para Gestão"
+                  >
+                    <span className="material-symbols-outlined !text-sm text-primary group-hover:scale-110 transition-transform">dashboard</span>
+                  </Link>
+                  <button
+                    onClick={onLogout}
+                    className="size-8 bg-red-500/10 hover:bg-red-500/20 rounded-xl flex items-center justify-center transition-all group"
+                    title="Terminar Sessão"
+                  >
+                    <span className="material-symbols-outlined !text-sm text-red-500 group-hover:rotate-12 transition-transform">logout</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             <button onClick={toggleDarkMode} className="size-10 flex items-center justify-center hover:bg-primary/10 rounded-full transition-all text-gray-500 dark:text-gray-400" title="Alternar tema">
               <span className="material-symbols-outlined !text-xl">{isDark ? 'light_mode' : 'dark_mode'}</span>
             </button>
@@ -160,6 +193,38 @@ const Header: React.FC<HeaderProps> = ({
               </button>
             ))}
 
+            {/* Mobile Session Info */}
+            {isAuthenticated && userProfile && (
+              <div className="mt-8 p-6 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/5 flex flex-col gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="size-12 bg-primary text-black rounded-2xl flex items-center justify-center font-black">
+                    {userProfile.full_name?.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-black uppercase text-primary tracking-widest">Sessão Ativa</p>
+                    <p className="text-sm font-black uppercase tracking-tighter">{userProfile.full_name}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <Link
+                    to="/admin"
+                    onClick={() => setIsMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 bg-primary text-black py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest"
+                  >
+                    <span className="material-symbols-outlined !text-sm">dashboard</span> Ir para Gestão
+                  </Link>
+                  <button
+                    onClick={() => {
+                      onLogout?.();
+                      setIsMenuOpen(false);
+                    }}
+                    className="flex items-center justify-center gap-2 bg-red-500/10 text-red-500 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest"
+                  >
+                    <span className="material-symbols-outlined !text-sm">logout</span> Sair
+                  </button>
+                </div>
+              </div>
+            )}
           </nav>
         </div>
       )}

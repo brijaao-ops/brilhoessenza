@@ -510,6 +510,9 @@ const AppContent: React.FC = () => {
         onCategoryChange={setSelectedCategory}
         onReset={resetFilters}
         categories={categories}
+        isAuthenticated={isAuthenticated}
+        userProfile={userProfile}
+        onLogout={handleLogout}
       />
       <main className="flex-1 max-w-[1280px] mx-auto px-4 lg:px-10 w-full">
         <Routes>
