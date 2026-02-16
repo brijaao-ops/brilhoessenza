@@ -48,9 +48,10 @@ const Header: React.FC<HeaderProps> = ({
     }
   };
 
-  // Fallback to ensure menu is never empty on mobile/desktop if fetch fails
-  const validCategories = categories.length > 0
-    ? categories.filter(c => c.active)
+  // Hardened fallback logic: use fallbacks if categories is empty OR if filtering results in empty list
+  const activeCategories = categories.filter(c => c.active);
+  const validCategories = activeCategories.length > 0
+    ? activeCategories
     : [
       { name: 'Fragrâncias', slug: 'fragrancias' },
       { name: 'Cuidados com a Pele', slug: 'skincare' },
@@ -142,8 +143,8 @@ const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-[96px] z-[100] bg-white dark:bg-[#0c0b06] animate-in fade-in slide-in-from-top-10 duration-300 border-t border-gray-100 dark:border-white/5 shadow-2xl overflow-y-auto">
-          <nav className="flex flex-col p-8 gap-6 min-h-full pb-32 bg-white dark:bg-[#0c0b06]">
+        <div className="lg:hidden absolute top-full left-0 right-0 z-[100] bg-white dark:bg-[#0c0b06] border-t border-gray-100 dark:border-white/5 shadow-2xl overflow-y-auto animate-slide-in">
+          <nav className="flex flex-col p-8 gap-6 min-h-[50vh] bg-white dark:bg-[#0c0b06]">
 
             {menuItems.map((item) => (
               <button
