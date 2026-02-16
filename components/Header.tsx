@@ -48,7 +48,17 @@ const Header: React.FC<HeaderProps> = ({
     }
   };
 
-  const menuItems = categories.filter(c => c.active).map(c => ({
+  // Fallback to ensure menu is never empty on mobile/desktop if fetch fails
+  const validCategories = categories.length > 0
+    ? categories.filter(c => c.active)
+    : [
+      { name: 'Fragrâncias', slug: 'fragrancias' },
+      { name: 'Cuidados com a Pele', slug: 'skincare' },
+      { name: 'Maquiagem', slug: 'maquiagem' },
+      { name: 'Acessórios', slug: 'acessorios' }
+    ];
+
+  const menuItems = validCategories.map(c => ({
     label: c.name,
     value: c.name
   }));
@@ -88,10 +98,7 @@ const Header: React.FC<HeaderProps> = ({
               )}
             </button>
           ))}
-          <div className="h-4 w-[1px] bg-gray-100 dark:bg-white/10"></div>
-          <Link to="/admin" className="text-[9px] font-black text-gray-400 hover:text-primary transition-all uppercase tracking-[0.3em] border border-gray-100 dark:border-white/5 px-4 py-2 rounded-xl hover:bg-gray-50 dark:hover:bg-white/5">
-            Mesa de Gestão
-          </Link>
+
         </nav>
 
         {/* Actions & Concierge Search */}
@@ -135,7 +142,7 @@ const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed inset-x-0 top-[88px] bottom-0 z-[100] bg-white dark:bg-[#0c0b06] animate-in fade-in slide-in-from-top-10 duration-300 border-t border-gray-100 dark:border-white/5 shadow-2xl overflow-y-auto">
+        <div className="lg:hidden fixed inset-0 top-[96px] z-[100] bg-white dark:bg-[#0c0b06] animate-in fade-in slide-in-from-top-10 duration-300 border-t border-gray-100 dark:border-white/5 shadow-2xl overflow-y-auto">
           <nav className="flex flex-col p-8 gap-6 min-h-full pb-32 bg-white dark:bg-[#0c0b06]">
 
             {menuItems.map((item) => (
@@ -151,13 +158,7 @@ const Header: React.FC<HeaderProps> = ({
                 {item.label}
               </button>
             ))}
-            <Link
-              to="/admin"
-              onClick={() => setIsMenuOpen(false)}
-              className="text-sm font-black uppercase tracking-widest text-primary pt-4"
-            >
-              Mesa de Gestão
-            </Link>
+
           </nav>
         </div>
       )}

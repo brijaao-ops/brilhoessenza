@@ -90,8 +90,12 @@ const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               <li><Link to="/atelier/heranca" className="hover:text-white transition-colors">Herança</Link></li>
               <li><Link to="/atelier/ingredientes" className="hover:text-white transition-colors">Pureza</Link></li>
               <li><button onClick={handleMaps} className="hover:text-white transition-colors">Boutiques</button></li>
-              <li><Link to="/admin" className="hover:text-white transition-colors">Mesa de Gestão</Link></li>
-              <li><button onClick={handleConcierge} className="text-primary hover:brightness-110 transition-colors">Concierge VIP</button></li>
+              <li>
+                <Link to="/admin" className="inline-block mt-2 px-4 py-2 border border-primary/30 rounded-lg text-primary hover:bg-primary hover:text-black transition-all font-bold shadow-lg shadow-primary/10">
+                  Mesa de Gestão
+                </Link>
+              </li>
+              <li><button onClick={handleConcierge} className="text-primary hover:brightness-110 transition-colors mt-2">Concierge VIP</button></li>
             </ul>
           </div>
 
