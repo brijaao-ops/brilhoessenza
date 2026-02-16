@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Product, Slide } from '../types';
+import ProductCard from '../components/ProductCard';
 
 interface HomeProps {
   onAddToCart: (product: Product) => void;
@@ -126,61 +127,7 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
             {filteredProducts.map((p) => (
-              <div key={p.id} className="flex flex-col gap-8 group animate-fade-up">
-                {/* Image Showcase */}
-                <div className="relative product-image-container rounded-[3rem] overflow-hidden bg-white dark:bg-[#15140b] border border-[#f4f2e7] dark:border-[#222115] p-3 luxury-shadow">
-                  <Link to={`/product/${p.id}`} className="block w-full h-full rounded-[2.5rem] overflow-hidden relative">
-                    <div className="absolute inset-0 bg-gray-50 dark:bg-[#0f0e08] opacity-50 group-hover:opacity-0 transition-opacity"></div>
-                    <img className="w-full h-full object-contain p-8 group-hover:scale-110 transition-transform duration-[1.2s] relative z-10" alt={p.name} src={p.image} />
-                  </Link>
-
-                  {/* Floating Elements */}
-                  <button
-                    onClick={() => onAddToCart(p)}
-                    className="absolute bottom-8 right-8 size-16 bg-black dark:bg-primary text-white dark:text-black rounded-full flex items-center justify-center translate-y-20 group-hover:translate-y-0 transition-all duration-500 shadow-2xl hover:scale-110 active:scale-95 z-30"
-                  >
-                    <span className="material-symbols-outlined !text-2xl">add_shopping_cart</span>
-                  </button>
-
-                  {p.bestSeller && (
-                    <div className="absolute top-8 left-8 glass-effect px-5 py-2 rounded-full text-[9px] font-black uppercase tracking-[0.3em] z-20 shadow-xl text-primary border border-primary/20">
-                      Signature
-                    </div>
-                  )}
-                  <div className="absolute top-8 right-8 glass-effect px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest z-20 border border-white/10 text-gray-400">
-                    Stock: {p.stock}
-                  </div>
-                </div>
-
-                {/* Info Container - Fixed Heights for Alignment */}
-                <div className="flex flex-col gap-4 px-4">
-                  <div className="flex flex-col gap-2">
-                    <span className="text-[9px] font-black uppercase tracking-[0.6em] text-primary/70">
-                      {p.subCategory || p.category}
-                    </span>
-                    <Link to={`/product/${p.id}`}>
-                      <h5 className="font-black text-2xl leading-tight group-hover:text-primary transition-colors line-clamp-2 h-[2.5em] tracking-tighter text-[#1c1a0d] dark:text-white">
-                        {p.name}
-                      </h5>
-                    </Link>
-                  </div>
-
-                  <div className="flex items-end justify-between pt-6 border-t border-gray-100 dark:border-white/5">
-                    <div className="flex flex-col">
-                      <span className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Preço Especial</span>
-                      <div className="flex items-center gap-2">
-                        <p className="text-3xl font-black text-[#1c1a0d] dark:text-white tracking-tighter">
-                          {p.price.toLocaleString()}
-                        </p>
-                        <span className="text-[10px] font-black uppercase text-primary tracking-[0.2em] mb-1">Kz</span>
-                      </div>
-                    </div>
-                    <Link to={`/product/${p.id}`} className="size-10 rounded-full border border-gray-100 dark:border-white/10 flex items-center justify-center group-hover:bg-primary group-hover:border-primary transition-all group-hover:scale-110">
-                      <span className="material-symbols-outlined !text-lg text-gray-400 group-hover:text-black transition-colors">arrow_forward</span>
-                    </Link>
-                  </div>
-                </div>
-              </div>
+              <ProductCard product={p} onAddToCart={onAddToCart} />
             ))}
           </div>
         ) : (
