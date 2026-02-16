@@ -35,14 +35,28 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
     }
   }, [slides.length]);
   const filteredProducts = products.filter(p => {
+    // 1. Search Filter
     const matchesSearch = searchTerm === "" ||
       p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.description.toLowerCase().includes(searchTerm.toLowerCase());
 
-    const matchesCategory = selectedCategory === null || p.category === selectedCategory;
+    // 2. Category / Special Filter
+    let matchesCategory = true;
+    if (selectedCategory === 'Novidades') {
+      matchesCategory = true; // Show all, but we will sort later
+    } else if (selectedCategory === 'Ofertas') {
+      matchesCategory = (p.salePrice || 0) > 0 && (p.salePrice || 0) < p.price;
+    } else if (selectedCategory !== null) {
+      matchesCategory = p.category === selectedCategory;
+    }
 
     return matchesSearch && matchesCategory;
+  }).sort((a, b) => {
+    if (selectedCategory === 'Novidades') {
+      return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+    }
+    return 0; // Keep default order (which is usually by ID or whatever fetch returned)
   });
 
   return (
@@ -129,9 +143,9 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
             </div>
           </div>
           <div className="flex items-center gap-2 bg-gray-50 dark:bg-white/5 p-2 rounded-2xl border border-gray-100 dark:border-white/5">
-            <button className="px-5 py-2 text-[10px] font-black uppercase text-primary bg-white dark:bg-[#1c1a0d] rounded-xl shadow-sm">Todos</button>
-            <button className="px-5 py-2 text-[10px] font-black uppercase text-gray-400 hover:text-black dark:hover:text-white transition-colors">Novidades</button>
-            <button className="px-5 py-2 text-[10px] font-black uppercase text-gray-400 hover:text-black dark:hover:text-white transition-colors">Ofertas</button>
+            <button onClick={() => onCategorySelect(null)} className={`px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${!selectedCategory ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Todos</button>
+            <button onClick={() => onCategorySelect('Novidades')} className={`px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Novidades' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Novidades</button>
+            <button onClick={() => onCategorySelect('Ofertas')} className={`px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Ofertas' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Ofertas</button>
           </div>
         </div>
 

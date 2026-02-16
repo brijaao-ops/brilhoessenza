@@ -64,6 +64,11 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
             <div className="flex items-center gap-4">
               <span className="h-[2px] w-12 bg-primary"></span>
               <span className="text-primary text-[10px] font-black tracking-[0.5em] uppercase">{product.subCategory || product.category}</span>
+              {product.salePrice && product.salePrice > 0 && product.salePrice < product.price && (
+                <span className="bg-red-600 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full animate-pulse">
+                  Oferta Limitada
+                </span>
+              )}
             </div>
             <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-[#1c1a0d] dark:text-white leading-[0.95]">{product.name}</h1>
           </div>
@@ -71,8 +76,22 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
           <div className="flex flex-col gap-2">
             <span className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Investimento Luxo</span>
             <div className="flex items-baseline gap-4">
-              <p className="text-5xl font-black tracking-tighter text-[#1c1a0d] dark:text-white">{product.price.toLocaleString()}</p>
-              <span className="text-sm font-black text-primary uppercase tracking-widest mb-2">Kwanza (Kz)</span>
+              {product.salePrice && product.salePrice > 0 && product.salePrice < product.price ? (
+                <div className="flex flex-col">
+                  <span className="text-xl line-through text-gray-400 font-bold decoration-red-500 decoration-2">
+                    {product.price.toLocaleString()} Kz
+                  </span>
+                  <div className="flex items-baseline gap-4">
+                    <p className="text-5xl font-black tracking-tighter text-red-600">{product.salePrice.toLocaleString()}</p>
+                    <span className="text-sm font-black text-primary uppercase tracking-widest mb-2">Kwanza (Kz)</span>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p className="text-5xl font-black tracking-tighter text-[#1c1a0d] dark:text-white">{product.price.toLocaleString()}</p>
+                  <span className="text-sm font-black text-primary uppercase tracking-widest mb-2">Kwanza (Kz)</span>
+                </>
+              )}
             </div>
           </div>
 
