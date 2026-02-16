@@ -14,6 +14,17 @@ interface HomeProps {
 
 const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, onCategorySelect, products, slides }) => {
   const [currentSlide, setCurrentSlide] = React.useState(0);
+  const [email, setEmail] = React.useState('');
+  const [subscribed, setSubscribed] = React.useState(false);
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      setSubscribed(true);
+      setEmail('');
+      setTimeout(() => setSubscribed(false), 5000);
+    }
+  };
 
   React.useEffect(() => {
     if (slides.length > 1) {
@@ -145,10 +156,29 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
         <div className="bg-primary/5 rounded-[4rem] p-12 lg:p-24 text-center border border-primary/10">
           <h4 className="text-4xl font-black uppercase tracking-tighter mb-6">Mantenha-se <span className="text-primary italic">Exclusivo</span></h4>
           <p className="text-gray-500 font-medium mb-12 max-w-lg mx-auto leading-relaxed">Assine para receber convites para lançamentos privados e acesso antecipado a novas coleções.</p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input type="email" placeholder="Seu melhor e-mail" className="flex-1 bg-white dark:bg-[#1c1a0d] border-none px-6 py-5 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
-            <button className="bg-[#1c1a0d] dark:bg-white text-white dark:text-black px-8 py-5 rounded-2xl font-black uppercase tracking-widest text-[9px] hover:scale-105 transition-all">Participar</button>
-          </div>
+
+          <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto relative">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Seu melhor e-mail"
+              required
+              className="flex-1 bg-white dark:bg-[#1c1a0d] border-none px-6 py-5 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none text-[#1c1a0d] dark:text-white"
+            />
+            <button type="submit" className="bg-[#1c1a0d] dark:bg-white text-white dark:text-black px-8 py-5 rounded-2xl font-black uppercase tracking-widest text-[9px] hover:scale-105 transition-all">
+              Participar
+            </button>
+
+            {/* Success Message Float */}
+            {subscribed && (
+              <div className="absolute -bottom-16 left-0 right-0 text-center animate-fade-up">
+                <span className="text-primary font-black uppercase tracking-widest text-[10px] bg-white dark:bg-black px-4 py-2 rounded-full shadow-lg border border-primary/20">
+                  Bem-vindo ao Clube Exclusivo ✨
+                </span>
+              </div>
+            )}
+          </form>
         </div>
       </section>
     </div>
