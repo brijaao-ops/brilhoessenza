@@ -28,8 +28,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                 </div>
             </div>
 
-            {/* Image Container - Expanded to full available space */}
-            <div className="flex-1 relative flex items-center justify-center p-0 transition-transform duration-700">
+            {/* Image Container - Reduced size slightly with padding, but still large */}
+            <div className="flex-1 relative flex items-center justify-center p-6 transition-transform duration-700">
                 <Link to={`/product/${product.id}`} className="block w-full h-full flex items-center justify-center overflow-hidden">
                     <img
                         src={product.image}
@@ -49,34 +49,35 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                 </button>
             </div>
 
-            {/* Product Name */}
-            <div className="z-20 text-center px-4 mb-24 pointer-events-none">
-                <h3 className="text-2xl font-black uppercase tracking-tighter text-black leading-none">
+            {/* Product Name - Smaller text, better wrapping */}
+            <div className="z-20 text-center px-6 mb-24 pointer-events-none">
+                <h3 className="text-lg font-black uppercase tracking-tight text-black leading-tight line-clamp-2">
                     {product.name}
                 </h3>
             </div>
 
-            {/* Price Bar - Design Match */}
-            <div className="absolute bottom-0 left-0 w-full h-24 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center z-20 border-t border-gray-100">
+            {/* Price Bar - Currency next to price, no circle */}
+            <div className="absolute bottom-0 left-0 w-full h-20 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center z-20 border-t border-gray-100">
                 {product.salePrice && product.salePrice > 0 && product.salePrice < product.price ? (
                     <>
-                        <span className="text-xs line-through text-black/50 font-bold">
+                        <span className="text-xs line-through text-black/40 font-bold mb-1">
                             {product.price.toLocaleString('pt-AO', { minimumFractionDigits: 0 })} Kz
                         </span>
-                        <span className="text-3xl font-black tracking-tighter text-red-600">
-                            {product.salePrice.toLocaleString('pt-AO', { minimumFractionDigits: 0 })}
-                        </span>
+                        <div className="flex items-baseline gap-1">
+                            <span className="text-2xl font-black tracking-tighter text-red-600">
+                                {product.salePrice.toLocaleString('pt-AO', { minimumFractionDigits: 0 })}
+                            </span>
+                            <span className="text-xs font-black text-red-600">Kz</span>
+                        </div>
                     </>
                 ) : (
-                    <span className="text-3xl font-black tracking-tighter text-black">
-                        {product.price.toLocaleString('pt-AO', { minimumFractionDigits: 0 })}
-                    </span>
+                    <div className="flex items-baseline gap-1">
+                        <span className="text-2xl font-black tracking-tighter text-black">
+                            {product.price.toLocaleString('pt-AO', { minimumFractionDigits: 0 })}
+                        </span>
+                        <span className="text-xs font-black text-black">Kz</span>
+                    </div>
                 )}
-
-                {/* Kz Badge - Floating Circle */}
-                <div className="absolute -top-6 right-6 size-12 bg-black text-white rounded-full flex items-center justify-center shadow-lg pointer-events-auto group-hover:scale-110 transition-transform">
-                    <span className="text-sm font-black">Kz</span>
-                </div>
             </div>
 
         </div>

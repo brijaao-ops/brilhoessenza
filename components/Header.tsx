@@ -158,8 +158,8 @@ const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="lg:hidden fixed inset-0 top-[88px] z-[100] bg-white dark:bg-[#0c0b06] animate-in fade-in slide-in-from-top duration-300 border-t border-gray-100 dark:border-white/5">
-          <nav className="flex flex-col p-8 gap-6 h-full overflow-y-auto pb-32">
+        <div className="lg:hidden fixed inset-x-0 top-[88px] bottom-0 z-[100] bg-white dark:bg-[#0c0b06] animate-in fade-in slide-in-from-top-10 duration-300 border-t border-gray-100 dark:border-white/5 shadow-2xl overflow-y-auto">
+          <nav className="flex flex-col p-8 gap-6 min-h-full pb-32 bg-white dark:bg-[#0c0b06]">
             <button
               onClick={() => {
                 ensureHomeAndAction(() => onCategoryChange('Novidades'));
