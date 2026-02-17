@@ -1,6 +1,5 @@
-
 import { createClient } from '@supabase/supabase-js';
-import { Product, Order, Category, Slide } from '../types';
+import { Product, Order, Category, Slide, UserProfile, UserPermissions } from '../types';
 
 // @ts-ignore
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -46,32 +45,6 @@ export const getCurrentUser = async () => {
 
 // --- Team & Permissions ---
 
-export interface PermissionArea {
-    view?: boolean;
-    create?: boolean;
-    edit?: boolean;
-    delete?: boolean;
-    [key: string]: boolean | undefined;
-}
-
-export interface UserPermissions {
-    orders?: PermissionArea;
-    products?: PermissionArea;
-    finance?: PermissionArea;
-    settings?: PermissionArea;
-    team?: PermissionArea;
-}
-
-export interface UserProfile {
-    id: string;
-    email: string;
-    full_name?: string;
-    role: 'admin' | 'employee';
-    permissions: UserPermissions;
-    is_first_login: boolean;
-    is_active?: boolean;
-}
-
 // Access Control helper
 export const fetchProfile = async (userId: string) => {
     const { data, error } = await supabase
@@ -89,17 +62,14 @@ export const fetchProfile = async (userId: string) => {
 
 // Admin function to create employee
 export const createEmployee = async (email: string, password: string, name: string, permissions: UserPermissions) => {
-    // 1. Create a temporary client to sign up the user WITHOUT logging out the admin
     const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
         auth: {
-            persistSession: false, // Don't save this session to localStorage
+            persistSession: false,
             autoRefreshToken: false,
             detectSessionInUrl: false
         }
     });
 
-    // 2. SignUp the new user
-    // We catch the error to check if user already exists
     let userId = '';
 
     try {
@@ -107,18 +77,12 @@ export const createEmployee = async (email: string, password: string, name: stri
             email,
             password,
             options: {
-                data: { full_name: name } // metadata
+                data: { full_name: name }
             }
         });
 
         if (authError) {
-            // Check if user already exists
             if (authError.message.includes("already registered") || authError.status === 422) {
-                console.warn("User already exists, attempting to recover/create profile for them...");
-                // Note: We cannot get the ID of an existing user easily via client API without logging in.
-                // However, if we are Admin, we might assume the previous creation succeeded in Auth but failed in Profile.
-                // WE CANNOT GET THE ID OF THE EXISTING USER TO REPAIR IT IF WE DON'T KNOW IT.
-                // Strategy: We can't actually repair "User A" without their ID.
                 throw new Error("Este email já está cadastrado no sistema. Por favor, peça para o funcionário fazer login. Se o erro 'Perfil não encontrado' persistir, exclua o funcionário da lista (se visível) ou contate o suporte.");
             }
             throw authError;
@@ -134,8 +98,6 @@ export const createEmployee = async (email: string, password: string, name: stri
         throw err;
     }
 
-    // 3. Create the Profile link
-    // Only proceeds if we have a valid NEW userId
     const { error: profileError } = await supabase
         .from('profiles')
         .insert([{
@@ -144,7 +106,8 @@ export const createEmployee = async (email: string, password: string, name: stri
             full_name: name,
             role: 'employee',
             permissions: permissions,
-            is_first_login: true
+            is_first_login: true,
+            is_active: true
         }]);
 
     if (profileError) {

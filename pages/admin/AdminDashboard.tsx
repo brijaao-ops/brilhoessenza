@@ -9,8 +9,9 @@ interface AdminDashboardProps {
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => {
   const stats = useMemo(() => {
-    // Faturamento Total baseado nos pedidos reais
-    const totalRevenue = orders.reduce((acc, curr) => acc + curr.amount, 0);
+    const validSales = orders.filter(o => o.status !== 'PEDIDO');
+    // Faturamento Total baseado nas vendas reais
+    const totalRevenue = validSales.reduce((acc, curr) => acc + curr.amount, 0);
 
     // Category Breakdown
     const categoryMap: Record<string, number> = {};

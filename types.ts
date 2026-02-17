@@ -37,8 +37,9 @@ export interface Order {
   customer: string;
   phone?: string; // Contact for WhatsApp
   amount: number;
-  status: 'PAGO' | 'ENVIADO' | 'PENDENTE';
+  status: 'PAGO' | 'ENVIADO' | 'PENDENTE' | 'PEDIDO';
   date: string;
+  time?: string;
   address?: string;
   neighborhood?: string;
   municipality?: string;
@@ -46,6 +47,7 @@ export interface Order {
   seller_name?: string;
   validator_name?: string;
   deliverer_name?: string;
+  productId?: string;
 }
 
 export interface InventoryAlert {
@@ -55,10 +57,12 @@ export interface InventoryAlert {
 }
 
 export interface UserPermissions {
-  orders?: boolean;
-  products?: boolean;
-  finance?: boolean;
-  settings?: boolean;
+  orders?: Record<string, boolean>;
+  products?: Record<string, boolean>;
+  finance?: Record<string, boolean>;
+  settings?: Record<string, boolean>;
+  team?: Record<string, boolean>;
+  sales?: Record<string, boolean>;
 }
 
 export interface UserProfile {

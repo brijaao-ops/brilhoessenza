@@ -19,7 +19,8 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
         products: {},
         finance: {},
         settings: {},
-        team: {}
+        team: {},
+        sales: {}
     });
     const [creating, setCreating] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -104,7 +105,7 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
         setNewName('');
         setNewEmail('');
         setNewPass('');
-        setPermissions({ orders: {}, products: {}, finance: {}, settings: {}, team: {} });
+        setPermissions({ orders: {}, products: {}, finance: {}, settings: {}, team: {}, sales: {} });
     };
 
     const handleDelete = async (id: string) => {
@@ -162,6 +163,10 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
             team: [
                 { key: 'view', label: 'Ver' },
                 { key: 'edit', label: 'Gerir' }
+            ],
+            sales: [
+                { key: 'view', label: 'Ver' },
+                { key: 'manage', label: 'Gerir' }
             ]
         };
 
@@ -267,10 +272,10 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
                         <div className="border-t border-gray-100 dark:border-gray-800 pt-6">
                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Acessos Permitidos</p>
                             <div className="flex gap-2 flex-wrap">
-                                {(['orders', 'products', 'finance', 'settings', 'team'] as const).map(area => {
+                                {(['orders', 'sales', 'products', 'finance', 'settings', 'team'] as const).map(area => {
                                     const active = isAreaActive(area, member.permissions || {});
                                     if (!active && member.role !== 'admin') return null;
-                                    const areaLabel = area === 'products' ? 'Produtos' : area === 'orders' ? 'Pedidos' : area === 'finance' ? 'Finanças' : area === 'team' ? 'Equipe' : 'Config';
+                                    const areaLabel = area === 'products' ? 'Produtos' : area === 'orders' ? 'Pedidos' : area === 'sales' ? 'Vendas' : area === 'finance' ? 'Finanças' : area === 'team' ? 'Equipe' : 'Config';
                                     return (
                                         <div key={area} className="flex flex-col gap-1">
                                             <span className="text-[9px] font-black uppercase text-primary">{areaLabel}</span>
@@ -336,8 +341,9 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
 
                             <div className="bg-gray-50 dark:bg-[#0f0e08] p-6 rounded-2xl max-h-[300px] overflow-y-auto custom-scrollbar">
                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Permissões de Acesso</p>
-                                <PermissionRow area="products" label="Produtos" perms={permissions} />
                                 <PermissionRow area="orders" label="Pedidos" perms={permissions} />
+                                <PermissionRow area="sales" label="Vendas" perms={permissions} />
+                                <PermissionRow area="products" label="Produtos" perms={permissions} />
                                 <PermissionRow area="finance" label="Finanças" perms={permissions} />
                                 <PermissionRow area="settings" label="Configurações" perms={permissions} />
                                 <PermissionRow area="team" label="Equipe" perms={permissions} />
@@ -369,8 +375,9 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
 
                             <div className="bg-gray-50 dark:bg-[#0f0e08] p-6 rounded-2xl max-h-[300px] overflow-y-auto custom-scrollbar">
                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Acessos Permitidos</p>
-                                <PermissionRow area="products" label="Produtos" perms={editPerms} isEdit />
                                 <PermissionRow area="orders" label="Pedidos" perms={editPerms} isEdit />
+                                <PermissionRow area="sales" label="Vendas" perms={editPerms} isEdit />
+                                <PermissionRow area="products" label="Produtos" perms={editPerms} isEdit />
                                 <PermissionRow area="finance" label="Finanças" perms={editPerms} isEdit />
                                 <PermissionRow area="settings" label="Configurações" perms={editPerms} isEdit />
                                 <PermissionRow area="team" label="Equipe" perms={editPerms} isEdit />

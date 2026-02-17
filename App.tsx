@@ -12,6 +12,7 @@ import AdminCategories from './pages/admin/AdminCategories';
 import AdminCategoryForm from './pages/admin/AdminCategoryForm';
 import AdminStock from './pages/admin/AdminStock';
 import AdminOrders from './pages/admin/AdminOrders';
+import AdminSales from './pages/admin/AdminSales';
 import AdminPayments from './pages/admin/AdminPayments';
 import AdminLogistics from './pages/admin/AdminLogistics';
 import AdminCustomers from './pages/admin/AdminCustomers';
@@ -299,8 +300,9 @@ const AppContent: React.FC = () => {
       customer: data.name,
       phone: data.phone,
       amount: total,
-      status: 'PENDENTE',
+      status: 'PEDIDO',
       date: new Date().toLocaleDateString('pt-BR'),
+      time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
       address: data.address,
       neighborhood: data.neighborhood,
       municipality: data.municipality,
@@ -385,7 +387,8 @@ const AppContent: React.FC = () => {
         { name: 'Estoque', path: '/admin/estoque' },
       ]
     },
-    { name: 'Vendas', path: '/admin/pedidos', icon: 'receipt_long', perm: 'orders' },
+    { name: 'Pedidos', path: '/admin/pedidos', icon: 'shopping_cart', perm: 'orders' },
+    { name: 'Vendas', path: '/admin/vendas', icon: 'sell', perm: 'sales' },
     { name: 'Slides Home', path: '/admin/slides', icon: 'collections', perm: 'settings' },
     { name: 'Equipe', path: '/admin/equipe', icon: 'groups', perm: 'admin_only' }, // 'admin_only' is a special permission for role 'admin'
   ];
@@ -487,6 +490,7 @@ const AppContent: React.FC = () => {
             <Route path="/admin/categorias/editar/:id" element={<AdminCategoryForm />} />
             <Route path="/admin/estoque" element={<AdminStock products={products} />} />
             <Route path="/admin/pedidos" element={<AdminOrders orders={orders} setOrders={setOrders} userProfile={userProfile} />} />
+            <Route path="/admin/vendas" element={<AdminSales orders={orders} setOrders={setOrders} userProfile={userProfile} />} />
             <Route path="/admin/pagamentos" element={<AdminPayments orders={orders} />} />
             <Route path="/admin/logistica" element={<AdminLogistics />} />
             <Route path="/admin/clientes" element={<AdminCustomers />} />
