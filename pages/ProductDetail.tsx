@@ -50,8 +50,15 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
         {/* Detalhes da Boutique */}
         <div className="flex flex-col gap-12 pt-4">
           <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
               <span className="h-[2px] w-12 bg-primary"></span>
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined !text-lg text-primary">
+                  {product.gender === 'masculino' ? 'male' : product.gender === 'feminino' ? 'female' : 'wc'}
+                </span>
+                <span className="text-primary text-[10px] font-black tracking-[0.5em] uppercase">{product.gender === 'unissexo' ? 'Unissexo' : product.gender}</span>
+              </div>
+              <span className="text-gray-300 dark:text-white/20 text-[10px] uppercase font-black tracking-widest">•</span>
               <span className="text-primary text-[10px] font-black tracking-[0.5em] uppercase">{product.subCategory || product.category}</span>
               {product.salePrice && product.salePrice > 0 && product.salePrice < product.price && (
                 <span className="bg-red-600 text-white text-[9px] font-black uppercase tracking-widest px-3 py-1 rounded-full animate-pulse">

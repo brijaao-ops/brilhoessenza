@@ -12,6 +12,7 @@ export interface Product {
   description: string;
   stock: number;
   bestSeller?: boolean;
+  gender: 'masculino' | 'feminino' | 'unissexo';
   created_by_name?: string;
   createdAt?: string;
   salePrice?: number;

@@ -13,9 +13,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
 
             {/* Header: Category/Signature & Stock */}
             <div className="absolute top-0 left-0 w-full flex justify-between items-center p-6 z-20 pointer-events-none">
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
-                    {product.subCategory || product.category}
-                </span>
+                <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+                        {product.subCategory || product.category}
+                    </span>
+                    <span className="material-symbols-outlined !text-xs text-primary/60">
+                        {product.gender === 'masculino' ? 'male' : product.gender === 'feminino' ? 'female' : 'wc'}
+                    </span>
+                </div>
                 <div className="flex gap-2 pointer-events-auto">
                     {product.salePrice && product.salePrice > 0 && product.salePrice < product.price && (
                         <span className="px-2 py-1 bg-red-600 text-white text-[9px] font-black uppercase tracking-widest rounded-md">
