@@ -144,10 +144,24 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
               <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.5em]">Curadoria Exclusiva</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-gray-50 dark:bg-white/5 p-2 rounded-2xl border border-gray-100 dark:border-white/5">
-            <button onClick={() => onCategorySelect(null)} className={`px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${!selectedCategory ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Todos</button>
-            <button onClick={() => onCategorySelect('Novidades')} className={`px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Novidades' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Novidades</button>
-            <button onClick={() => onCategorySelect('Ofertas')} className={`px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Ofertas' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Ofertas</button>
+          <div className="flex items-center gap-2 bg-gray-50 dark:bg-white/5 p-2 rounded-2xl border border-gray-100 dark:border-white/5 overflow-x-auto max-w-full">
+            <button onClick={() => onCategorySelect(null)} className={`whitespace-nowrap px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${!selectedCategory ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Todos</button>
+            <button onClick={() => onCategorySelect('Novidades')} className={`whitespace-nowrap px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Novidades' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Novidades</button>
+            <button onClick={() => onCategorySelect('Ofertas')} className={`whitespace-nowrap px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Ofertas' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Ofertas</button>
+
+            {/* Dynamic Categories From Admin */}
+            {products.length > 0 && Array.from(new Set(products.map(p => p.category)))
+              .filter(cat => cat && cat !== 'Novidades' && cat !== 'Ofertas')
+              .map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => onCategorySelect(cat)}
+                  className={`whitespace-nowrap px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === cat ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}
+                >
+                  {cat}
+                </button>
+              ))
+            }
           </div>
         </div>
 

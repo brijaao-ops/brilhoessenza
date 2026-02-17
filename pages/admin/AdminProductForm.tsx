@@ -1,8 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { Product, UserProfile } from '../../types';
-import { updateProduct, addProduct } from '../../services/supabase';
+import { Product, UserProfile, Category } from '../../types';
+import { updateProduct, addProduct, fetchCategories } from '../../services/supabase';
 
 interface AdminProductFormProps {
   onSave: (product: Product) => void;
@@ -16,6 +16,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
   const isEditing = !!id;
 
   const [imageMode, setImageMode] = useState<'url' | 'upload'>('url');
+  const [categories, setCategories] = useState<Category[]>([]);
 
   const [formData, setFormData] = useState<Omit<Product, 'id' | 'rating' | 'reviewsCount'>>({
     name: '',
@@ -37,26 +38,36 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
   });
 
   useEffect(() => {
-    if (isEditing) {
-      const product = products.find(p => p.id === id);
-      if (product) {
-        setFormData({
-          name: product.name,
-          category: product.category,
-          subCategory: product.subCategory || '',
-          gender: (product.gender as any) || 'unissexo',
-          price: product.price,
-          salePrice: product.salePrice || 0,
-          costPrice: product.costPrice || 0,
-          stock: product.stock,
-          image: product.image,
-          description: product.description,
-          bestSeller: product.bestSeller || false,
-          created_by_name: product.created_by_name,
-          notes: product.notes || { top: '', heart: '', base: '' }
-        });
+    const loadData = async () => {
+      try {
+        const cats = await fetchCategories();
+        setCategories(cats);
+
+        if (isEditing) {
+          const product = products.find(p => p.id === id);
+          if (product) {
+            setFormData({
+              name: product.name,
+              category: product.category,
+              subCategory: product.subCategory || '',
+              gender: (product.gender as any) || 'unissexo',
+              price: product.price,
+              salePrice: product.salePrice || 0,
+              costPrice: product.costPrice || 0,
+              stock: product.stock,
+              image: product.image,
+              description: product.description,
+              bestSeller: product.bestSeller || false,
+              created_by_name: product.created_by_name,
+              notes: product.notes || { top: '', heart: '', base: '' }
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Erro ao carregar dados:", error);
       }
-    }
+    };
+    loadData();
   }, [id, isEditing, products]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -69,7 +80,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
       reader.readAsDataURL(file);
     }
   };
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -212,9 +222,17 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
               <div className="flex flex-col gap-2">
                 <label className="text-[10px] font-black text-gray-400 uppercase">Categoria</label>
                 <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value as any })} className="bg-gray-50 dark:bg-[#0f0e08] p-5 rounded-2xl font-bold outline-none">
-                  <option>Fragrâncias</option>
-                  <option>Cuidados com a Pele</option>
-                  <option>Maquiagem</option>
+                  {categories.length > 0 ? (
+                    categories.map(cat => (
+                      <option key={cat.id} value={cat.name}>{cat.name}</option>
+                    ))
+                  ) : (
+                    <>
+                      <option>Fragrâncias</option>
+                      <option>Cuidados com a Pele</option>
+                      <option>Maquiagem</option>
+                    </>
+                  )}
                 </select>
               </div>
               <div className="flex flex-col gap-2">

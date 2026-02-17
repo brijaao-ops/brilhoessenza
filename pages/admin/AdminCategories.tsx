@@ -1,34 +1,39 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchCategories, deleteCategory } from '../../services/supabase';
+import { fetchCategories, deleteCategory, fetchProducts } from '../../services/supabase';
 import { Category } from '../../types';
 
 const AdminCategories: React.FC = () => {
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
+  const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const loadCategories = async () => {
+  const loadData = async () => {
     try {
-      const data = await fetchCategories();
-      setCategories(data);
+      const [cats, prods] = await Promise.all([
+        fetchCategories(),
+        fetchProducts()
+      ]);
+      setCategories(cats);
+      setProducts(prods);
     } catch (error) {
-      console.error('Failed to load categories', error);
+      console.error('Failed to load data', error);
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    loadCategories();
+    loadData();
   }, []);
 
   const handleDelete = async (id: string) => {
     if (window.confirm('Tem certeza que deseja excluir esta categoria?')) {
       try {
         await deleteCategory(id);
-        loadCategories();
+        loadData();
       } catch (error) {
         alert('Erro ao excluir categoria');
       }
@@ -39,7 +44,7 @@ const AdminCategories: React.FC = () => {
     <div className="p-8 lg:p-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
         <div>
-          <h2 className="text-3xl font-black uppercase tracking-tighter">Gestão de <span className="text-primary italic">Categorias</span></h2>
+          <h2 className="text-3xl font-black uppercase tracking-tighter">Gestão de <span className="text-primary italic">Categorias</span> <span className="text-[10px] text-gray-300 font-normal ml-2">v1.1.2</span></h2>
           <p className="text-sm text-gray-500 font-medium">Estruture seu catálogo em departamentos e coleções exclusivas.</p>
         </div>
         <button
@@ -61,7 +66,9 @@ const AdminCategories: React.FC = () => {
                 <span className="material-symbols-outlined !text-3xl">{cat.icon || 'category'}</span>
               </div>
               <div className="text-right">
-                <p className="text-3xl font-black mb-1">{cat.count || 0}</p>
+                <p className="text-3xl font-black mb-1">
+                  {products.filter(p => p.category === cat.name).length}
+                </p>
                 <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Produtos Vinculados</p>
               </div>
             </div>
@@ -70,12 +77,10 @@ const AdminCategories: React.FC = () => {
 
             <div className="flex items-center gap-4 mb-8 relative z-10">
               <div className="flex items-center gap-2">
-                <span className="size-2 rounded-full bg-green-500"></span>
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Ativo na Loja</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="size-2 rounded-full bg-blue-500"></span>
-                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">SEO Otimizado</span>
+                <span className={`size-2 rounded-full ${cat.active ? 'bg-green-500' : 'bg-gray-300'}`}></span>
+                <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                  {cat.active ? 'Ativo na Loja' : 'Inativo'}
+                </span>
               </div>
             </div>
 
