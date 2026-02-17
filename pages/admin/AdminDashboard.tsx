@@ -1,5 +1,6 @@
 
 import React, { useMemo } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from 'recharts';
 import { Product, Order } from '../../types';
 
@@ -108,7 +109,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => 
 
       {/* Mesa de Gestão - Quick Access */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
-        <a href="/admin/pedidos" className="group bg-white dark:bg-[#15140b] p-8 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] hover:border-primary transition-all flex items-center justify-between luxury-shadow">
+        <Link to="/admin/pedidos" className="group bg-white dark:bg-[#15140b] p-8 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] hover:border-primary transition-all flex items-center justify-between luxury-shadow">
           <div className="flex items-center gap-6">
             <div className="size-16 bg-primary rounded-[1.5rem] flex items-center justify-center text-black shadow-lg shadow-primary/20">
               <span className="material-symbols-outlined !text-3xl">shopping_cart</span>
@@ -121,9 +122,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => 
             </div>
           </div>
           <span className="material-symbols-outlined text-gray-300 group-hover:text-primary transition-colors">arrow_forward_ios</span>
-        </a>
+        </Link>
 
-        <a href="/admin/vendas" className="group bg-[#1c1a0d] dark:bg-white/5 p-8 rounded-[2.5rem] hover:brightness-110 transition-all flex items-center justify-between shadow-2xl">
+        <Link to="/admin/vendas" className="group bg-[#1c1a0d] dark:bg-white/5 p-8 rounded-[2.5rem] hover:brightness-110 transition-all flex items-center justify-between shadow-2xl">
           <div className="flex items-center gap-6">
             <div className="size-16 bg-white dark:bg-primary rounded-[1.5rem] flex items-center justify-center text-black">
               <span className="material-symbols-outlined !text-3xl">sell</span>
@@ -134,7 +135,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => 
             </div>
           </div>
           <span className="material-symbols-outlined text-gray-600 group-hover:text-primary transition-colors">arrow_forward_ios</span>
-        </a>
+        </Link>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
@@ -176,7 +177,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => 
                 <YAxis hide />
                 <Tooltip
                   contentStyle={{ borderRadius: '24px', border: 'none', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)', fontWeight: 'bold', padding: '16px' }}
-                  formatter={(value) => [`${value.toLocaleString()} Kz`, 'Vendas']}
+                  formatter={(value) => [`${(value || 0).toLocaleString()} Kz`, 'Vendas']}
                 />
                 <Area
                   type="monotone"
