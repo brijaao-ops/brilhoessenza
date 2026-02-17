@@ -96,15 +96,15 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
   };
 
   return (
-    <div className="p-8 lg:p-12 max-w-7xl mx-auto animate-fade-in">
-      {/* Dynamic Header with Save Button */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div className="p-6 lg:p-12 animate-fade-in">
+      {/* Absolute/Sticky Header for Save Button */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
         <div className="flex items-center gap-6">
-          <Link to="/admin/produtos" className="size-14 bg-white dark:bg-[#15140b] rounded-2xl flex items-center justify-center hover:bg-primary border shrink-0">
+          <Link to="/admin/produtos" className="size-14 bg-white dark:bg-[#15140b] rounded-2xl flex items-center justify-center hover:bg-primary border shrink-0 transition-all active:scale-95 shadow-sm">
             <span className="material-symbols-outlined">arrow_back</span>
           </Link>
           <div>
-            <h2 className="text-4xl font-black uppercase tracking-tighter leading-none">
+            <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-tighter leading-none">
               {isEditing ? 'Refinar' : 'Novo'} <span className="text-primary italic">Tesouro</span>
             </h2>
             {isEditing && formData.created_by_name && (
@@ -118,7 +118,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
 
         <button
           onClick={handleSubmit}
-          className="bg-black dark:bg-white text-white dark:text-black font-black px-12 py-5 rounded-2xl uppercase tracking-widest text-xs shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-3"
+          className="bg-primary text-black font-black px-10 py-5 rounded-2xl uppercase tracking-widest text-[11px] shadow-2xl shadow-primary/20 hover:scale-[1.05] active:scale-95 transition-all flex items-center justify-center gap-3 whitespace-nowrap md:ml-auto"
         >
           <span className="material-symbols-outlined !text-xl">save</span>
           {isEditing ? 'Salvar Refinamento' : 'Publicar Tesouro'}
