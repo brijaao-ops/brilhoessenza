@@ -17,7 +17,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
                         {product.subCategory || product.category}
                     </span>
-                    <span className="material-symbols-outlined !text-xs text-primary/60">
+                    <span className="material-symbols-outlined !text-[14px] text-primary bg-primary/10 size-6 flex items-center justify-center rounded-lg shadow-sm border border-primary/20">
                         {product.gender === 'masculino' ? 'male' : product.gender === 'feminino' ? 'female' : 'wc'}
                     </span>
                 </div>
