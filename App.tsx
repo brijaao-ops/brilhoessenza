@@ -387,8 +387,8 @@ const AppContent: React.FC = () => {
         { name: 'Estoque', path: '/admin/estoque' },
       ]
     },
-    { name: 'Pedidos', path: '/admin/pedidos', icon: 'shopping_cart', perm: 'orders' },
-    { name: 'Vendas', path: '/admin/vendas', icon: 'sell', perm: 'sales' },
+    { name: 'Gestão de Pedidos', path: '/admin/pedidos', icon: 'shopping_cart', perm: 'orders' },
+    { name: 'Fluxo de Vendas', path: '/admin/vendas', icon: 'sell', perm: 'sales' },
     { name: 'Slides Home', path: '/admin/slides', icon: 'collections', perm: 'settings' },
     { name: 'Equipe', path: '/admin/equipe', icon: 'groups', perm: 'admin_only' }, // 'admin_only' is a special permission for role 'admin'
   ];
@@ -396,7 +396,11 @@ const AppContent: React.FC = () => {
   // Filter tabs based on user permissions
   const visibleTabs = allTabs.map((t, idx) => ({ ...t, originalIndex: idx })).filter(t => {
     if (!userProfile) return false; // If profile not loaded, hide all tabs for safety
-    if (userProfile.role === 'admin') return true; // Admin sees all
+
+    // Case-insensitive admin check
+    const isAdmin = userProfile.role?.toLowerCase() === 'admin';
+    if (isAdmin) return true;
+
     if (t.perm === 'all') return true; // 'all' permission means visible to everyone authenticated
     if (t.perm === 'admin_only') return false; // Non-admins don't see admin_only tabs
 
