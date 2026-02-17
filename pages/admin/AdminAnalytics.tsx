@@ -4,15 +4,12 @@ import {
   ResponsiveContainer,
   AreaChart, Area,
   XAxis, YAxis,
-  CartesianGrid, Tooltip
+  Tooltip
 } from 'recharts';
-import { getFragranceAssistantResponse } from '../../services/geminiService';
 import { fetchOrders, fetchProducts } from '../../services/supabase';
 import { Order, Product } from '../../types';
 
 const AdminAnalytics: React.FC = () => {
-  const [aiInsight, setAiInsight] = useState<string | null>(null);
-  const [loadingAi, setLoadingAi] = useState(false);
   const [kpis, setKpis] = useState({ revenue: 0, ticket: 0, ltv: 0 });
   const [teamStats, setTeamStats] = useState<{ name: string, val: number, env: number }[]>([]);
   const [profit, setProfit] = useState(0);
@@ -51,13 +48,7 @@ const AdminAnalytics: React.FC = () => {
       setTeamStats(Array.from(performanceMap.entries()).map(([name, s]) => ({ name, ...s })));
 
       // Calculate Total Profit (Revenue - Cost)
-      const totalCost = paidOrders.reduce((acc, order) => {
-        const item = products.find(p => p.name === order.customer); // This is a weak link in the current schema, but let's assume we can find it
-        // Better: orders should have product_id. For now, use a fallback or products in catalog
-        return acc + 0; // Placeholder until we have order items
-      }, 0);
       setProfit(totalRevenue * 0.4); // fallback to 40% margin for visibility
-
 
       // Aggregate Revenue by Month
       const monthMap = new Map<string, number>();
@@ -67,7 +58,6 @@ const AdminAnalytics: React.FC = () => {
       months.forEach(m => monthMap.set(m, 0));
 
       paidOrders.forEach(o => {
-        // Assuming date format DD/MM/YYYY
         const parts = o.date.split('/');
         if (parts.length === 3) {
           const monthIndex = parseInt(parts[1], 10) - 1;
@@ -81,36 +71,9 @@ const AdminAnalytics: React.FC = () => {
       // Convert Map to Array for Chart
       const chartData = months.map(m => ({ name: m, receita: monthMap.get(m) || 0 }));
       setRevenueData(chartData);
-
-      // Trigger AI if not loaded
-      fetchAiInsight(totalRevenue, ticket, ltv);
     };
     loadData();
   }, []);
-
-  const fetchAiInsight = async (rev: number, ticket: number, ltv: number) => {
-    if (aiInsight) return; // Don't refetch if already have it
-    setLoadingAi(true);
-    const metricsContext = `
-      KPIs Atuais em Kwanzas (Kz):
-      - Receita Bruta: ${rev.toLocaleString()} Kz
-      - Ticket Médio: ${ticket.toLocaleString()} Kz
-      - LTV (Valor Vitalício do Cliente): ${ltv.toLocaleString()} Kz
-    `;
-
-    const prompt = `Analise estrategicamente estes dados financeiros reais de uma perfumaria de luxo em Angola (Brilho Essenza): ${metricsContext}. Dê 3 insights curtos e acionáveis em tom de consultoria sênior. Foco em crescimento.`;
-
-    try {
-      const response = await getFragranceAssistantResponse(prompt);
-      setAiInsight(response);
-    } catch (err) {
-      setAiInsight("Erro ao processar as estrelas financeiras.");
-    } finally {
-      setLoadingAi(false);
-    }
-  };
-
-
 
   return (
     <div className="p-8 lg:p-12">
@@ -136,7 +99,7 @@ const AdminAnalytics: React.FC = () => {
             <AreaChart data={revenueData}>
               <XAxis dataKey="name" />
               <YAxis hide />
-              <Tooltip formatter={(value) => `${value.toLocaleString()} Kz`} />
+              <Tooltip formatter={(value: any) => `${value.toLocaleString()} Kz`} />
               <Area type="monotone" dataKey="receita" stroke="#f2d00d" fill="#f2d00d33" strokeWidth={4} />
             </AreaChart>
           </ResponsiveContainer>
@@ -164,12 +127,6 @@ const AdminAnalytics: React.FC = () => {
           <h3 className="text-5xl font-black tracking-tighter">{profit.toLocaleString()} Kz</h3>
           <p className="text-[9px] text-gray-500 mt-4 font-bold uppercase tracking-widest">Cálculo baseado em pedidos pagos e custo de catálogo.</p>
         </div>
-      </div>
-
-      <div className="bg-[#f2d00d] p-12 rounded-[3rem] text-black">
-        <h3 className="text-2xl font-black mb-6 uppercase">Relatório Estratégico (Gemini IA)</h3>
-        <p className="text-lg italic mb-8">"{loadingAi ? 'Sintonizando com Luanda...' : aiInsight}"</p>
-        <button onClick={() => fetchAiInsight(kpis.revenue, kpis.ticket, kpis.ltv)} className="bg-black text-white px-8 py-4 rounded-xl font-black uppercase text-[10px]">Atualizar Visão</button>
       </div>
     </div>
   );

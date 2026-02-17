@@ -17,7 +17,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
 
   const [imageMode, setImageMode] = useState<'url' | 'upload'>('url');
 
-  const [formData, setFormData] = useState<Omit<Product, 'id'>>({
+  const [formData, setFormData] = useState<Omit<Product, 'id' | 'rating' | 'reviewsCount'>>({
     name: '',
     category: 'Fragrâncias',
     subCategory: '',
@@ -220,7 +220,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
             {['top', 'heart', 'base'].map((n) => (
               <div key={n} className="flex flex-col gap-2">
                 <label className="text-[9px] font-black text-gray-400 uppercase">{n}</label>
-                <input type="text" value={(formData.notes as any)[n]} onChange={e => setFormData({ ...formData, notes: { ...formData.notes, [n]: e.target.value } })} className="bg-white dark:bg-black/20 p-4 rounded-xl text-xs font-bold outline-none" />
+                <input type="text" value={(formData.notes as any)[n]} onChange={e => setFormData({ ...formData, notes: { ...formData.notes, [n]: e.target.value } as Product['notes'] as any })} className="bg-white dark:bg-black/20 p-4 rounded-xl text-xs font-bold outline-none" />
               </div>
             ))}
           </div>
@@ -231,9 +231,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
             {isEditing ? 'Salvar Refinamento' : 'Publicar Tesouro'}
           </button>
         </div>
+      </form>
     </div>
-      </form >
-    </div >
   );
 };
 

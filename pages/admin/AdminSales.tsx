@@ -29,7 +29,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
         }
     };
 
-    const totalAmount = sales.reduce((acc, curr) => acc + curr.amount, 0);
+    const totalAmount = sales.reduce((acc: number, curr: Order) => acc + curr.amount, 0);
 
     return (
         <div className="p-8 lg:p-12 animate-fade-in">

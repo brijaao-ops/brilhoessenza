@@ -23,9 +23,9 @@ import AdminTeam from './pages/admin/AdminTeam';
 import AdminSlides from './pages/admin/AdminSlides';
 import AdminSlideForm from './pages/admin/AdminSlideForm';
 import CheckoutModal from './components/CheckoutModal';
-import { Product, Order, Category, Slide } from './types';
+import { Product, Order, Category, Slide, UserProfile } from './types';
 import { MOCK_PRODUCTS, MOCK_ORDERS } from './constants';
-import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile, UserProfile } from './services/supabase';
+import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile } from './services/supabase';
 
 const AppContent: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -113,7 +113,14 @@ const AppContent: React.FC = () => {
           email: user.email!,
           full_name: 'Administrador Principal',
           role: 'admin',
-          permissions: { orders: true, products: true, finance: true, settings: true },
+          permissions: {
+            orders: { view: true, edit: true },
+            products: { view: true, edit: true, stock: true },
+            finance: { view: true },
+            settings: { view: true, slides: true },
+            team: { view: true, manage: true },
+            sales: { view: true, edit: true }
+          },
           is_first_login: false
         };
         setUserProfile(adminProfile);
@@ -137,7 +144,13 @@ const AppContent: React.FC = () => {
             email: user.email!,
             full_name: user.user_metadata?.full_name || 'Funcionário (Novo)',
             role: 'employee',
-            permissions: { orders: true, products: true, finance: false, settings: true }, // Give basic access by default
+            permissions: {
+              orders: { view: true },
+              products: { view: true },
+              finance: { view: false },
+              settings: { view: false },
+              sales: { view: true }
+            },
             is_first_login: true
           };
 
@@ -222,7 +235,7 @@ const AppContent: React.FC = () => {
     try {
       if (product.id && products.some(p => p.id === product.id)) {
         await apiUpdateProduct(product.id, product);
-        setProducts(prev => prev.map(p => p.id === product.id ? product : p));
+        setProducts(prev => prev.map((p: Product) => p.id === product.id ? product : p));
       } else {
         // @ts-ignore
         const { id, ...rest } = product;
@@ -240,7 +253,7 @@ const AppContent: React.FC = () => {
     if (window.confirm("Deseja remover este tesouro do catálogo?")) {
       try {
         await apiDeleteProduct(id);
-        setProducts(prev => prev.filter(p => p.id !== id));
+        setProducts(prev => prev.filter((p: Product) => p.id !== id));
       } catch (error) {
         alert("Erro ao remover produto.");
       }
@@ -269,7 +282,7 @@ const AppContent: React.FC = () => {
   };
 
   const updateCartQuantity = (id: string, delta: number) => {
-    setCartItems(prev => prev.map(item => {
+    setCartItems(prev => prev.map((item: any) => {
       if (item.product.id === id) {
         const newQty = item.quantity + delta;
         const prod = products.find(p => p.id === id);
@@ -294,7 +307,7 @@ const AppContent: React.FC = () => {
     const settings = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
     const whatsapp = settings.companyPhone || "244900000000";
 
-    const total = cartItems.reduce((acc, curr) => acc + (curr.product.price * curr.quantity), 0);
+    const total = cartItems.reduce((acc: number, curr: any) => acc + (curr.product.price * curr.quantity), 0);
     const orderData: Order = {
       id: `#BE-${Math.floor(Math.random() * 90000 + 10000)}`,
       customer: data.name,
@@ -306,7 +319,8 @@ const AppContent: React.FC = () => {
       address: data.address,
       neighborhood: data.neighborhood,
       municipality: data.municipality,
-      province: data.province
+      province: data.province,
+      productId: cartItems[0]?.product.id || 'Multiple'
     };
 
     try {
@@ -322,7 +336,7 @@ const AppContent: React.FC = () => {
         }
       }
 
-      setProducts(prevProducts => prevProducts.map(p => {
+      setProducts(prevProducts => prevProducts.map((p: Product) => {
         const itemInCart = cartItems.find(item => item.product.id === p.id);
         if (itemInCart) {
           return { ...p, stock: Math.max(0, p.stock - itemInCart.quantity) };
@@ -337,7 +351,7 @@ const AppContent: React.FC = () => {
       message += `*Localização:* ${data.neighborhood}, ${data.municipality}, ${data.province}\n`;
       if (data.address) message += `*Endereço:* ${data.address}\n`;
       message += `--------------------------\n`;
-      cartItems.forEach((item, index) => {
+      cartItems.forEach((item: any, index: number) => {
         message += `${index + 1}. *${item.product.name}*\n`;
         message += `   Qtd: ${item.quantity} | Subtotal: ${(item.product.price * item.quantity).toLocaleString()} Kz\n\n`;
       });
@@ -356,7 +370,7 @@ const AppContent: React.FC = () => {
     }
   };
 
-  const totalCart = cartItems.reduce((acc, curr) => acc + (curr.product.price * curr.quantity), 0);
+  const totalCart = cartItems.reduce((acc: number, curr: any) => acc + (curr.product.price * curr.quantity), 0);
 
   const resetFilters = () => {
     setSearchTerm("");
@@ -380,6 +394,8 @@ const AppContent: React.FC = () => {
   // Define all possible admin sidebar tabs with their required permissions
   const allTabs = [
     { name: 'Dashboard', path: '/admin', icon: 'dashboard', perm: 'all' },
+    { name: 'Gestão de Pedidos', path: '/admin/pedidos', icon: 'shopping_cart', perm: 'orders' },
+    { name: 'Fluxo de Vendas', path: '/admin/vendas', icon: 'sell', perm: 'sales' },
     {
       name: 'Atelier', path: '/admin/produtos', icon: 'inventory_2', perm: 'products', subItems: [
         { name: 'Catálogo', path: '/admin/produtos' },
@@ -387,8 +403,6 @@ const AppContent: React.FC = () => {
         { name: 'Estoque', path: '/admin/estoque' },
       ]
     },
-    { name: 'Gestão de Pedidos', path: '/admin/pedidos', icon: 'shopping_cart', perm: 'orders' },
-    { name: 'Fluxo de Vendas', path: '/admin/vendas', icon: 'sell', perm: 'sales' },
     { name: 'Slides Home', path: '/admin/slides', icon: 'collections', perm: 'settings' },
     { name: 'Equipe', path: '/admin/equipe', icon: 'groups', perm: 'admin_only' }, // 'admin_only' is a special permission for role 'admin'
   ];

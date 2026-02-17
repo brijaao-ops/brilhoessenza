@@ -1,0 +1,3 @@
+﻿error TS6305: Output file 'C:/Users/hp/Downloads/brilho-essenza-luxury/brilhoessenza/vite.config.d.ts' has not been built from source file 'C:/Users/hp/Downloads/brilho-essenza-luxury/brilhoessenza/vite.config.ts'.
+  The file is in the program because:
+    Matched by include pattern '**/*.ts' in 'C:/Users/hp/Downloads/brilho-essenza-luxury/brilhoessenza/tsconfig.json'

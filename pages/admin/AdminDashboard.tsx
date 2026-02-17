@@ -1,3 +1,4 @@
+
 import React, { useMemo } from 'react';
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from 'recharts';
 import { Product, Order } from '../../types';
@@ -17,7 +18,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => 
     const categoryMap: Record<string, number> = {};
     orders.forEach(o => {
       const p = products.find(prod => prod.id === o.productId);
-      if (p) {
+      if (p && o.productId) {
         categoryMap[p.category] = (categoryMap[p.category] || 0) + o.amount;
       }
     });
@@ -27,7 +28,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => 
     const productSalesMap: Record<string, { name: string, qty: number, revenue: number }> = {};
     orders.forEach(o => {
       const p = products.find(prod => prod.id === o.productId);
-      if (p) {
+      if (p && o.productId) {
         if (!productSalesMap[o.productId]) {
           productSalesMap[o.productId] = { name: p.name, qty: 0, revenue: 0 };
         }
@@ -63,6 +64,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => 
       { name: 'SAB', value: dayRevenueMap[6] },
       { name: 'DOM', value: dayRevenueMap[0] }
     ];
+
+    const totalProfit = totalRevenue * 0.4; // Fallback to 40% margin
 
     return { totalRevenue, totalProfit, paidOrdersCount, avgTicket, chartData, categoryData, topProducts };
   }, [orders, products]);
@@ -101,6 +104,37 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => 
             </div>
           )}
         </div>
+      </div>
+
+      {/* Mesa de Gestão - Quick Access */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+        <a href="/admin/pedidos" className="group bg-white dark:bg-[#15140b] p-8 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] hover:border-primary transition-all flex items-center justify-between luxury-shadow">
+          <div className="flex items-center gap-6">
+            <div className="size-16 bg-primary rounded-[1.5rem] flex items-center justify-center text-black shadow-lg shadow-primary/20">
+              <span className="material-symbols-outlined !text-3xl">shopping_cart</span>
+            </div>
+            <div>
+              <h4 className="text-xl font-black uppercase tracking-tighter">Gestão de Pedidos</h4>
+              <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-1">
+                {orders.filter(o => o.status === 'PEDIDO').length} Novas Solicitações
+              </p>
+            </div>
+          </div>
+          <span className="material-symbols-outlined text-gray-300 group-hover:text-primary transition-colors">arrow_forward_ios</span>
+        </a>
+
+        <a href="/admin/vendas" className="group bg-[#1c1a0d] dark:bg-white/5 p-8 rounded-[2.5rem] hover:brightness-110 transition-all flex items-center justify-between shadow-2xl">
+          <div className="flex items-center gap-6">
+            <div className="size-16 bg-white dark:bg-primary rounded-[1.5rem] flex items-center justify-center text-black">
+              <span className="material-symbols-outlined !text-3xl">sell</span>
+            </div>
+            <div className="text-white">
+              <h4 className="text-xl font-black uppercase tracking-tighter">Fluxo de Vendas</h4>
+              <p className="text-[10px] font-bold text-primary uppercase tracking-widest mt-1">Monitorar Faturamento</p>
+            </div>
+          </div>
+          <span className="material-symbols-outlined text-gray-600 group-hover:text-primary transition-colors">arrow_forward_ios</span>
+        </a>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
@@ -189,7 +223,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => 
                   <div className="size-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
                   <span className="text-[10px] font-black uppercase text-gray-400">{cat.name}</span>
                 </div>
-                <span className="text-xs font-black">{((cat.value / stats.totalRevenue) * 100).toFixed(0)}%</span>
+                <span className="text-xs font-black">{stats.totalRevenue > 0 ? ((cat.value / stats.totalRevenue) * 100).toFixed(0) : 0}%</span>
               </div>
             ))}
           </div>
