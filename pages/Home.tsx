@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Product, Slide } from '../types';
 import ProductCard from '../components/ProductCard';
+import ScentQuiz from '../components/ScentQuiz';
+import { ProductSkeleton } from '../components/Skeleton';
 
 interface HomeProps {
   onAddToCart: (product: Product) => void;
@@ -16,6 +18,7 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [email, setEmail] = React.useState('');
   const [subscribed, setSubscribed] = React.useState(false);
+  const [isQuizOpen, setIsQuizOpen] = React.useState(false);
 
   const handleSubscribe = (e: React.FormEvent) => {
     e.preventDefault();
@@ -88,26 +91,13 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
                         className="text-5xl lg:text-8xl font-black leading-[0.9] mb-8 tracking-tighter text-white"
                         dangerouslySetInnerHTML={{ __html: slide.title.replace(/\n/g, '<br />') }}
                       />
-                      <div className="flex flex-wrap gap-5">
-                        {slide.button_link.startsWith('#') ? (
-                          <button
-                            onClick={() => {
-                              const el = document.getElementById(slide.button_link.substring(1));
-                              if (el) el.scrollIntoView({ behavior: 'smooth' });
-                            }}
-                            className="bg-primary text-black font-black px-12 py-5 rounded-2xl hover:brightness-110 transition-all transform hover:scale-105 shadow-2xl shadow-primary/20 uppercase tracking-widest text-[10px]"
-                          >
-                            {slide.button_text}
-                          </button>
-                        ) : (
-                          <Link
-                            to={slide.button_link}
-                            className="bg-primary text-black font-black px-12 py-5 rounded-2xl hover:brightness-110 transition-all transform hover:scale-105 shadow-2xl shadow-primary/20 uppercase tracking-widest text-[10px]"
-                          >
-                            {slide.button_text}
-                          </Link>
-                        )}
-                      </div>
+                      <button
+                        onClick={() => setIsQuizOpen(true)}
+                        className="bg-white/10 backdrop-blur-md text-white border border-white/20 font-black px-12 py-5 rounded-2xl hover:bg-white hover:text-black transition-all transform hover:scale-105 uppercase tracking-widest text-[10px] flex items-center gap-3"
+                      >
+                        <span className="material-symbols-outlined !text-sm">auto_awesome</span>
+                        Descobrir meu Perfil
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -161,10 +151,16 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
           </div>
         </div>
 
-        {filteredProducts.length > 0 ? (
+        {products.length === 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+              <ProductSkeleton key={i} />
+            ))}
+          </div>
+        ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
             {filteredProducts.map((p) => (
-              <ProductCard product={p} onAddToCart={onAddToCart} />
+              <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} />
             ))}
           </div>
         ) : (
@@ -207,6 +203,18 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
           </form>
         </div>
       </section>
+
+      {/* Scent Quiz Modal */}
+      {isQuizOpen && (
+        <ScentQuiz
+          onClose={() => setIsQuizOpen(false)}
+          onFilterCategory={(cat) => {
+            onCategorySelect(cat);
+            const el = document.getElementById('produtos');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+        />
+      )}
     </div>
   );
 };

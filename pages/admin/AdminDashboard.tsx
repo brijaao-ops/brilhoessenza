@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell } from 'recharts';
 import { Product, Order } from '../../types';
 
 interface AdminDashboardProps {
@@ -12,13 +12,31 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => 
     // Faturamento Total baseado nos pedidos reais
     const totalRevenue = orders.reduce((acc, curr) => acc + curr.amount, 0);
 
-    // Lucro Total Aproximado (Preço de Venda - Preço de Custo)
-    const totalProfit = orders.reduce((acc, order) => {
-      const avgMarginPercent = products.length > 0
-        ? products.reduce((pAcc, p) => pAcc + (1 - (p.costPrice || p.price * 0.6) / p.price), 0) / products.length
-        : 0.4;
-      return acc + (order.amount * avgMarginPercent);
-    }, 0);
+    // Category Breakdown
+    const categoryMap: Record<string, number> = {};
+    orders.forEach(o => {
+      const p = products.find(prod => prod.id === o.productId);
+      if (p) {
+        categoryMap[p.category] = (categoryMap[p.category] || 0) + o.amount;
+      }
+    });
+    const categoryData = Object.entries(categoryMap).map(([name, value]) => ({ name, value }));
+
+    // Top Products (by quantity in orders)
+    const productSalesMap: Record<string, { name: string, qty: number, revenue: number }> = {};
+    orders.forEach(o => {
+      const p = products.find(prod => prod.id === o.productId);
+      if (p) {
+        if (!productSalesMap[o.productId]) {
+          productSalesMap[o.productId] = { name: p.name, qty: 0, revenue: 0 };
+        }
+        productSalesMap[o.productId].qty += 1;
+        productSalesMap[o.productId].revenue += o.amount;
+      }
+    });
+    const topProducts = Object.values(productSalesMap)
+      .sort((a, b) => b.qty - a.qty)
+      .slice(0, 5);
 
     const paidOrdersCount = orders.filter(o => o.status === 'PAGO').length;
     const avgTicket = orders.length > 0 ? totalRevenue / orders.length : 0;
@@ -45,8 +63,10 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => 
       { name: 'DOM', value: dayRevenueMap[0] }
     ];
 
-    return { totalRevenue, totalProfit, paidOrdersCount, avgTicket, chartData };
+    return { totalRevenue, totalProfit, paidOrdersCount, avgTicket, chartData, categoryData, topProducts };
   }, [orders, products]);
+
+  const COLORS = ['#f2d00d', '#1c1a0d', '#4a4a4a', '#8a8a8a', '#c2c2c2'];
 
   const lowStockItems = products.filter(p => p.stock < 10);
 
@@ -110,33 +130,92 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ orders, products }) => 
         </div>
       </div>
 
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-12">
+        <div className="xl:col-span-2 bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-[2.5rem] p-10 shadow-sm">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10">Projeção Semanal de Vendas (Kz)</h4>
+          <div className="h-[350px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={stats.chartData}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.05} />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: '#9ca3af' }} />
+                <YAxis hide />
+                <Tooltip
+                  contentStyle={{ borderRadius: '24px', border: 'none', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)', fontWeight: 'bold', padding: '16px' }}
+                  formatter={(value) => [`${value.toLocaleString()} Kz`, 'Vendas']}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="value"
+                  stroke="#f2d00d"
+                  strokeWidth={5}
+                  fill="url(#colorValue)"
+                />
+                <defs>
+                  <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#f2d00d" stopOpacity={0.4} />
+                    <stop offset="95%" stopColor="#f2d00d" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-[2.5rem] p-10 shadow-sm">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10">Distribuição por Categoria</h4>
+          <div className="h-[250px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={stats.categoryData}
+                  innerRadius={60}
+                  outerRadius={80}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {stats.categoryData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="mt-8 space-y-3">
+            {stats.categoryData.map((cat, i) => (
+              <div key={cat.name} className="flex justify-between items-center">
+                <div className="flex items-center gap-2">
+                  <div className="size-2 rounded-full" style={{ backgroundColor: COLORS[i % COLORS.length] }}></div>
+                  <span className="text-[10px] font-black uppercase text-gray-400">{cat.name}</span>
+                </div>
+                <span className="text-xs font-black">{((cat.value / stats.totalRevenue) * 100).toFixed(0)}%</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <div className="bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-[2.5rem] p-10 shadow-sm">
-        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10">Projeção Semanal de Vendas (Kz)</h4>
-        <div className="h-[350px] w-full">
-          <ResponsiveContainer width="100%" height="100%">
-            <AreaChart data={stats.chartData}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.05} />
-              <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 10, fontWeight: 900, fill: '#9ca3af' }} />
-              <YAxis hide />
-              <Tooltip
-                contentStyle={{ borderRadius: '24px', border: 'none', boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)', fontWeight: 'bold', padding: '16px' }}
-                formatter={(value) => [`${value.toLocaleString()} Kz`, 'Vendas']}
-              />
-              <Area
-                type="monotone"
-                dataKey="value"
-                stroke="#f2d00d"
-                strokeWidth={5}
-                fill="url(#colorValue)"
-              />
-              <defs>
-                <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#f2d00d" stopOpacity={0.4} />
-                  <stop offset="95%" stopColor="#f2d00d" stopOpacity={0} />
-                </linearGradient>
-              </defs>
-            </AreaChart>
-          </ResponsiveContainer>
+        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10">Produtos Mais Vendidos</h4>
+        <div className="space-y-6">
+          {stats.topProducts.map((p, i) => (
+            <div key={p.name} className="flex items-center justify-between group">
+              <div className="flex items-center gap-4">
+                <span className="size-8 rounded-lg bg-gray-50 dark:bg-white/5 flex items-center justify-center text-[10px] font-black text-primary">#{i + 1}</span>
+                <span className="text-sm font-black group-hover:text-primary transition-colors">{p.name}</span>
+              </div>
+              <div className="flex items-center gap-8">
+                <div className="text-right">
+                  <p className="text-[9px] font-black text-gray-400 uppercase leading-none mb-1">Qtd</p>
+                  <p className="text-sm font-black">{p.qty}</p>
+                </div>
+                <div className="text-right w-24">
+                  <p className="text-[9px] font-black text-gray-400 uppercase leading-none mb-1">Receita</p>
+                  <p className="text-sm font-black">{p.revenue.toLocaleString()} Kz</p>
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
