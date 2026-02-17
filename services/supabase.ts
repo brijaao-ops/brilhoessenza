@@ -208,6 +208,7 @@ export const addProduct = async (product: Omit<Product, 'id'>) => {
         stock: product.stock,
         best_seller: product.bestSeller,
         created_by_name: product.created_by_name,
+        gender: product.gender,
         notes: product.notes,
         sale_price: product.salePrice
     };
@@ -237,6 +238,7 @@ export const updateProduct = async (id: string, product: Partial<Product>) => {
     if (product.bestSeller !== undefined) dbProduct.best_seller = product.bestSeller;
     if (product.created_by_name !== undefined) dbProduct.created_by_name = product.created_by_name;
     if (product.notes !== undefined) dbProduct.notes = product.notes;
+    if (product.gender !== undefined) dbProduct.gender = product.gender;
 
     const { error } = await supabase
         .from('products')
