@@ -13,7 +13,7 @@ const AdminSlideForm: React.FC = () => {
         subtitle: '',
         image_url: '',
         button_text: 'Descobrir Catálogo',
-        button_link: '/fragrancias',
+        button_link: '#produtos',
         order_index: 0
     });
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -182,12 +182,16 @@ const AdminSlideForm: React.FC = () => {
                             </div>
 
                             <div className="flex flex-col gap-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Link de Destino</label>
+                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center justify-between">
+                                    Link de Destino
+                                    <span className="text-[9px] text-primary lowercase italic Normal">Dica: use #produtos para rolar até o catálogo</span>
+                                </label>
                                 <input
                                     type="text"
                                     value={formData.button_link}
                                     onChange={e => setFormData({ ...formData, button_link: e.target.value })}
                                     className="bg-gray-50 dark:bg-black/20 p-5 rounded-2xl font-bold outline-none text-xs"
+                                    placeholder="#produtos ou /url"
                                 />
                             </div>
                         </div>

@@ -1,7 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import { generateScentProfile } from '../../services/geminiService';
 import { Product, UserProfile } from '../../types';
 import { updateProduct, addProduct } from '../../services/supabase';
 
@@ -16,7 +15,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
   const { id } = useParams<{ id: string }>();
   const isEditing = !!id;
 
-  const [loadingAi, setLoadingAi] = useState(false);
   const [imageMode, setImageMode] = useState<'url' | 'upload'>('url');
 
   const [formData, setFormData] = useState<Omit<Product, 'id'>>({
@@ -70,18 +68,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
     }
   };
 
-  const handleAiGenerateNotes = async () => {
-    if (!formData.name) {
-      alert("Insira o nome para sintonizar a IA.");
-      return;
-    }
-    setLoadingAi(true);
-    const profile = await generateScentProfile(formData.name);
-    if (profile) {
-      setFormData(prev => ({ ...prev, notes: profile }));
-    }
-    setLoadingAi(false);
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -225,33 +211,29 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
             </div>
           </div>
 
-          <div className="bg-primary/5 p-10 rounded-[2.5rem] border border-primary/20">
-            <div className="flex items-center justify-between mb-8">
-              <h4 className="font-black uppercase text-[10px] text-primary flex items-center gap-2">
-                <span className="material-symbols-outlined">auto_awesome</span> Perfil Olfativo IA
-              </h4>
-              <button type="button" onClick={handleAiGenerateNotes} disabled={loadingAi} className="bg-primary text-black px-6 py-2 rounded-xl font-black text-[9px] uppercase shadow-lg disabled:opacity-50">
-                {loadingAi ? 'Sintonizando...' : 'Gerar via Gemini'}
-              </button>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {['top', 'heart', 'base'].map((n) => (
-                <div key={n} className="flex flex-col gap-2">
-                  <label className="text-[9px] font-black text-gray-400 uppercase">{n}</label>
-                  <input type="text" value={(formData.notes as any)[n]} onChange={e => setFormData({ ...formData, notes: { ...formData.notes, [n]: e.target.value } })} className="bg-white dark:bg-black/20 p-4 rounded-xl text-xs font-bold outline-none" />
-                </div>
-              ))}
-            </div>
+          <div className="flex items-center justify-between mb-8">
+            <h4 className="font-black uppercase text-[10px] text-primary flex items-center gap-2">
+              <span className="material-symbols-outlined">auto_awesome</span> Perfil Olfativo
+            </h4>
           </div>
-
-          <div className="flex gap-6 justify-end">
-            <button type="submit" className="bg-black dark:bg-white text-white dark:text-black font-black px-16 py-5 rounded-2xl uppercase tracking-widest text-xs shadow-xl transition-all hover:scale-105 active:scale-95">
-              {isEditing ? 'Salvar Refinamento' : 'Publicar Tesouro'}
-            </button>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {['top', 'heart', 'base'].map((n) => (
+              <div key={n} className="flex flex-col gap-2">
+                <label className="text-[9px] font-black text-gray-400 uppercase">{n}</label>
+                <input type="text" value={(formData.notes as any)[n]} onChange={e => setFormData({ ...formData, notes: { ...formData.notes, [n]: e.target.value } })} className="bg-white dark:bg-black/20 p-4 rounded-xl text-xs font-bold outline-none" />
+              </div>
+            ))}
           </div>
         </div>
-      </form>
+
+        <div className="flex gap-6 justify-end">
+          <button type="submit" className="bg-black dark:bg-white text-white dark:text-black font-black px-16 py-5 rounded-2xl uppercase tracking-widest text-xs shadow-xl transition-all hover:scale-105 active:scale-95">
+            {isEditing ? 'Salvar Refinamento' : 'Publicar Tesouro'}
+          </button>
+        </div>
     </div>
+      </form >
+    </div >
   );
 };
 

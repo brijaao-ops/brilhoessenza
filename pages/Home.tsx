@@ -89,12 +89,24 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
                         dangerouslySetInnerHTML={{ __html: slide.title.replace(/\n/g, '<br />') }}
                       />
                       <div className="flex flex-wrap gap-5">
-                        <Link
-                          to={slide.button_link}
-                          className="bg-primary text-black font-black px-12 py-5 rounded-2xl hover:brightness-110 transition-all transform hover:scale-105 shadow-2xl shadow-primary/20 uppercase tracking-widest text-[10px]"
-                        >
-                          {slide.button_text}
-                        </Link>
+                        {slide.button_link.startsWith('#') ? (
+                          <button
+                            onClick={() => {
+                              const el = document.getElementById(slide.button_link.substring(1));
+                              if (el) el.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            className="bg-primary text-black font-black px-12 py-5 rounded-2xl hover:brightness-110 transition-all transform hover:scale-105 shadow-2xl shadow-primary/20 uppercase tracking-widest text-[10px]"
+                          >
+                            {slide.button_text}
+                          </button>
+                        ) : (
+                          <Link
+                            to={slide.button_link}
+                            className="bg-primary text-black font-black px-12 py-5 rounded-2xl hover:brightness-110 transition-all transform hover:scale-105 shadow-2xl shadow-primary/20 uppercase tracking-widest text-[10px]"
+                          >
+                            {slide.button_text}
+                          </Link>
+                        )}
                       </div>
                     </div>
                   </div>
