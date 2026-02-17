@@ -148,20 +148,6 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
             <button onClick={() => onCategorySelect(null)} className={`whitespace-nowrap px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${!selectedCategory ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Todos</button>
             <button onClick={() => onCategorySelect('Novidades')} className={`whitespace-nowrap px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Novidades' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Novidades</button>
             <button onClick={() => onCategorySelect('Ofertas')} className={`whitespace-nowrap px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Ofertas' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Ofertas</button>
-
-            {/* Dynamic Categories From Admin */}
-            {products.length > 0 && Array.from(new Set(products.map(p => p.category)))
-              .filter(cat => cat && cat !== 'Novidades' && cat !== 'Ofertas')
-              .map(cat => (
-                <button
-                  key={cat}
-                  onClick={() => onCategorySelect(cat)}
-                  className={`whitespace-nowrap px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === cat ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}
-                >
-                  {cat}
-                </button>
-              ))
-            }
           </div>
         </div>
 
