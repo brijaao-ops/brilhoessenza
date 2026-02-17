@@ -46,11 +46,20 @@ export const getCurrentUser = async () => {
 
 // --- Team & Permissions ---
 
+export interface PermissionArea {
+    view?: boolean;
+    create?: boolean;
+    edit?: boolean;
+    delete?: boolean;
+    [key: string]: boolean | undefined;
+}
+
 export interface UserPermissions {
-    orders?: boolean;
-    products?: boolean;
-    finance?: boolean;
-    settings?: boolean;
+    orders?: PermissionArea;
+    products?: PermissionArea;
+    finance?: PermissionArea;
+    settings?: PermissionArea;
+    team?: PermissionArea;
 }
 
 export interface UserProfile {

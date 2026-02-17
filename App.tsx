@@ -362,15 +362,17 @@ const AppContent: React.FC = () => {
   };
 
   // Helper to check permission
-  const hasPermission = (perm: 'orders' | 'products' | 'finance' | 'settings') => {
+  const hasPermission = (area: keyof UserProfile['permissions'], action: string = 'view') => {
     // 1. If profile not loaded yet, default to FALSE for security (except Admin fallback handled in init)
     if (!userProfile) return false;
 
     // 2. Super Admins have full access
     if (userProfile.role === 'admin') return true;
 
-    // 3. Employees check specific flags
-    return !!userProfile.permissions[perm];
+    // 3. Employees check specific flags in the area
+    const areaPerms = userProfile.permissions[area];
+    if (!areaPerms) return false;
+    return !!areaPerms[action];
   };
 
   // Define all possible admin sidebar tabs with their required permissions
@@ -395,8 +397,11 @@ const AppContent: React.FC = () => {
     if (t.perm === 'all') return true; // 'all' permission means visible to everyone authenticated
     if (t.perm === 'admin_only') return false; // Non-admins don't see admin_only tabs
 
-    // @ts-ignore - userProfile.permissions is guaranteed to exist if userProfile exists
-    return userProfile.permissions?.[t.perm];
+    // Check if the area has at least one permission granted
+    // @ts-ignore
+    const areaPerms = userProfile.permissions?.[t.perm];
+    if (!areaPerms) return false;
+    return Object.values(areaPerms).some(v => v === true);
   });
 
   if (isAdminPath) {
@@ -487,7 +492,7 @@ const AppContent: React.FC = () => {
             <Route path="/admin/clientes" element={<AdminCustomers />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/configuracoes" element={<AdminSettings />} />
-            <Route path="/admin/equipe" element={<AdminTeam />} />
+            <Route path="/admin/equipe" element={<AdminTeam userProfile={userProfile} />} />
             <Route path="/admin/slides" element={<AdminSlides />} />
             <Route path="/admin/slides/novo" element={<AdminSlideForm />} />
             <Route path="/admin/slides/editar/:id" element={<AdminSlideForm />} />

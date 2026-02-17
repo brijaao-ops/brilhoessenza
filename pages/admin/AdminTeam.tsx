@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { UserProfile, fetchTeam, createEmployee, UserPermissions, updateEmployeeProfile, deleteEmployee } from '../../services/supabase';
 
-const AdminTeam: React.FC = () => {
+interface AdminTeamProps {
+    userProfile: UserProfile | null;
+}
+
+const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) => {
     const [team, setTeam] = useState<UserProfile[]>([]);
     const [loading, setLoading] = useState(true);
     const [showModal, setShowModal] = useState(false);
@@ -11,10 +15,11 @@ const AdminTeam: React.FC = () => {
     const [newEmail, setNewEmail] = useState('');
     const [newPass, setNewPass] = useState('');
     const [permissions, setPermissions] = useState<UserPermissions>({
-        orders: false,
-        products: false,
-        finance: false,
-        settings: false
+        orders: {},
+        products: {},
+        finance: {},
+        settings: {},
+        team: {}
     });
     const [creating, setCreating] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -83,7 +88,7 @@ const AdminTeam: React.FC = () => {
         const newStatus = member.is_active === false ? true : false;
         try {
             await updateEmployeeProfile(member.id, { is_active: newStatus });
-            setTeam(prev => prev.map(m => m.id === member.id ? { ...m, is_active: newStatus } : m));
+            setTeam((prev: UserProfile[]) => prev.map(m => m.id === member.id ? { ...m, is_active: newStatus } : m));
         } catch (err: any) {
             alert("Erro ao mudar status: " + err.message);
         }
@@ -99,26 +104,98 @@ const AdminTeam: React.FC = () => {
         setNewName('');
         setNewEmail('');
         setNewPass('');
-        setPermissions({ orders: false, products: false, finance: false, settings: false });
+        setPermissions({ orders: {}, products: {}, finance: {}, settings: {}, team: {} });
     };
 
     const handleDelete = async (id: string) => {
         if (window.confirm("Deseja remover este acesso? O usuário não poderá mais entrar.")) {
             try {
                 await deleteEmployee(id);
-                setTeam(prev => prev.filter(m => m.id !== id));
+                setTeam((prev: UserProfile[]) => prev.filter(m => m.id !== id));
             } catch (err) {
                 alert("Erro ao remover: " + err);
             }
         }
     };
 
-    const togglePermission = (key: keyof UserPermissions, isEdit = false) => {
+    const togglePermission = (area: keyof UserPermissions, key: string, isEdit = false) => {
+        const updater = (prev: UserPermissions): UserPermissions => {
+            const areaPerms = prev[area] || {};
+            return {
+                ...prev,
+                [area]: { ...areaPerms, [key]: !areaPerms[key] }
+            };
+        };
+
         if (isEdit) {
-            setEditPerms(prev => ({ ...prev, [key]: !prev[key] }));
+            setEditPerms(updater);
         } else {
-            setPermissions(prev => ({ ...prev, [key]: !prev[key] }));
+            setPermissions(updater);
         }
+    };
+
+    const isAreaActive = (area: keyof UserPermissions, perms: UserPermissions) => {
+        return Object.values(perms[area] || {}).some(v => v === true);
+    };
+
+    const PermissionRow = ({ area, label, perms, isEdit = false }: { area: keyof UserPermissions, label: string, perms: UserPermissions, isEdit?: boolean }) => {
+        const active = isAreaActive(area, perms);
+        const subPerms: Record<keyof UserPermissions, { key: string, label: string }[]> = {
+            products: [
+                { key: 'view', label: 'Ver' },
+                { key: 'create', label: 'Add' },
+                { key: 'edit', label: 'Edit' },
+                { key: 'delete', label: 'Del' },
+                { key: 'stock', label: 'Stock' }
+            ],
+            orders: [
+                { key: 'view', label: 'Ver' },
+                { key: 'edit', label: 'Mudar Status' },
+            ],
+            finance: [
+                { key: 'view', label: 'Ver Dashboard' }
+            ],
+            settings: [
+                { key: 'view', label: 'Ver' },
+                { key: 'slides', label: 'Slides' }
+            ],
+            team: [
+                { key: 'view', label: 'Ver' },
+                { key: 'edit', label: 'Gerir' }
+            ]
+        };
+
+        return (
+            <div className="flex flex-col gap-3 py-4 border-b border-gray-100 dark:border-white/5 last:border-none">
+                <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white">{label}</span>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            const firstKey = subPerms[area][0].key;
+                            togglePermission(area, firstKey, isEdit);
+                        }}
+                        className={`text-[9px] font-black uppercase px-3 py-1 rounded-full transition-all ${active ? 'bg-primary text-black' : 'bg-gray-100 dark:bg-white/5 text-gray-400'}`}
+                    >
+                        {active ? 'Ativado' : 'Desativado'}
+                    </button>
+                </div>
+                {active && (
+                    <div className="flex flex-wrap gap-2 animate-fade-in">
+                        {subPerms[area].map(sub => (
+                            <button
+                                key={sub.key}
+                                type="button"
+                                onClick={() => togglePermission(area, sub.key, isEdit)}
+                                className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${perms[area]?.[sub.key] ? 'bg-primary/10 border-primary text-primary' : 'bg-white dark:bg-[#15140b] border-gray-100 dark:border-white/5 text-gray-400'}`}
+                            >
+                                {sub.label}
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </div>
+        );
     };
 
     return (
@@ -190,17 +267,26 @@ const AdminTeam: React.FC = () => {
                         <div className="border-t border-gray-100 dark:border-gray-800 pt-6">
                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Acessos Permitidos</p>
                             <div className="flex gap-2 flex-wrap">
-                                {Object.entries(member.permissions || {}).map(([key, val]) => (
-                                    val && (
-                                        <span key={key} className="text-[9px] font-bold uppercase border border-gray-200 dark:border-gray-700 px-2 py-1 rounded text-gray-600 dark:text-gray-400">
-                                            {key === 'products' ? 'Produtos' : key === 'orders' ? 'Pedidos' : key === 'finance' ? 'Finanças' : 'Config'}
-                                        </span>
-                                    )
-                                ))}
-                                {Object.values(member.permissions || {}).every(v => !v) && member.role !== 'admin' && (
-                                    <span className="text-[9px] text-red-400 font-bold">Sem acessos</span>
-                                )}
-                                {member.role === 'admin' && <span className="text-[9px] font-bold text-primary">Acesso Total</span>}
+                                {(['orders', 'products', 'finance', 'settings', 'team'] as const).map(area => {
+                                    const active = isAreaActive(area, member.permissions || {});
+                                    if (!active && member.role !== 'admin') return null;
+                                    const areaLabel = area === 'products' ? 'Produtos' : area === 'orders' ? 'Pedidos' : area === 'finance' ? 'Finanças' : area === 'team' ? 'Equipe' : 'Config';
+                                    return (
+                                        <div key={area} className="flex flex-col gap-1">
+                                            <span className="text-[9px] font-black uppercase text-primary">{areaLabel}</span>
+                                            <div className="flex gap-1 flex-wrap">
+                                                {Object.entries(member.permissions?.[area] || {}).map(([sub, val]) => (
+                                                    val && (
+                                                        <span key={sub} className="text-[8px] font-bold uppercase bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 px-1.5 py-0.5 rounded text-gray-500">
+                                                            {sub}
+                                                        </span>
+                                                    )
+                                                ))}
+                                            </div>
+                                        </div>
+                                    );
+                                })}
+                                {userProfile?.role === 'admin' && userProfile.id === member.id && <span className="text-[9px] font-bold text-primary">Acesso Total</span>}
                             </div>
                         </div>
                     </div>
@@ -236,35 +322,28 @@ const AdminTeam: React.FC = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-2">
                                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nome</label>
-                                    <input required type="text" value={newName} onChange={e => setNewName(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="Ex: Ana Silva" />
+                                    <input required type="text" value={newName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewName(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="Ex: Ana Silva" />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Senha Provisória</label>
-                                    <input required type="text" value={newPass} onChange={e => setNewPass(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="Min 6 caracteres" />
+                                    <input required type="text" value={newPass} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPass(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="Min 6 caracteres" />
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2">
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Email Corporativo</label>
-                                <input required type="email" value={newEmail} onChange={e => setNewEmail(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="ana@brilho.com" />
+                                <input required type="email" value={newEmail} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEmail(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="ana@brilho.com" />
                             </div>
 
-                            <div className="bg-gray-50 dark:bg-[#0f0e08] p-6 rounded-2xl">
+                            <div className="bg-gray-50 dark:bg-[#0f0e08] p-6 rounded-2xl max-h-[300px] overflow-y-auto custom-scrollbar">
                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Permissões de Acesso</p>
-                                <div className="grid grid-cols-2 gap-4">
-                                    {(['orders', 'products', 'finance', 'settings'] as const).map(key => (
-                                        <button key={key} type="button" onClick={() => togglePermission(key)} className={`flex items-center gap-3 p-4 rounded-xl transition-all border ${permissions[key] ? 'bg-primary/10 border-primary text-primary' : 'bg-white dark:bg-[#15140b] border-transparent text-gray-400'}`}>
-                                            <span className={`size-4 rounded border flex items-center justify-center ${permissions[key] ? 'bg-primary border-primary' : 'border-gray-300'}`}>
-                                                {permissions[key] && <span className="material-symbols-outlined text-[10px] text-black font-black">check</span>}
-                                            </span>
-                                            <span className="text-[10px] font-black uppercase tracking-widest">
-                                                {key === 'products' ? 'Produtos' : key === 'orders' ? 'Pedidos' : key === 'finance' ? 'Finanças' : 'Config'}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
+                                <PermissionRow area="products" label="Produtos" perms={permissions} />
+                                <PermissionRow area="orders" label="Pedidos" perms={permissions} />
+                                <PermissionRow area="finance" label="Finanças" perms={permissions} />
+                                <PermissionRow area="settings" label="Configurações" perms={permissions} />
+                                <PermissionRow area="team" label="Equipe" perms={permissions} />
                             </div>
 
-                            <button disabled={creating} className="bg-black text-white px-8 py-5 rounded-xl font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50">
+                            <button disabled={creating} type="submit" className="bg-black text-white px-8 py-5 rounded-xl font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50">
                                 {creating ? 'Criando Acesso...' : 'Confirmar e Criar'}
                             </button>
                         </form>
@@ -285,23 +364,16 @@ const AdminTeam: React.FC = () => {
                         <form onSubmit={handleUpdate} className="flex flex-col gap-6">
                             <div className="flex flex-col gap-2">
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nome Completo</label>
-                                <input required type="text" value={editName} onChange={e => setEditName(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
+                                <input required type="text" value={editName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditName(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
                             </div>
 
-                            <div className="bg-gray-50 dark:bg-[#0f0e08] p-6 rounded-2xl">
+                            <div className="bg-gray-50 dark:bg-[#0f0e08] p-6 rounded-2xl max-h-[300px] overflow-y-auto custom-scrollbar">
                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Acessos Permitidos</p>
-                                <div className="grid grid-cols-2 gap-4">
-                                    {(['orders', 'products', 'finance', 'settings'] as const).map(key => (
-                                        <button key={key} type="button" onClick={() => togglePermission(key, true)} className={`flex items-center gap-3 p-4 rounded-xl transition-all border ${editPerms[key] ? 'bg-primary/10 border-primary text-primary' : 'bg-white dark:bg-[#15140b] border-transparent text-gray-400'}`}>
-                                            <span className={`size-4 rounded border flex items-center justify-center ${editPerms[key] ? 'bg-primary border-primary' : 'border-gray-300'}`}>
-                                                {editPerms[key] && <span className="material-symbols-outlined text-[10px] text-black font-black">check</span>}
-                                            </span>
-                                            <span className="text-[10px] font-black uppercase tracking-widest">
-                                                {key === 'products' ? 'Produtos' : key === 'orders' ? 'Pedidos' : key === 'finance' ? 'Finanças' : 'Config'}
-                                            </span>
-                                        </button>
-                                    ))}
-                                </div>
+                                <PermissionRow area="products" label="Produtos" perms={editPerms} isEdit />
+                                <PermissionRow area="orders" label="Pedidos" perms={editPerms} isEdit />
+                                <PermissionRow area="finance" label="Finanças" perms={editPerms} isEdit />
+                                <PermissionRow area="settings" label="Configurações" perms={editPerms} isEdit />
+                                <PermissionRow area="team" label="Equipe" perms={editPerms} isEdit />
                             </div>
 
                             <button disabled={updating} type="submit" className="bg-primary text-black font-black py-4 rounded-2xl uppercase tracking-widest text-[10px] hover:brightness-110 shadow-xl shadow-primary/20 transition-all active:scale-95 disabled:opacity-50 mt-4 flex items-center justify-center gap-2">
