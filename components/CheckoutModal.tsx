@@ -91,10 +91,11 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                                 <input
                                     type="tel"
                                     required
+                                    maxLength={9}
                                     value={formData.phone}
                                     onChange={handlePhoneChange}
                                     className="w-full bg-gray-50 dark:bg-white/5 p-5 pl-16 rounded-2xl font-black outline-none border border-transparent focus:border-primary transition-all text-lg tracking-widest"
-                                    placeholder="9XX XXX XXX"
+                                    placeholder="9XXXXXXXX"
                                 />
                             </div>
                         </div>

@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { Product, Order, Category, Slide, UserProfile, UserPermissions } from '../types';
+import { Product, Order, Category, Slide, UserProfile, UserPermissions, DeliveryDriver } from '../types';
 
 // @ts-ignore
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
@@ -262,7 +262,7 @@ export const deleteProduct = async (id: string) => {
 export const fetchOrders = async (): Promise<Order[]> => {
     const { data, error } = await supabase
         .from('orders')
-        .select('*')
+        .select('*, driver:delivery_drivers(*)')
         .order('created_at', { ascending: false });
 
     if (error) {
@@ -376,6 +376,56 @@ export const deleteSlide = async (id: string) => {
         .from('slides')
         .delete()
         .eq('id', id);
+
+    if (error) throw error;
+};
+
+// --- Delivery Drivers ---
+
+export const fetchDrivers = async (): Promise<DeliveryDriver[]> => {
+    const { data, error } = await supabase
+        .from('delivery_drivers')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+};
+
+export const createDriver = async (driver: Omit<DeliveryDriver, 'id' | 'verified' | 'created_at'>) => {
+    const { data, error } = await supabase
+        .from('delivery_drivers')
+        .insert([driver])
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+};
+
+export const updateDriver = async (id: string, updates: Partial<DeliveryDriver>) => {
+    const { error } = await supabase
+        .from('delivery_drivers')
+        .update(updates)
+        .eq('id', id);
+
+    if (error) throw error;
+};
+
+export const deleteDriver = async (id: string) => {
+    const { error } = await supabase
+        .from('delivery_drivers')
+        .delete()
+        .eq('id', id);
+
+    if (error) throw error;
+};
+
+export const assignDriverToOrder = async (orderId: string, driverId: string | null) => {
+    const { error } = await supabase
+        .from('orders')
+        .update({ driver_id: driverId })
+        .eq('id', orderId);
 
     if (error) throw error;
 };

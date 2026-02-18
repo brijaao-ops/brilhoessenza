@@ -22,6 +22,8 @@ import AdminLogin from './pages/admin/AdminLogin';
 import AdminTeam from './pages/admin/AdminTeam';
 import AdminSlides from './pages/admin/AdminSlides';
 import AdminSlideForm from './pages/admin/AdminSlideForm';
+import AdminDrivers from './pages/admin/AdminDrivers';
+import DriverRegistration from './pages/DriverRegistration';
 import CheckoutModal from './components/CheckoutModal';
 import { Product, Order, Category, Slide, UserProfile } from './types';
 import { MOCK_PRODUCTS, MOCK_ORDERS } from './constants';
@@ -404,7 +406,8 @@ const AppContent: React.FC = () => {
       ]
     },
     { name: 'Slides Home', path: '/admin/slides', icon: 'collections', perm: 'settings' },
-    { name: 'Equipe', path: '/admin/equipe', icon: 'groups', perm: 'admin_only' }, // 'admin_only' is a special permission for role 'admin'
+    { name: 'Equipe', path: '/admin/equipe', icon: 'groups', perm: 'admin_only' },
+    { name: 'Entregadores', path: '/admin/entregadores', icon: 'delivery_dining', perm: 'drivers' },
   ];
 
   // Filter tabs based on user permissions
@@ -511,6 +514,7 @@ const AppContent: React.FC = () => {
             <Route path="/admin/vendas" element={<AdminSales orders={orders} setOrders={setOrders} userProfile={userProfile} />} />
             <Route path="/admin/pagamentos" element={<AdminPayments orders={orders} />} />
             <Route path="/admin/logistica" element={<AdminLogistics />} />
+            <Route path="/admin/entregadores" element={<AdminDrivers userProfile={userProfile} />} />
             <Route path="/admin/clientes" element={<AdminCustomers />} />
             <Route path="/admin/analytics" element={<AdminAnalytics />} />
             <Route path="/admin/configuracoes" element={<AdminSettings />} />
@@ -546,6 +550,7 @@ const AppContent: React.FC = () => {
           <Route path="/" element={<Home onAddToCart={handleAddToCart} products={products} slides={slides} searchTerm={searchTerm} selectedCategory={selectedCategory} onCategorySelect={setSelectedCategory} />} />
           <Route path="/product/:id" element={<ProductDetail onAddToCart={handleAddToCart} products={products} />} />
           <Route path="/atelier/:section" element={<AtelierInfo />} />
+          <Route path="/entregador/cadastro" element={<DriverRegistration />} />
           <Route path="*" element={<div className="py-24 text-center font-black uppercase tracking-widest text-gray-400">Página não encontrada</div>} />
         </Routes>
       </main>

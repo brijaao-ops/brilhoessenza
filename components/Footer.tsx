@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -80,7 +79,7 @@ const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               <li><button onClick={() => handleCategoryClick('Fragrâncias')} className="hover:text-white transition-colors">Fragrâncias</button></li>
               <li><button onClick={() => handleCategoryClick('Cuidados com a Pele')} className="hover:text-white transition-colors">Skincare</button></li>
               <li><button onClick={() => handleCategoryClick('Maquiagem')} className="hover:text-white transition-colors">Beauty</button></li>
-              <li><button onClick={() => handleCategoryClick(null)} className="hover:text-white transition-colors">Privé</button></li>
+              <li><Link to="/entregador/cadastro" className="text-primary font-black animate-pulse hover:text-white transition-colors">QUERO SER ENTREGADOR</Link></li>
             </ul>
           </div>
 

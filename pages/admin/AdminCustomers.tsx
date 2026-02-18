@@ -57,7 +57,7 @@ const AdminCustomers: React.FC = () => {
               <div>
                 <h4 className="font-black text-xl">{c.name}</h4>
                 <div className="flex gap-4 mt-1">
-                  <p className="text-sm text-gray-400 flex items-center gap-1"><span className="material-symbols-outlined text-[10px]">call</span> {c.phone}</p>
+                  <p className="text-sm text-gray-400 flex items-center gap-1"><span className="material-symbols-outlined text-[10px]">call</span> {c.phone.length === 9 ? `+244 ${c.phone}` : c.phone}</p>
                   <p className="text-sm text-gray-400 flex items-center gap-1"><span className="material-symbols-outlined text-[10px]">receipt</span> {c.orders} Pedidos</p>
                 </div>
               </div>

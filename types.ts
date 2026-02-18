@@ -49,6 +49,22 @@ export interface Order {
   validator_name?: string;
   deliverer_name?: string;
   productId?: string;
+  driver_id?: string;
+  driver?: DeliveryDriver;
+}
+
+export interface DeliveryDriver {
+  id: string;
+  name: string;
+  address: string;
+  transport_type: string;
+  whatsapp: string;
+  id_front_url?: string;
+  id_back_url?: string;
+  selfie_url?: string;
+  verified: boolean;
+  active: boolean;
+  created_at: string;
 }
 
 export interface InventoryAlert {
@@ -64,6 +80,7 @@ export interface UserPermissions {
   settings?: Record<string, boolean>;
   team?: Record<string, boolean>;
   sales?: Record<string, boolean>;
+  drivers?: Record<string, boolean>;
 }
 
 export interface UserProfile {

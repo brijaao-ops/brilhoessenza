@@ -1,6 +1,6 @@
-import React from 'react';
-import { Order, UserProfile } from '../../types';
-import { updateOrder } from '../../services/supabase';
+import React, { useState, useEffect } from 'react';
+import { Order, UserProfile, DeliveryDriver } from '../../types';
+import { updateOrder, fetchDrivers, assignDriverToOrder } from '../../services/supabase';
 
 interface AdminSalesProps {
     orders: Order[];
@@ -9,7 +9,44 @@ interface AdminSalesProps {
 }
 
 const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile }) => {
+    const [drivers, setDrivers] = React.useState<DeliveryDriver[]>([]);
     const sales = orders.filter(o => o.status !== 'PEDIDO');
+
+    React.useEffect(() => {
+        const loadDrivers = async () => {
+            const data = await fetchDrivers();
+            setDrivers(data.filter(d => d.verified && d.active));
+        };
+        loadDrivers();
+    }, []);
+
+    const handleAssignDriver = async (orderId: string, driverId: string) => {
+        try {
+            await assignDriverToOrder(orderId, driverId);
+            const driver = drivers.find(d => d.id === driverId);
+            setOrders(prev => prev.map(o => o.id === orderId ? { ...o, driver_id: driverId, driver } : o));
+
+            if (driver) {
+                const order = orders.find(o => o.id === orderId);
+                if (order) notifyDriver(order, driver);
+            }
+        } catch (error) {
+            alert("Erro ao atribuir entregador.");
+        }
+    };
+
+    const notifyDriver = (order: Order, driver: DeliveryDriver) => {
+        const message = `*NOVA ENTREGA ATRIBUÍDA - BRILHO ESSENZA*\n\n` +
+            `*ID Venda:* ${order.id}\n` +
+            `*Cliente:* ${order.customer}\n` +
+            `*Localização:* ${order.neighborhood}, ${order.municipality}\n` +
+            `*Contacto Cliente:* ${order.phone}\n` +
+            `*Valor Total:* ${order.amount.toLocaleString()} Kz\n\n` +
+            `_Por favor, confirme a recepção do pedido._`;
+
+        const encodedMsg = encodeURIComponent(message);
+        window.open(`https://wa.me/${driver.whatsapp.replace(/\D/g, '')}?text=${encodedMsg}`, '_blank');
+    };
 
     const updateStatus = async (orderId: string, newStatus: Order['status']) => {
         try {
@@ -73,7 +110,9 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                         </div>
                                     </td>
                                     <td className="px-8 py-5">
-                                        <div className="flex flex-col gap-1 text-sm font-bold text-gray-500">{o.phone || '---'}</div>
+                                        <div className="flex flex-col gap-1 text-sm font-bold text-gray-500">
+                                            {o.phone?.length === 9 ? `+244 ${o.phone}` : (o.phone || '---')}
+                                        </div>
                                     </td>
                                     <td className="px-8 py-5 font-black text-sm">{o.amount.toLocaleString()} Kz</td>
                                     <td className="px-8 py-5 text-xs text-gray-400 font-bold">{o.date}</td>
@@ -86,19 +125,43 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                         </span>
                                     </td>
                                     <td className="px-8 py-5">
-                                        <div className="flex flex-col gap-1 items-center">
-                                            {o.validator_name && (
-                                                <div className="flex items-center gap-1">
-                                                    <span className="text-[7px] font-black uppercase text-green-500 bg-green-500/10 px-1 rounded">Pago:</span>
-                                                    <span className="text-[9px] font-bold text-gray-400 truncate max-w-[70px]">{o.validator_name}</span>
-                                                </div>
-                                            )}
-                                            {o.deliverer_name && (
-                                                <div className="flex items-center gap-1">
-                                                    <span className="text-[7px] font-black uppercase text-blue-500 bg-blue-500/10 px-1 rounded">Env:</span>
-                                                    <span className="text-[9px] font-bold text-gray-400 truncate max-w-[70px]">{o.deliverer_name}</span>
-                                                </div>
-                                            )}
+                                        <div className="flex flex-col gap-2">
+                                            <div className="flex flex-col gap-1">
+                                                {o.validator_name && (
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="text-[7px] font-black uppercase text-green-500 bg-green-500/10 px-1 rounded">Pago:</span>
+                                                        <span className="text-[9px] font-bold text-gray-400 truncate max-w-[70px]">{o.validator_name}</span>
+                                                    </div>
+                                                )}
+                                                {o.deliverer_name && (
+                                                    <div className="flex items-center gap-1">
+                                                        <span className="text-[7px] font-black uppercase text-blue-500 bg-blue-500/10 px-1 rounded">Env:</span>
+                                                        <span className="text-[9px] font-bold text-gray-400 truncate max-w-[70px]">{o.deliverer_name}</span>
+                                                    </div>
+                                                )}
+                                            </div>
+
+                                            {/* Driver Assignment */}
+                                            <div className="flex flex-col gap-1">
+                                                <select
+                                                    value={o.driver_id || ""}
+                                                    onChange={(e) => handleAssignDriver(o.id, e.target.value)}
+                                                    className="text-[8px] font-black uppercase bg-gray-50 dark:bg-white/5 border-none rounded p-1 outline-none w-full"
+                                                >
+                                                    <option value="">Atribuir Entregador</option>
+                                                    {drivers.map(d => (
+                                                        <option key={d.id} value={d.id}>{d.name}</option>
+                                                    ))}
+                                                </select>
+                                                {o.driver && (
+                                                    <button
+                                                        onClick={() => notifyDriver(o, o.driver!)}
+                                                        className="text-[7px] font-black uppercase text-primary hover:underline text-left mt-0.5"
+                                                    >
+                                                        Reenviar WhatsApp
+                                                    </button>
+                                                )}
+                                            </div>
                                         </div>
                                     </td>
                                     <td className="px-8 py-5 text-right">
