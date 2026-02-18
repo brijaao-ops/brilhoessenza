@@ -12,6 +12,15 @@ interface ProductDetailProps {
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) => {
   const { id } = useParams<{ id: string }>();
+  const [isAdded, setIsAdded] = useState(false);
+
+  const handleAddToCart = () => {
+    if (product) {
+      onAddToCart(product);
+      setIsAdded(true);
+      setTimeout(() => setIsAdded(false), 1500);
+    }
+  };
   const product = products.find(p => p.id === id);
 
   useEffect(() => {
@@ -104,11 +113,17 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
 
           <div className="flex flex-col gap-6">
             <button
-              onClick={() => onAddToCart(product)}
-              className="w-full bg-primary text-black font-black py-7 rounded-[2rem] hover:brightness-110 transition-all shadow-2xl shadow-primary/30 uppercase tracking-[0.3em] text-[11px] hover:scale-[1.02] active:scale-95 flex items-center justify-center gap-3"
+              onClick={handleAddToCart}
+              disabled={isAdded}
+              className={`w-full font-black py-7 rounded-[2rem] transition-all shadow-xl uppercase tracking-[0.3em] text-[11px] flex items-center justify-center gap-3 ${isAdded
+                  ? 'bg-green-500 text-white scale-95 shadow-green-500/20'
+                  : 'bg-primary text-black hover:brightness-110 shadow-primary/30 hover:scale-[1.02] active:scale-95'
+                }`}
             >
-              <span className="material-symbols-outlined !text-xl">shopping_cart_checkout</span>
-              Adicionar à Reserva
+              <span className="material-symbols-outlined !text-xl animate-bounce">
+                {isAdded ? 'check_circle' : 'shopping_cart_checkout'}
+              </span>
+              {isAdded ? 'Adicionado!' : 'Adicionar à Reserva'}
             </button>
             <div className="flex items-center justify-center gap-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">
               <div className="flex items-center gap-2">

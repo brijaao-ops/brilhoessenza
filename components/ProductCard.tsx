@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../types';
 
@@ -8,6 +8,15 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
+    const [isAdded, setIsAdded] = useState(false);
+
+    const handleAddToCart = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onAddToCart(product);
+        setIsAdded(true);
+        setTimeout(() => setIsAdded(false), 1500);
+    };
     return (
         <div className="relative flex flex-col justify-between h-[450px] w-full bg-white rounded-[30px] overflow-hidden group shadow-lg border border-gray-200 transition-all duration-500 hover:shadow-2xl">
 
@@ -46,11 +55,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                 </Link>
 
                 {/* Floating Cart Button */}
+                {/* Floating Cart Button */}
                 <button
-                    onClick={() => onAddToCart(product)}
-                    className="absolute bottom-4 right-4 size-10 bg-black text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0 transition-all duration-300 shadow-xl z-30"
+                    onClick={handleAddToCart}
+                    disabled={isAdded}
+                    className={`absolute bottom-4 right-4 size-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl z-30 ${isAdded
+                            ? 'bg-green-500 text-white opacity-100 translate-y-0 scale-110'
+                            : 'bg-black text-white opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0'
+                        }`}
                 >
-                    <span className="material-symbols-outlined !text-sm">add_shopping_cart</span>
+                    <span className={`material-symbols-outlined !text-sm ${isAdded ? 'animate-bounce' : ''}`}>
+                        {isAdded ? 'check' : 'add_shopping_cart'}
+                    </span>
                 </button>
             </div>
 
