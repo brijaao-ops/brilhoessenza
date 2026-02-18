@@ -319,6 +319,7 @@ const AppContent: React.FC = () => {
       status: 'PEDIDO',
       date: new Date().toLocaleDateString('pt-BR'),
       time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+      address: data.address,
       neighborhood: data.neighborhood,
       municipality: data.municipality,
       province: data.province,
