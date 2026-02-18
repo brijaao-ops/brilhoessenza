@@ -154,11 +154,26 @@ const DriverRegistration: React.FC = () => {
         setLoading(true);
 
         try {
-            const [id_front_url, id_back_url, selfie_url] = await Promise.all([
-                uploadImage(images.id_front, 'drivers'),
-                uploadImage(images.id_back, 'drivers'),
-                uploadImage(images.selfie, 'drivers'),
-            ]);
+            // Upload images sequentially to avoid race conditions
+            let id_front_url = '';
+            let id_back_url = '';
+            let selfie_url = '';
+
+            try {
+                id_front_url = await uploadImage(images.id_front, 'drivers');
+            } catch (err: any) {
+                throw new Error('Falha ao enviar foto do BI Frente: ' + (err.message || err));
+            }
+            try {
+                id_back_url = await uploadImage(images.id_back, 'drivers');
+            } catch (err: any) {
+                throw new Error('Falha ao enviar foto do BI Verso: ' + (err.message || err));
+            }
+            try {
+                selfie_url = await uploadImage(images.selfie, 'drivers');
+            } catch (err: any) {
+                throw new Error('Falha ao enviar Selfie: ' + (err.message || err));
+            }
 
             await createDriver({
                 ...formData,
@@ -170,9 +185,9 @@ const DriverRegistration: React.FC = () => {
 
             setSuccess(true);
             setTimeout(() => navigate('/'), 5000);
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error registering driver:', error);
-            alert('Erro ao realizar cadastro.');
+            alert('Erro ao realizar cadastro: ' + (error.message || 'Tente novamente.'));
         } finally {
             setLoading(false);
         }
