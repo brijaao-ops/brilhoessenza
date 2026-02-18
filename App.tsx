@@ -413,7 +413,7 @@ const AppContent: React.FC = () => {
       ]
     },
     { name: 'Slides Home', path: '/admin/slides', icon: 'collections', perm: 'settings' },
-    { name: 'Equipe', path: '/admin/equipe', icon: 'groups', perm: 'admin_only' },
+    { name: 'Equipe', path: '/admin/equipe', icon: 'groups', perm: 'team' },
     { name: 'Entregadores', path: '/admin/entregadores', icon: 'delivery_dining', perm: 'drivers' },
   ];
 
