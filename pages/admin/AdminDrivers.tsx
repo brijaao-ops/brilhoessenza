@@ -82,7 +82,7 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
                     <p className="font-black uppercase tracking-widest text-xs text-gray-400">Nenhum entregador encontrado</p>
                 </div>
             ) : (
-                <DriverTable drivers={filteredDrivers} onUpdate={handleUpdate} onDelete={handleDelete} />
+                <DriverTable drivers={filteredDrivers} onUpdate={handleUpdate} onDelete={handleDelete} userProfile={userProfile} />
             )}
         </div>
     );

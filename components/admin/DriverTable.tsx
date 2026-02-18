@@ -1,13 +1,15 @@
 import React from 'react';
-import { DeliveryDriver } from '../../types';
+import { DeliveryDriver, UserProfile } from '../../types';
 
 interface DriverTableProps {
     drivers: DeliveryDriver[];
     onUpdate: (id: string, updates: Partial<DeliveryDriver>) => void;
     onDelete: (id: string) => void;
+    userProfile?: UserProfile | null;
 }
 
-const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete }) => {
+const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, userProfile }) => {
+    const canManage = userProfile?.role === 'admin' || userProfile?.permissions?.drivers?.manage || userProfile?.permissions?.team?.manage;
     return (
         <div className="overflow-x-auto">
             <table className="w-full text-left">
@@ -17,7 +19,8 @@ const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete }
                         <th className="px-8 py-6">Transporte</th>
                         <th className="px-8 py-6">Documentos Biométricos</th>
                         <th className="px-8 py-6">Status</th>
-                        <th className="px-8 py-6 text-right">Ações</th>
+                        <th className="px-8 py-6">Status</th>
+                        {canManage && <th className="px-8 py-6 text-right">Ações</th>}
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50 dark:divide-[#222115]">
@@ -71,33 +74,35 @@ const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete }
                                     </span>
                                 </div>
                             </td>
-                            <td className="px-8 py-6 text-right">
-                                <div className="flex justify-end gap-2">
-                                    {!d.verified && (
+                            {canManage && (
+                                <td className="px-8 py-6 text-right">
+                                    <div className="flex justify-end gap-2">
+                                        {!d.verified && (
+                                            <button
+                                                onClick={() => onUpdate(d.id, { verified: true })}
+                                                className="p-2 text-green-500 hover:bg-green-500/10 rounded-xl transition-all"
+                                                title="Verificar Biometria"
+                                            >
+                                                <span className="material-symbols-outlined !text-lg">how_to_reg</span>
+                                            </button>
+                                        )}
                                         <button
-                                            onClick={() => onUpdate(d.id, { verified: true })}
-                                            className="p-2 text-green-500 hover:bg-green-500/10 rounded-xl transition-all"
-                                            title="Verificar Biometria"
+                                            onClick={() => onUpdate(d.id, { active: !d.active })}
+                                            className={`p-2 rounded-xl transition-all ${d.active ? 'text-orange-500 hover:bg-orange-500/10' : 'text-blue-500 hover:bg-blue-500/10'}`}
+                                            title={d.active ? "Desativar" : "Ativar"}
                                         >
-                                            <span className="material-symbols-outlined !text-lg">how_to_reg</span>
+                                            <span className="material-symbols-outlined !text-lg">{d.active ? 'block' : 'check_circle'}</span>
                                         </button>
-                                    )}
-                                    <button
-                                        onClick={() => onUpdate(d.id, { active: !d.active })}
-                                        className={`p-2 rounded-xl transition-all ${d.active ? 'text-orange-500 hover:bg-orange-500/10' : 'text-blue-500 hover:bg-blue-500/10'}`}
-                                        title={d.active ? "Desativar" : "Ativar"}
-                                    >
-                                        <span className="material-symbols-outlined !text-lg">{d.active ? 'block' : 'check_circle'}</span>
-                                    </button>
-                                    <button
-                                        onClick={() => onDelete(d.id)}
-                                        className="p-2 text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
-                                        title="Eliminar Perfil"
-                                    >
-                                        <span className="material-symbols-outlined !text-lg">delete</span>
-                                    </button>
-                                </div>
-                            </td>
+                                        <button
+                                            onClick={() => onDelete(d.id)}
+                                            className="p-2 text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                                            title="Eliminar Perfil"
+                                        >
+                                            <span className="material-symbols-outlined !text-lg">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            )}
                         </tr>
                     ))}
                 </tbody>

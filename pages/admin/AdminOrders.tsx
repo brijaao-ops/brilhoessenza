@@ -177,12 +177,14 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
                         </div>
                       </td>
                       <td className="px-8 py-5 text-right">
-                        <button
-                          onClick={() => convertToSale(o.id)}
-                          className="bg-primary text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider hover:scale-105 transition-all shadow-lg"
-                        >
-                          Converter em Venda
-                        </button>
+                        {(userProfile?.role === 'admin' || userProfile?.permissions?.orders?.edit) && (
+                          <button
+                            onClick={() => convertToSale(o.id)}
+                            className="bg-primary text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider hover:scale-105 transition-all shadow-lg"
+                          >
+                            Converter em Venda
+                          </button>
+                        )}
                       </td>
                     </tr>
                   );
@@ -244,18 +246,24 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
                         </span>
                       </td>
                       <td className="px-8 py-5">
-                        <select
-                          value={o.driver_id || ''}
-                          onChange={(e) => handleAssignDriver(o.id, e.target.value)}
-                          className="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary dark:focus:border-primary font-medium"
-                        >
-                          <option value="">Selecione um entregador...</option>
-                          {drivers.filter(d => d.active && d.verified).map((driver) => (
-                            <option key={driver.id} value={driver.id}>
-                              {driver.name} ({driver.transport_type})
-                            </option>
-                          ))}
-                        </select>
+                        {(userProfile?.role === 'admin' || userProfile?.permissions?.orders?.edit) ? (
+                          <select
+                            value={o.driver_id || ''}
+                            onChange={(e) => handleAssignDriver(o.id, e.target.value)}
+                            className="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary dark:focus:border-primary font-medium"
+                          >
+                            <option value="">Selecione um entregador...</option>
+                            {drivers.filter(d => d.active && d.verified).map((driver) => (
+                              <option key={driver.id} value={driver.id}>
+                                {driver.name} ({driver.transport_type})
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <span className="text-xs text-gray-500 italic">
+                            {drivers.find(d => d.id === o.driver_id)?.name || 'Não atribuído'}
+                          </span>
+                        )}
                       </td>
                       <td className="px-8 py-5 text-right">
                         <button className="text-gray-400 hover:text-red-500 transition-colors">

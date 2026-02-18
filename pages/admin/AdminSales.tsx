@@ -143,17 +143,23 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
 
                                             {/* Driver Assignment */}
                                             <div className="flex flex-col gap-1">
-                                                <select
-                                                    value={o.driver_id || ""}
-                                                    onChange={(e) => handleAssignDriver(o.id, e.target.value)}
-                                                    className="text-[8px] font-black uppercase bg-gray-50 dark:bg-white/5 border-none rounded p-1 outline-none w-full"
-                                                >
-                                                    <option value="">Atribuir Entregador</option>
-                                                    {drivers.map(d => (
-                                                        <option key={d.id} value={d.id}>{d.name}</option>
-                                                    ))}
-                                                </select>
-                                                {o.driver && (
+                                                {(userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) ? (
+                                                    <select
+                                                        value={o.driver_id || ""}
+                                                        onChange={(e) => handleAssignDriver(o.id, e.target.value)}
+                                                        className="text-[8px] font-black uppercase bg-gray-50 dark:bg-white/5 border-none rounded p-1 outline-none w-full"
+                                                    >
+                                                        <option value="">Atribuir Entregador</option>
+                                                        {drivers.map(d => (
+                                                            <option key={d.id} value={d.id}>{d.name}</option>
+                                                        ))}
+                                                    </select>
+                                                ) : (
+                                                    <span className="text-[8px] font-bold text-gray-400">
+                                                        {drivers.find(d => d.id === o.driver_id)?.name || 'Sem Entregador'}
+                                                    </span>
+                                                )}
+                                                {o.driver && (userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
                                                     <button
                                                         onClick={() => notifyDriver(o, o.driver!)}
                                                         className="text-[7px] font-black uppercase text-primary hover:underline text-left mt-0.5"
@@ -166,7 +172,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                     </td>
                                     <td className="px-8 py-5 text-right">
                                         <div className="flex justify-end gap-2">
-                                            {o.status === 'PENDENTE' && (
+                                            {o.status === 'PENDENTE' && (userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
                                                 <button
                                                     onClick={() => updateStatus(o.id, 'PAGO')}
                                                     className="bg-green-500 text-white px-3 py-1 rounded-md text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all"
@@ -174,7 +180,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                                     Confirmar Pago
                                                 </button>
                                             )}
-                                            {o.status === 'PAGO' && (
+                                            {o.status === 'PAGO' && (userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
                                                 <button
                                                     onClick={() => updateStatus(o.id, 'ENVIADO')}
                                                     className="bg-blue-500 text-white px-3 py-1 rounded-md text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all"

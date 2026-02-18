@@ -2,10 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchCategories, deleteCategory, fetchProducts } from '../../services/supabase';
-import { Category } from '../../types';
+import { Category, UserProfile } from '../../types';
 import { useToast } from '../../contexts/ToastContext';
 
-const AdminCategories: React.FC = () => {
+interface AdminCategoriesProps {
+  userProfile?: UserProfile | null;
+}
+
+const AdminCategories: React.FC<AdminCategoriesProps> = ({ userProfile }) => {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
@@ -50,12 +54,14 @@ const AdminCategories: React.FC = () => {
           <h2 className="text-3xl font-black uppercase tracking-tighter">Gestão de <span className="text-primary italic">Categorias</span> <span className="text-[10px] text-gray-300 font-normal ml-2">v1.1.2</span></h2>
           <p className="text-sm text-gray-500 font-medium">Estruture seu catálogo em departamentos e coleções exclusivas.</p>
         </div>
-        <button
-          onClick={() => navigate('/admin/categorias/nova')}
-          className="bg-primary text-black font-black px-8 py-4 rounded-2xl hover:brightness-110 transition-all flex items-center gap-2 shadow-lg shadow-primary/20 uppercase tracking-widest text-xs"
-        >
-          <span className="material-symbols-outlined">add_circle</span> Criar Categoria
-        </button>
+        {(userProfile?.role === 'admin' || userProfile?.permissions?.products?.create || userProfile?.permissions?.products?.edit) && (
+          <button
+            onClick={() => navigate('/admin/categorias/nova')}
+            className="bg-primary text-black font-black px-8 py-4 rounded-2xl hover:brightness-110 transition-all flex items-center gap-2 shadow-lg shadow-primary/20 uppercase tracking-widest text-xs"
+          >
+            <span className="material-symbols-outlined">add_circle</span> Criar Categoria
+          </button>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -88,27 +94,33 @@ const AdminCategories: React.FC = () => {
             </div>
 
             <div className="mt-auto pt-8 border-t border-gray-50 dark:border-[#222115] flex gap-3 relative z-10">
-              <button
-                onClick={() => navigate(`/admin/categorias/editar/${cat.id}`)}
-                className="flex-1 bg-black dark:bg-white text-white dark:text-black py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all"
-              >
-                Configurar
-              </button>
-              <button onClick={() => handleDelete(cat.id)} className="size-12 flex items-center justify-center bg-gray-50 dark:bg-white/5 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-500/5 transition-all">
-                <span className="material-symbols-outlined text-sm">delete</span>
-              </button>
+              {(userProfile?.role === 'admin' || userProfile?.permissions?.products?.edit) && (
+                <button
+                  onClick={() => navigate(`/admin/categorias/editar/${cat.id}`)}
+                  className="flex-1 bg-black dark:bg-white text-white dark:text-black py-4 rounded-xl text-[10px] font-black uppercase tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  Configurar
+                </button>
+              )}
+              {(userProfile?.role === 'admin' || userProfile?.permissions?.products?.delete) && (
+                <button onClick={() => handleDelete(cat.id)} className="size-12 flex items-center justify-center bg-gray-50 dark:bg-white/5 rounded-xl text-gray-400 hover:text-red-500 hover:bg-red-500/5 transition-all">
+                  <span className="material-symbols-outlined text-sm">delete</span>
+                </button>
+              )}
             </div>
           </div>
         ))}
 
         {/* Card Adicionar Novo (Placeholder Visual) */}
-        <button
-          onClick={() => navigate('/admin/categorias/nova')}
-          className="border-4 border-dashed border-gray-100 dark:border-[#222115] p-10 rounded-[2.5rem] flex flex-col items-center justify-center text-gray-300 hover:text-primary hover:border-primary/30 transition-all group"
-        >
-          <span className="material-symbols-outlined !text-6xl mb-4 group-hover:scale-110 transition-transform">add_box</span>
-          <p className="font-black uppercase tracking-[0.2em] text-sm">Adicionar Novo Departamento</p>
-        </button>
+        {(userProfile?.role === 'admin' || userProfile?.permissions?.products?.create || userProfile?.permissions?.products?.edit) && (
+          <button
+            onClick={() => navigate('/admin/categorias/nova')}
+            className="border-4 border-dashed border-gray-100 dark:border-[#222115] p-10 rounded-[2.5rem] flex flex-col items-center justify-center text-gray-300 hover:text-primary hover:border-primary/30 transition-all group"
+          >
+            <span className="material-symbols-outlined !text-6xl mb-4 group-hover:scale-110 transition-transform">add_box</span>
+            <p className="font-black uppercase tracking-[0.2em] text-sm">Adicionar Novo Departamento</p>
+          </button>
+        )}
       </div>
     </div>
   );

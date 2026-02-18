@@ -512,10 +512,10 @@ const AppContent: React.FC = () => {
           <Routes>
             <Route path="/admin" element={<AdminDashboard orders={orders} products={products} />} />
 
-            <Route path="/admin/produtos" element={<AdminProducts products={products} onDelete={deleteProduct} />} />
+            <Route path="/admin/produtos" element={<AdminProducts products={products} onDelete={deleteProduct} userProfile={userProfile} />} />
             <Route path="/admin/produtos/novo" element={<AdminProductForm onSave={saveProduct} userProfile={userProfile} />} />
             <Route path="/admin/produtos/editar/:id" element={<AdminProductForm onSave={saveProduct} products={products} userProfile={userProfile} />} />
-            <Route path="/admin/categorias" element={<AdminCategories />} />
+            <Route path="/admin/categorias" element={<AdminCategories userProfile={userProfile} />} />
             <Route path="/admin/categorias/nova" element={<AdminCategoryForm />} />
             <Route path="/admin/categorias/editar/:id" element={<AdminCategoryForm />} />
             <Route path="/admin/estoque" element={<AdminStock products={products} />} />

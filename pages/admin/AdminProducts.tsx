@@ -1,14 +1,15 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Product } from '../../types';
+import { Product, UserProfile } from '../../types';
 
 interface AdminProductsProps {
   products: Product[];
   onDelete: (id: string) => void;
+  userProfile: UserProfile | null;
 }
 
-const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete }) => {
+const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userProfile }) => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredProducts = products.filter(p =>
@@ -37,7 +38,9 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete }) => 
         <h2 className="text-3xl font-black uppercase tracking-tighter">Lista de <span className="text-primary italic">Itens</span></h2>
         <div className="flex gap-4">
           <input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} placeholder="Pesquisar..." className="pl-4 pr-4 py-3 bg-white dark:bg-[#15140b] border border-gray-100 dark:border-white/5 rounded-xl text-xs font-bold outline-none focus:ring-1 focus:ring-primary" />
-          <Link to="/admin/produtos/novo" className="bg-primary text-black font-black px-8 py-4 rounded-2xl text-xs uppercase shadow-lg hover:scale-105 transition-all">Novo Produto</Link>
+          {(userProfile?.role === 'admin' || userProfile?.permissions?.products?.create || userProfile?.permissions?.products?.edit) && (
+            <Link to="/admin/produtos/novo" className="bg-primary text-black font-black px-8 py-4 rounded-2xl text-xs uppercase shadow-lg hover:scale-105 transition-all">Novo Produto</Link>
+          )}
         </div>
       </div>
 
@@ -68,8 +71,12 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete }) => 
                 </td>
                 <td className="px-8 py-5 text-right">
                   <div className="flex justify-end gap-4">
-                    <Link to={`/admin/produtos/editar/${p.id}`} className="text-primary text-[10px] font-black uppercase tracking-widest hover:underline">Editar</Link>
-                    <button onClick={() => onDelete(p.id)} className="text-red-500 text-[10px] font-black uppercase tracking-widest hover:underline">Remover</button>
+                    {(userProfile?.role === 'admin' || userProfile?.permissions?.products?.edit) && (
+                      <Link to={`/admin/produtos/editar/${p.id}`} className="text-primary text-[10px] font-black uppercase tracking-widest hover:underline">Editar</Link>
+                    )}
+                    {(userProfile?.role === 'admin' || userProfile?.permissions?.products?.delete) && (
+                      <button onClick={() => onDelete(p.id)} className="text-red-500 text-[10px] font-black uppercase tracking-widest hover:underline">Remover</button>
+                    )}
                   </div>
                 </td>
               </tr>
