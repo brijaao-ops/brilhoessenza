@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Category } from '../types';
-import { UserProfile } from '../services/supabase';
+import { Category, UserProfile } from '../types';
 
 interface HeaderProps {
   cartCount: number;
@@ -43,6 +42,7 @@ const Header: React.FC<HeaderProps> = ({
 
   const ensureHomeAndAction = (action: () => void) => {
     action();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     if (location.pathname !== '/') {
       navigate('/');
     }
@@ -75,7 +75,7 @@ const Header: React.FC<HeaderProps> = ({
     <header className="sticky top-0 z-50 glass-effect border-b border-[#f4f2e7] dark:border-[#222115] shadow-sm">
       <div className="max-w-[1400px] mx-auto px-8 lg:px-12 py-6 flex items-center justify-between gap-12">
         {/* Boutique Branding */}
-        <Link to="/" onClick={onReset} className="flex items-center gap-3 group shrink-0">
+        <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-3 group shrink-0">
           <div className="bg-primary text-black size-12 rounded-2xl flex items-center justify-center font-black group-hover:rotate-[15deg] transition-all shadow-xl shadow-primary/20">
             BE
           </div>
