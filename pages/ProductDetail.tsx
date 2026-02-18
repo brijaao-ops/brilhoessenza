@@ -1,6 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import { useToast } from '../contexts/ToastContext';
+import { ProductDetailsSkeleton } from '../components/Skeletons';
 import { Product } from '../types';
 
 interface ProductDetailProps {

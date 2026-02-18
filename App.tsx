@@ -28,6 +28,7 @@ import CheckoutModal from './components/CheckoutModal';
 import { Product, Order, Category, Slide, UserProfile } from './types';
 import { MOCK_PRODUCTS, MOCK_ORDERS } from './constants';
 import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile } from './services/supabase';
+import { ProductCardSkeleton } from './components/Skeletons';
 
 const AppContent: React.FC = () => {
   const [products, setProducts] = useState<Product[]>([]);
@@ -433,8 +434,10 @@ const AppContent: React.FC = () => {
   if (isAdminPath) {
     if (isAuthLoading) {
       return (
-        <div className="min-h-screen bg-[#0f0e08] flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+        <div className="container mx-auto px-4 py-8 mb-20">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
+            {[1, 2, 3, 4, 5, 6, 7, 8].map(n => <ProductCardSkeleton key={n} />)}
+          </div>
         </div>
       );
     }

@@ -4,6 +4,9 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Product, UserProfile, Category } from '../../types';
 import { fetchCategories } from '../../services/supabase';
 import { useToast } from '../../contexts/ToastContext';
+import { ImageUpload } from '../../components/admin/ImageUpload';
+import { PricingFields } from '../../components/admin/PricingFields';
+import { CategorySelect } from '../../components/admin/CategorySelect';
 
 interface AdminProductFormProps {
   onSave: (product: Product) => Promise<void>;
@@ -72,16 +75,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
     loadData();
   }, [id, isEditing, products]);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, image: reader.result as string }));
-      };
-      reader.readAsDataURL(file);
-    }
-  };
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -135,56 +129,20 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-12">
         <div className="lg:col-span-4 flex flex-col gap-8">
-          <div className="bg-white dark:bg-[#15140b] p-8 rounded-[2.5rem] border shadow-sm">
-            <h4 className="font-black uppercase tracking-widest text-[10px] mb-8 text-primary">Visual do Item</h4>
+          <ImageUpload
+            image={formData.image}
+            onImageChange={(url) => setFormData(prev => ({ ...prev, image: url }))}
+            imageMode={imageMode}
+            setImageMode={setImageMode}
+          />
 
-            <div className="flex gap-4 mb-6">
-              <button
-                type="button"
-                onClick={() => setImageMode('url')}
-                className={`flex-1 py-2 text-[10px] font-black uppercase rounded-lg border transition-all ${imageMode === 'url' ? 'bg-primary border-primary text-black' : 'border-gray-200'}`}
-              >Link HTML</button>
-              <button
-                type="button"
-                onClick={() => setImageMode('upload')}
-                className={`flex-1 py-2 text-[10px] font-black uppercase rounded-lg border transition-all ${imageMode === 'upload' ? 'bg-primary border-primary text-black' : 'border-gray-200'}`}
-              >Upload</button>
-            </div>
-
-            <div className="w-full aspect-square bg-gray-50 dark:bg-white/5 rounded-3xl border-2 border-dashed relative overflow-hidden mb-6 flex items-center justify-center p-4">
-              {formData.image ? (
-                <img src={formData.image} className="w-full h-full object-contain" />
-              ) : (
-                <span className="material-symbols-outlined !text-4xl opacity-20">image</span>
-              )}
-            </div>
-
-            {imageMode === 'url' ? (
-              <input
-                type="url"
-                value={formData.image}
-                onChange={e => setFormData({ ...formData, image: e.target.value })}
-                placeholder="Cole o link da imagem aqui..."
-                className="w-full bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary outline-none"
-              />
-            ) : (
-              <input type="file" accept="image/*" onChange={handleImageUpload} className="text-xs" />
-            )}
-          </div>
-
-          <div className="bg-white dark:bg-[#15140b] p-8 rounded-[2.5rem] border shadow-sm">
-            <h4 className="font-black uppercase tracking-widest text-[10px] mb-8 text-primary">Financeiro</h4>
-            <div className="flex flex-col gap-6">
-              <div className="flex flex-col gap-2">
-                <label className="text-[9px] font-black uppercase text-gray-400">Preço Venda (Kz)</label>
-                <input type="number" value={formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} className="bg-gray-50 dark:bg-[#0f0e08] p-4 rounded-xl font-black text-xl outline-none" required />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-[9px] font-black uppercase text-gray-400">Preço Promocional (Opcional)</label>
-                <input type="number" value={formData.salePrice} onChange={e => setFormData({ ...formData, salePrice: Number(e.target.value) })} className="bg-gray-50 dark:bg-[#0f0e08] p-4 rounded-xl font-black text-xl outline-none text-red-500" placeholder="0" />
-              </div>
-            </div>
-          </div>
+          <PricingFields
+            price={formData.price}
+            salePrice={formData.salePrice || 0}
+            stock={formData.stock}
+            bestSeller={formData.bestSeller || false}
+            onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
+          />
         </div>
 
         <div className="lg:col-span-8 flex flex-col gap-10">
@@ -196,83 +154,43 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
                 <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="bg-gray-50 dark:bg-[#0f0e08] p-5 rounded-2xl font-bold outline-none" required />
               </div>
 
-              <div className="flex flex-col gap-4 md:col-span-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase">Perfil / Gênero</label>
-                <div className="grid grid-cols-3 gap-4">
-                  {[
-                    { id: 'masculino', label: 'Masculino', icon: 'male' },
-                    { id: 'feminino', label: 'Feminino', icon: 'female' },
-                    { id: 'unissexo', label: 'Unissexo', icon: 'wc' }
-                  ].map(g => (
-                    <button
-                      key={g.id}
-                      type="button"
-                      onClick={() => setFormData({ ...formData, gender: g.id as any })}
-                      className={`flex flex-col items-center gap-3 p-6 rounded-3xl border-2 transition-all ${formData.gender === g.id ? 'bg-primary/10 border-primary text-primary' : 'bg-gray-50 dark:bg-[#0f0e08] border-transparent text-gray-400 hover:border-gray-200'}`}
-                    >
-                      <span className="material-symbols-outlined !text-3xl">{g.icon}</span>
-                      <span className="text-[10px] font-black uppercase tracking-widest">{g.label}</span>
-                    </button>
-                  ))}
-                </div>
+              <div className="md:col-span-2">
+                <CategorySelect
+                  category={formData.category}
+                  subCategory={formData.subCategory}
+                  gender={formData.gender}
+                  categories={categories}
+                  onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
+                />
               </div>
 
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase">Categoria</label>
-                <select value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value as any })} className="bg-gray-50 dark:bg-[#0f0e08] p-5 rounded-2xl font-bold outline-none">
-                  {categories.length > 0 ? (
-                    categories.map(cat => (
-                      <option key={cat.id} value={cat.name}>{cat.name}</option>
-                    ))
-                  ) : (
-                    <>
-                      <option>Fragrâncias</option>
-                      <option>Cuidados com a Pele</option>
-                      <option>Maquiagem</option>
-                    </>
-                  )}
-                </select>
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase">Subcategoria / Coleção</label>
-                <input type="text" value={formData.subCategory} onChange={e => setFormData({ ...formData, subCategory: e.target.value })} placeholder="Ex: Gold Edition" className="bg-gray-50 dark:bg-[#0f0e08] p-5 rounded-2xl font-bold outline-none" />
-              </div>
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase">Estoque Disponível</label>
-                <input type="number" value={formData.stock} onChange={e => setFormData({ ...formData, stock: Number(e.target.value) })} className="bg-gray-50 dark:bg-[#0f0e08] p-5 rounded-2xl font-bold outline-none" />
-              </div>
-              <div className="flex items-center gap-4 mt-6">
-                <input
-                  id="bestSeller"
-                  type="checkbox"
-                  checked={formData.bestSeller}
-                  onChange={e => setFormData({ ...formData, bestSeller: e.target.checked })}
-                  className="size-6 text-primary focus:ring-primary border-gray-300 rounded-lg"
-                />
-                <label htmlFor="bestSeller" className="text-[10px] font-black text-gray-500 uppercase tracking-widest cursor-pointer">Marcar como Destaque (Best Seller)</label>
-              </div>
               <div className="flex flex-col gap-2 md:col-span-2">
                 <label className="text-[10px] font-black text-gray-400 uppercase">Descrição Detalhada</label>
                 <textarea rows={4} value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="bg-gray-50 dark:bg-[#0f0e08] p-5 rounded-2xl font-bold outline-none resize-none" />
               </div>
-            </div>
-          </div>
 
-          <div className="flex flex-col gap-8">
-            <h4 className="font-black uppercase text-[10px] text-primary flex items-center gap-2">
-              <span className="material-symbols-outlined">auto_awesome</span> Perfil Olfativo
-            </h4>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                { key: 'top', label: 'Notas de Topo' },
-                { key: 'heart', label: 'Notas de Coração' },
-                { key: 'base', label: 'Notas de Base' }
-              ].map((n) => (
-                <div key={n.key} className="flex flex-col gap-2">
-                  <label className="text-[9px] font-black text-gray-400 uppercase">{n.label}</label>
-                  <input type="text" value={(formData.notes as any)[n.key]} onChange={e => setFormData({ ...formData, notes: { ...formData.notes, [n.key]: e.target.value } as Product['notes'] as any })} className="bg-white dark:bg-black/20 p-4 rounded-xl text-xs font-bold outline-none border" />
+              <div className="md:col-span-2 flex flex-col gap-8">
+                <h4 className="font-black uppercase text-[10px] text-primary flex items-center gap-2">
+                  <span className="material-symbols-outlined">auto_awesome</span> Perfil Olfativo
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[
+                    { key: 'top', label: 'Notas de Topo' },
+                    { key: 'heart', label: 'Notas de Coração' },
+                    { key: 'base', label: 'Notas de Base' }
+                  ].map((n) => (
+                    <div key={n.key} className="flex flex-col gap-2">
+                      <label className="text-[9px] font-black text-gray-400 uppercase">{n.label}</label>
+                      <input
+                        type="text"
+                        value={(formData.notes as any)?.[n.key] || ''}
+                        onChange={e => setFormData({ ...formData, notes: { ...formData.notes, [n.key]: e.target.value } as any })}
+                        className="bg-gray-50 dark:bg-[#0f0e08] p-4 rounded-xl text-xs font-bold outline-none border border-transparent focus:border-primary/20 transition-all"
+                      />
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>
