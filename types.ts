@@ -51,6 +51,7 @@ export interface Order {
   productId?: string;
   driver_id?: string;
   driver?: DeliveryDriver;
+  items?: any[]; // Stores the cart items snapshot
 }
 
 export interface DeliveryDriver {

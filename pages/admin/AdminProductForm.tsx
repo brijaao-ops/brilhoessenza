@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Product, UserProfile, Category } from '../../types';
-import { updateProduct, addProduct, fetchCategories } from '../../services/supabase';
+import { fetchCategories } from '../../services/supabase';
 
 interface AdminProductFormProps {
-  onSave: (product: Product) => void;
+  onSave: (product: Product) => Promise<void>;
   products?: Product[];
   userProfile: UserProfile | null;
 }
@@ -85,19 +85,14 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
     e.preventDefault();
     const finalProduct: Product = {
       ...formData,
-      id: isEditing ? id! : Date.now().toString(),
+      id: isEditing ? id! : '',
       rating: isEditing ? (products.find(p => p.id === id)?.rating || 5) : 5,
       reviewsCount: isEditing ? (products.find(p => p.id === id)?.reviewsCount || 0) : 0,
       created_by_name: userProfile?.full_name || 'Desconhecido'
     };
 
     try {
-      if (isEditing) {
-        await updateProduct(finalProduct.id, finalProduct);
-      } else {
-        await addProduct(finalProduct);
-      }
-      onSave(finalProduct);
+      await onSave(finalProduct);
       navigate('/admin/produtos');
     } catch (error) {
       alert("Erro ao salvar produto. Tente novamente.");

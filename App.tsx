@@ -235,19 +235,20 @@ const AppContent: React.FC = () => {
 
   const saveProduct = async (product: Product) => {
     try {
-      if (product.id && products.some(p => p.id === product.id)) {
+      if (product.id && product.id !== '') {
+        // Editing existing product
         await apiUpdateProduct(product.id, product);
         setProducts(prev => prev.map((p: Product) => p.id === product.id ? product : p));
       } else {
-        // @ts-ignore
+        // New product — let Supabase generate the UUID
         const { id, ...rest } = product;
         const newProduct = await addProduct(rest);
-        // @ts-ignore
         setProducts(prev => [newProduct, ...prev]);
       }
     } catch (error) {
       alert("Erro ao salvar produto. Tente novamente.");
       console.error(error);
+      throw error; // Re-throw so AdminProductForm can catch it
     }
   };
 
@@ -318,11 +319,11 @@ const AppContent: React.FC = () => {
       status: 'PEDIDO',
       date: new Date().toLocaleDateString('pt-BR'),
       time: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
-      address: data.address,
       neighborhood: data.neighborhood,
       municipality: data.municipality,
       province: data.province,
-      productId: cartItems[0]?.product.id || 'Multiple'
+      productId: cartItems.map(i => i.product.id).join(', '), // Store IDs as comma-separated string
+      items: cartItems // Store full cart structure
     };
 
     try {
