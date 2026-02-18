@@ -3,8 +3,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchCategories, deleteCategory, fetchProducts } from '../../services/supabase';
 import { Category } from '../../types';
+import { useToast } from '../../contexts/ToastContext';
 
 const AdminCategories: React.FC = () => {
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const [categories, setCategories] = useState<Category[]>([]);
   const [products, setProducts] = useState<any[]>([]);
@@ -33,9 +35,10 @@ const AdminCategories: React.FC = () => {
     if (window.confirm('Tem certeza que deseja excluir esta categoria?')) {
       try {
         await deleteCategory(id);
+        showToast('Categoria excluída com sucesso.', 'success');
         loadData();
       } catch (error) {
-        alert('Erro ao excluir categoria');
+        showToast('Erro ao excluir categoria.', 'error');
       }
     }
   };

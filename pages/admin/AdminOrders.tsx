@@ -2,6 +2,7 @@
 import React from 'react';
 import { Order, UserProfile } from '../../types';
 import { updateOrder } from '../../services/supabase';
+import { useToast } from '../../contexts/ToastContext';
 
 interface AdminOrdersProps {
   orders: Order[];
@@ -10,6 +11,7 @@ interface AdminOrdersProps {
 }
 
 const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfile }) => {
+  const { showToast } = useToast();
   const pendingRequests = orders.filter(o => o.status === 'PEDIDO');
 
   const convertToSale = async (orderId: string) => {
@@ -20,8 +22,9 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
       };
       await updateOrder(orderId, updates);
       setOrders(prev => prev.map(o => o.id === orderId ? { ...o, ...updates } : o));
+      showToast("Pedido convertido em venda com sucesso!", "success");
     } catch (error) {
-      alert("Erro ao converter pedido em venda.");
+      showToast("Erro ao converter pedido em venda.", "error");
       console.error(error);
     }
   };

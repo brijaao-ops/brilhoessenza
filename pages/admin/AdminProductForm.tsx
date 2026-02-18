@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Product, UserProfile, Category } from '../../types';
 import { fetchCategories } from '../../services/supabase';
+import { useToast } from '../../contexts/ToastContext';
 
 interface AdminProductFormProps {
   onSave: (product: Product) => Promise<void>;
@@ -11,6 +12,7 @@ interface AdminProductFormProps {
 }
 
 const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = [], userProfile }) => {
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditing = !!id;
@@ -93,9 +95,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
 
     try {
       await onSave(finalProduct);
+      showToast(isEditing ? 'Produto atualizado com sucesso!' : 'Produto criado com sucesso!', 'success');
       navigate('/admin/produtos');
     } catch (error) {
-      alert("Erro ao salvar produto. Tente novamente.");
+      showToast("Erro ao salvar produto. Tente novamente.", 'error');
       console.error(error);
     }
   };

@@ -2,8 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { fetchCategories, createCategory, updateCategory } from '../../services/supabase';
+import { useToast } from '../../contexts/ToastContext';
 
 const AdminCategoryForm: React.FC = () => {
+  const { showToast } = useToast();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditing = !!id;
@@ -68,12 +70,14 @@ const AdminCategoryForm: React.FC = () => {
 
       if (isEditing && id) {
         await updateCategory(id, categoryData);
+        showToast('Categoria atualizada com sucesso!', 'success');
       } else {
         await createCategory(categoryData);
+        showToast('Categoria criada com sucesso!', 'success');
       }
       navigate('/admin/categorias');
     } catch (error: any) {
-      alert("Erro ao salvar categoria: " + (error.message || "Tente novamente"));
+      showToast("Erro ao salvar categoria: " + (error.message || "Tente novamente"), 'error');
       console.error(error);
     } finally {
       setLoading(false);
@@ -122,8 +126,8 @@ const AdminCategoryForm: React.FC = () => {
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, icon }))}
                       className={`size-12 rounded-xl flex items-center justify-center transition-all ${formData.icon === icon
-                          ? 'bg-primary text-black scale-110 shadow-lg'
-                          : 'bg-gray-50 dark:bg-white/5 text-gray-400 hover:text-primary hover:bg-primary/5'
+                        ? 'bg-primary text-black scale-110 shadow-lg'
+                        : 'bg-gray-50 dark:bg-white/5 text-gray-400 hover:text-primary hover:bg-primary/5'
                         }`}
                     >
                       <span className="material-symbols-outlined">{icon}</span>

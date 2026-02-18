@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { DeliveryDriver, UserProfile } from '../../types';
 import { fetchDrivers, updateDriver, deleteDriver, supabase } from '../../services/supabase';
+import { useToast } from '../../contexts/ToastContext';
 
 interface AdminDriversProps {
     userProfile?: UserProfile | null;
 }
 
 const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
+    const { showToast } = useToast();
     const [drivers, setDrivers] = useState<DeliveryDriver[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'verified' | 'pending'>('all');
@@ -31,8 +33,9 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
         try {
             await updateDriver(id, updates);
             setDrivers(prev => prev.map(d => d.id === id ? { ...d, ...updates } : d));
+            showToast("Entregador atualizado com sucesso.", "success");
         } catch (error) {
-            alert("Erro ao atualizar entregador.");
+            showToast("Erro ao atualizar entregador.", "error");
         }
     };
 
@@ -41,8 +44,9 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
         try {
             await deleteDriver(id);
             setDrivers(prev => prev.filter(d => d.id !== id));
+            showToast("Entregador eliminado com sucesso.", "success");
         } catch (error) {
-            alert("Erro ao eliminar entregador.");
+            showToast("Erro ao eliminar entregador.", "error");
         }
     };
 

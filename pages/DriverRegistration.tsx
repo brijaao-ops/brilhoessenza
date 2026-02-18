@@ -3,7 +3,10 @@ import { createDriver, uploadImage } from '../services/supabase';
 import { useNavigate } from 'react-router-dom';
 import { createWorker } from 'tesseract.js';
 
+import { useToast } from '../contexts/ToastContext';
+
 const DriverRegistration: React.FC = () => {
+    const { showToast } = useToast();
     const [formData, setFormData] = useState({
         name: '',
         address: '',
@@ -78,7 +81,7 @@ const DriverRegistration: React.FC = () => {
             }
         } catch (err) {
             console.error("Error accessing camera:", err);
-            alert("Não foi possível aceder à câmara. Verifique as permissões.");
+            showToast("Não foi possível aceder à câmara. Verifique as permissões.", "error");
             setIsCameraOpen(false);
         }
     };
@@ -148,12 +151,12 @@ const DriverRegistration: React.FC = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!images.id_front || !images.id_back || !images.selfie) {
-            alert('Por favor, capture todos os documentos e a sua selfie.');
+            showToast('Por favor, capture todos os documentos e a sua selfie.', 'info');
             return;
         }
 
         if (formData.whatsapp.length !== 9) {
-            alert('O WhatsApp deve ter 9 dígitos.');
+            showToast('O WhatsApp deve ter 9 dígitos.', 'error');
             return;
         }
 
@@ -193,7 +196,7 @@ const DriverRegistration: React.FC = () => {
             setTimeout(() => navigate('/'), 5000);
         } catch (error: any) {
             console.error('Error registering driver:', error);
-            alert('Erro ao realizar cadastro: ' + (error.message || 'Tente novamente.'));
+            showToast('Erro ao realizar cadastro: ' + (error.message || 'Tente novamente.'), 'error');
         } finally {
             setLoading(false);
         }
