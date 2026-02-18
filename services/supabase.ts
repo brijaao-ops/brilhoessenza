@@ -393,14 +393,12 @@ export const fetchDrivers = async (): Promise<DeliveryDriver[]> => {
 };
 
 export const createDriver = async (driver: Omit<DeliveryDriver, 'id' | 'verified' | 'created_at'>) => {
-    const { data, error } = await supabase
+    const { error } = await supabase
         .from('delivery_drivers')
-        .insert([driver])
-        .select()
-        .single();
+        .insert([driver]);
 
     if (error) throw error;
-    return data;
+    return null;
 };
 
 export const updateDriver = async (id: string, updates: Partial<DeliveryDriver>) => {
