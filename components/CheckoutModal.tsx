@@ -4,7 +4,7 @@ import { ANGOLA_LOCATIONS, LocationSuggestion } from '../data/locations';
 interface CheckoutModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (data: { name: string; phone: string; address: string; neighborhood: string; municipality: string; province: string; paymentMethod: 'multicaixa' | 'cash' | 'transfer' }) => void;
+    onConfirm: (data: { name: string; phone: string; address: string; neighborhood: string; municipality: string; province: string; paymentMethod: 'multicaixa' | 'cash' | 'transfer' | 'express' }) => void;
     total: number;
 }
 
@@ -14,7 +14,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
         phone: '',
         address: '',
         locationSearch: '',
-        paymentMethod: 'multicaixa' as 'multicaixa' | 'cash' | 'transfer'
+        paymentMethod: 'multicaixa' as 'multicaixa' | 'cash' | 'transfer' | 'express'
     });
     const [selectedLocation, setSelectedLocation] = useState<LocationSuggestion | null>(null);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -61,7 +61,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
 
-            <div className="relative w-full max-w-xl bg-white dark:bg-[#15140b] rounded-[3rem] shadow-2xl overflow-hidden animate-fade-up">
+            <div className="relative w-full max-w-xl bg-white dark:bg-[#15140b] rounded-[3rem] shadow-2xl overflow-hidden animate-fade-up max-h-[80vh] overflow-y-auto">
                 <div className="p-8 lg:p-12">
                     <div className="flex items-center justify-between mb-10">
                         <div>
