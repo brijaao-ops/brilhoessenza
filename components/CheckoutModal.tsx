@@ -4,7 +4,7 @@ import { ANGOLA_LOCATIONS, LocationSuggestion } from '../data/locations';
 interface CheckoutModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onConfirm: (data: { name: string; phone: string; address: string; neighborhood: string; municipality: string; province: string }) => void;
+    onConfirm: (data: { name: string; phone: string; address: string; neighborhood: string; municipality: string; province: string; paymentMethod: 'multicaixa' | 'cash' | 'transfer' }) => void;
     total: number;
 }
 
@@ -13,7 +13,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
         name: '',
         phone: '',
         address: '',
-        locationSearch: ''
+        locationSearch: '',
+        paymentMethod: 'multicaixa' as 'multicaixa' | 'cash' | 'transfer'
     });
     const [selectedLocation, setSelectedLocation] = useState<LocationSuggestion | null>(null);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -49,7 +50,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
             address: formData.address,
             neighborhood: selectedLocation?.neighborhood || formData.locationSearch,
             municipality: selectedLocation?.municipality || '',
-            province: selectedLocation?.province || 'Angola'
+            province: selectedLocation?.province || 'Angola',
+            paymentMethod: formData.paymentMethod
         });
     };
 
@@ -143,6 +145,36 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                             )}
                         </div>
 
+                        <div className="flex flex-col gap-3">
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Forma de Pagamento</label>
+                            <div className="grid grid-cols-3 gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, paymentMethod: 'multicaixa' })}
+                                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border transition-all ${formData.paymentMethod === 'multicaixa' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
+                                >
+                                    <span className="material-symbols-outlined">credit_card</span>
+                                    <span className="text-[9px] font-black uppercase">Multicaixa</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, paymentMethod: 'cash' })}
+                                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border transition-all ${formData.paymentMethod === 'cash' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
+                                >
+                                    <span className="material-symbols-outlined">payments</span>
+                                    <span className="text-[9px] font-black uppercase">Numerário</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, paymentMethod: 'transfer' })}
+                                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border transition-all ${formData.paymentMethod === 'transfer' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
+                                >
+                                    <span className="material-symbols-outlined">account_balance</span>
+                                    <span className="text-[9px] font-black uppercase">Transferência</span>
+                                </button>
+                            </div>
+                        </div>
+
                         <div className="flex flex-col gap-2">
                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Endereço Detalhado (Opcional)</label>
                             <textarea
@@ -168,8 +200,8 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                         </div>
                     </form>
                 </div>
-            </div>
-        </div>
+            </div >
+        </div >
     );
 };
 

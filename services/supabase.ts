@@ -411,6 +411,13 @@ export const updateDriver = async (id: string, updates: Partial<DeliveryDriver>)
 };
 
 export const deleteDriver = async (id: string) => {
+    // First, unlink this driver from any orders
+    await supabase
+        .from('orders')
+        .update({ driver_id: null })
+        .eq('driver_id', id);
+
+    // Then delete the driver
     const { error } = await supabase
         .from('delivery_drivers')
         .delete()

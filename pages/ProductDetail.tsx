@@ -116,14 +116,14 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
               onClick={handleAddToCart}
               disabled={isAdded}
               className={`w-full font-black py-7 rounded-[2rem] transition-all shadow-xl uppercase tracking-[0.3em] text-[11px] flex items-center justify-center gap-3 ${isAdded
-                  ? 'bg-green-500 text-white scale-95 shadow-green-500/20'
-                  : 'bg-primary text-black hover:brightness-110 shadow-primary/30 hover:scale-[1.02] active:scale-95'
+                ? 'bg-green-500 text-white scale-95 shadow-green-500/20'
+                : 'bg-primary text-black hover:brightness-110 shadow-primary/30 hover:scale-[1.02] active:scale-95'
                 }`}
             >
               <span className="material-symbols-outlined !text-xl animate-bounce">
                 {isAdded ? 'check_circle' : 'shopping_cart_checkout'}
               </span>
-              {isAdded ? 'Adicionado!' : 'Adicionar à Reserva'}
+              {isAdded ? 'Adicionado!' : 'Fazer Pedido'}
             </button>
             <div className="flex items-center justify-center gap-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">
               <div className="flex items-center gap-2">

@@ -307,7 +307,7 @@ const AppContent: React.FC = () => {
     setIsCartOpen(false);
   };
 
-  const handleCheckoutConfirm = async (data: { name: string; phone: string; address: string; neighborhood: string; municipality: string; province: string }) => {
+  const handleCheckoutConfirm = async (data: { name: string; phone: string; address: string; neighborhood: string; municipality: string; province: string; paymentMethod: 'multicaixa' | 'cash' | 'transfer' }) => {
     const settings = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
     const whatsapp = settings.companyPhone || "244900000000";
 
@@ -350,11 +350,14 @@ const AppContent: React.FC = () => {
       }));
 
       // WhatsApp Message
+      const paymentText = data.paymentMethod === 'multicaixa' ? 'Multicaixa Express' : data.paymentMethod === 'cash' ? 'Numerário' : 'Transferência Bancária';
+
       let message = `*SOLICITAÇÃO DE RESERVA - ${settings.companyName || 'BRILHO ESSENZA'}*\n\n`;
       message += `*Cliente:* ${data.name}\n`;
       message += `*Contacto:* +244 ${data.phone}\n`;
       message += `*Localização:* ${data.neighborhood}, ${data.municipality}, ${data.province}\n`;
       if (data.address) message += `*Endereço:* ${data.address}\n`;
+      message += `*Pagamento:* ${paymentText}\n`;
       message += `--------------------------\n`;
       cartItems.forEach((item: any, index: number) => {
         message += `${index + 1}. *${item.product.name}*\n`;
@@ -369,6 +372,7 @@ const AppContent: React.FC = () => {
 
       setCartItems([]);
       setIsCheckoutOpen(false);
+      alert("Reserva realizada com sucesso!");
     } catch (error) {
       console.error("Erro ao processar pedido", error);
       alert("Ocorreu um erro ao processar sua reserva. Por favor, tente novamente.");
