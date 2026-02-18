@@ -147,7 +147,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
 
                         <div className="flex flex-col gap-3">
                             <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Forma de Pagamento</label>
-                            <div className="grid grid-cols-3 gap-3">
+                            <div className="grid grid-cols-2 gap-3">
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, paymentMethod: 'multicaixa' })}
@@ -171,6 +171,14 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                                 >
                                     <span className="material-symbols-outlined">account_balance</span>
                                     <span className="text-[9px] font-black uppercase">Transferência</span>
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, paymentMethod: 'express' })}
+                                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border transition-all ${formData.paymentMethod === 'express' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
+                                >
+                                    <span className="material-symbols-outlined">bolt</span>
+                                    <span className="text-[9px] font-black uppercase">Express</span>
                                 </button>
                             </div>
                         </div>
