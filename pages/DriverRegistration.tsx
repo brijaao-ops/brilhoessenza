@@ -384,6 +384,13 @@ const DriverRegistration: React.FC = () => {
                         <div className="flex gap-4">
                             <button
                                 type="button"
+                                onClick={() => navigate('/')}
+                                className="flex-1 py-6 bg-red-50 dark:bg-red-900/10 text-red-500 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] hover:bg-red-100 dark:hover:bg-red-900/20 transition-all"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                type="button"
                                 onClick={() => setStep(1)}
                                 className="flex-1 py-6 bg-gray-100 dark:bg-white/5 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] hover:bg-gray-200 transition-all"
                             >

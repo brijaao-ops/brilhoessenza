@@ -210,13 +210,15 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
                     <h2 className="text-3xl font-black uppercase tracking-tighter">Gestão de <span className="text-primary italic">Equipe</span></h2>
                     <p className="text-sm text-gray-500 font-medium">Controle de acesso e colaboradores.</p>
                 </div>
-                <button
-                    onClick={() => setShowModal(true)}
-                    className="bg-primary text-black font-black px-8 py-4 rounded-2xl uppercase tracking-widest text-[10px] hover:brightness-110 shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center gap-2"
-                >
-                    <span className="material-symbols-outlined !text-base">person_add</span>
-                    Novo Funcionário
-                </button>
+                {(userProfile?.role === 'admin' || userProfile?.permissions?.team?.edit) && (
+                    <button
+                        onClick={() => setShowModal(true)}
+                        className="bg-primary text-black font-black px-8 py-4 rounded-2xl uppercase tracking-widest text-[10px] hover:brightness-110 shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center gap-2"
+                    >
+                        <span className="material-symbols-outlined !text-base">person_add</span>
+                        Novo Funcionário
+                    </button>
+                )}
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -229,13 +231,17 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
                     <div key={member.id} className={`bg-white dark:bg-[#15140b] p-8 rounded-[2rem] border ${member.is_active === false ? 'border-red-500/30' : 'border-gray-100 dark:border-[#222115]'} shadow-sm relative group overflow-hidden transition-all ${member.is_active === false ? 'opacity-70 bg-gray-50 dark:bg-black/20' : ''}`}>
 
                         <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button onClick={() => startEdit(member)} className="size-8 bg-black dark:bg-white text-white dark:text-black rounded-lg flex items-center justify-center hover:scale-110 transition-transform shadow-lg" title="Editar Perfil">
-                                <span className="material-symbols-outlined text-sm">edit</span>
-                            </button>
-                            {member.role !== 'admin' && (
-                                <button onClick={() => handleDelete(member.id)} className="size-8 bg-red-500 text-white rounded-lg flex items-center justify-center hover:scale-110 transition-transform shadow-lg" title="Remover Acesso">
-                                    <span className="material-symbols-outlined text-sm">delete</span>
-                                </button>
+                            {(userProfile?.role === 'admin' || userProfile?.permissions?.team?.edit) && (
+                                <>
+                                    <button onClick={() => startEdit(member)} className="size-8 bg-black dark:bg-white text-white dark:text-black rounded-lg flex items-center justify-center hover:scale-110 transition-transform shadow-lg" title="Editar Perfil">
+                                        <span className="material-symbols-outlined text-sm">edit</span>
+                                    </button>
+                                    {member.role !== 'admin' && (
+                                        <button onClick={() => handleDelete(member.id)} className="size-8 bg-red-500 text-white rounded-lg flex items-center justify-center hover:scale-110 transition-transform shadow-lg" title="Remover Acesso">
+                                            <span className="material-symbols-outlined text-sm">delete</span>
+                                        </button>
+                                    )}
+                                </>
                             )}
                         </div>
 
