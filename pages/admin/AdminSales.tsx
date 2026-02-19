@@ -85,69 +85,69 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
-                            <tr className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
-                                <th className="px-8 py-6">ID Venda</th>
-                                <th className="px-8 py-6">Cliente</th>
-                                <th className="px-8 py-6">Entrega</th>
-                                <th className="px-8 py-6">Contacto</th>
-                                <th className="px-8 py-6">Valor</th>
-                                <th className="px-8 py-6">Data</th>
-                                <th className="px-8 py-6">Status</th>
-                                <th className="px-8 py-6 text-center">Responsáveis</th>
-                                <th className="px-8 py-6 text-right">Ações</th>
+                            <tr className="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
+                                <th className="px-4 py-3">ID Venda</th>
+                                <th className="px-4 py-3">Cliente</th>
+                                <th className="px-4 py-3">Entrega</th>
+                                <th className="px-4 py-3">Contacto</th>
+                                <th className="px-4 py-3">Valor</th>
+                                <th className="px-4 py-3">Data</th>
+                                <th className="px-4 py-3">Status</th>
+                                <th className="px-4 py-3 text-center">Responsáveis</th>
+                                <th className="px-4 py-3 text-right">Ações</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50 dark:divide-[#222115]">
                             {sales.map((o) => (
                                 <tr key={o.id} className="hover:bg-gray-50/50 dark:hover:bg-white/[0.01] transition-all">
-                                    <td className="px-8 py-5 font-black text-primary text-sm">{o.id}</td>
-                                    <td className="px-8 py-5 font-bold text-sm">{o.customer}</td>
-                                    <td className="px-8 py-5">
-                                        <div className="flex flex-col gap-1">
-                                            <span className="text-xs font-black text-gray-800 dark:text-gray-200">{o.neighborhood || '---'}</span>
-                                            <span className="text-[9px] font-black uppercase text-gray-400 tracking-wider">{(o.municipality || '')} {o.province && `| ${o.province}`}</span>
-                                            {o.address && <p className="text-[10px] text-gray-400 italic truncate max-w-[150px]" title={o.address}>{o.address}</p>}
+                                    <td className="px-4 py-3 font-bold text-primary text-[8px]">{o.id}</td>
+                                    <td className="px-4 py-3 font-medium text-[8px]">{o.customer}</td>
+                                    <td className="px-4 py-3">
+                                        <div className="flex flex-col gap-0.5">
+                                            <span className="text-[8px] text-gray-800 dark:text-gray-200">{o.neighborhood || '---'}</span>
+                                            <span className="text-[8px] text-gray-400 uppercase tracking-wider">{(o.municipality || '')} {o.province && `| ${o.province}`}</span>
+                                            {o.address && <p className="text-[8px] text-gray-400 italic truncate max-w-[150px]" title={o.address}>{o.address}</p>}
                                         </div>
                                     </td>
-                                    <td className="px-8 py-5">
-                                        <div className="flex flex-col gap-1 text-sm font-bold text-gray-500">
+                                    <td className="px-4 py-3">
+                                        <div className="flex flex-col gap-0.5 text-[8px] text-gray-500">
                                             {o.phone?.length === 9 ? `+244 ${o.phone}` : (o.phone || '---')}
                                         </div>
                                     </td>
-                                    <td className="px-8 py-5 font-black text-sm">{o.amount.toLocaleString()} Kz</td>
-                                    <td className="px-8 py-5 text-xs text-gray-400 font-bold">{o.date}</td>
-                                    <td className="px-8 py-5">
-                                        <span className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest ${o.status === 'PAGO' ? 'bg-green-500/10 text-green-500' :
+                                    <td className="px-4 py-3 font-bold text-[8px]">{o.amount.toLocaleString()} Kz</td>
+                                    <td className="px-4 py-3 text-[8px] text-gray-400">{o.date}</td>
+                                    <td className="px-4 py-3">
+                                        <span className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-widest ${o.status === 'PAGO' ? 'bg-green-500/10 text-green-500' :
                                             o.status === 'PENDENTE' ? 'bg-orange-500/10 text-orange-500' :
                                                 'bg-blue-500/10 text-blue-500'
                                             }`}>
                                             {o.status}
                                         </span>
                                     </td>
-                                    <td className="px-8 py-5">
-                                        <div className="flex flex-col gap-2">
-                                            <div className="flex flex-col gap-1">
+                                    <td className="px-4 py-3">
+                                        <div className="flex flex-col gap-1">
+                                            <div className="flex flex-col gap-0.5">
                                                 {o.validator_name && (
                                                     <div className="flex items-center gap-1">
-                                                        <span className="text-[7px] font-black uppercase text-green-500 bg-green-500/10 px-1 rounded">Pago:</span>
-                                                        <span className="text-[9px] font-bold text-gray-400 truncate max-w-[70px]">{o.validator_name}</span>
+                                                        <span className="text-[7px] font-bold uppercase text-green-500 bg-green-500/10 px-1 rounded">Pago:</span>
+                                                        <span className="text-[8px] text-gray-400 truncate max-w-[70px]">{o.validator_name}</span>
                                                     </div>
                                                 )}
                                                 {o.deliverer_name && (
                                                     <div className="flex items-center gap-1">
-                                                        <span className="text-[7px] font-black uppercase text-blue-500 bg-blue-500/10 px-1 rounded">Env:</span>
-                                                        <span className="text-[9px] font-bold text-gray-400 truncate max-w-[70px]">{o.deliverer_name}</span>
+                                                        <span className="text-[7px] font-bold uppercase text-blue-500 bg-blue-500/10 px-1 rounded">Env:</span>
+                                                        <span className="text-[8px] text-gray-400 truncate max-w-[70px]">{o.deliverer_name}</span>
                                                     </div>
                                                 )}
                                             </div>
 
                                             {/* Driver Assignment */}
-                                            <div className="flex flex-col gap-1">
+                                            <div className="flex flex-col gap-0.5">
                                                 {(userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) ? (
                                                     <select
                                                         value={o.driver_id || ""}
                                                         onChange={(e) => handleAssignDriver(o.id, e.target.value)}
-                                                        className="text-[8px] font-black uppercase bg-gray-50 dark:bg-white/5 border-none rounded p-1 outline-none w-full"
+                                                        className="text-[8px] bg-gray-50 dark:bg-white/5 border-none rounded p-1 outline-none w-full cursor-pointer"
                                                     >
                                                         <option value="">Atribuir Entregador</option>
                                                         {drivers.map(d => (
@@ -155,14 +155,14 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                                         ))}
                                                     </select>
                                                 ) : (
-                                                    <span className="text-[8px] font-bold text-gray-400">
+                                                    <span className="text-[8px] text-gray-400">
                                                         {drivers.find(d => d.id === o.driver_id)?.name || 'Sem Entregador'}
                                                     </span>
                                                 )}
                                                 {o.driver && (userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
                                                     <button
                                                         onClick={() => notifyDriver(o, o.driver!)}
-                                                        className="text-[7px] font-black uppercase text-primary hover:underline text-left mt-0.5"
+                                                        className="text-[7px] font-bold uppercase text-primary hover:underline text-left"
                                                     >
                                                         Reenviar WhatsApp
                                                     </button>
@@ -170,22 +170,22 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-8 py-5 text-right">
+                                    <td className="px-4 py-3 text-right">
                                         <div className="flex justify-end gap-2">
                                             {o.status === 'PENDENTE' && (userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
                                                 <button
                                                     onClick={() => updateStatus(o.id, 'PAGO')}
-                                                    className="bg-green-500 text-white px-3 py-1 rounded-md text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all"
+                                                    className="bg-green-500 text-white px-2 py-1 rounded text-[8px] font-bold uppercase tracking-widest hover:scale-105 transition-all"
                                                 >
-                                                    Confirmar Pago
+                                                    Confirmar
                                                 </button>
                                             )}
                                             {o.status === 'PAGO' && (userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
                                                 <button
                                                     onClick={() => updateStatus(o.id, 'ENVIADO')}
-                                                    className="bg-blue-500 text-white px-3 py-1 rounded-md text-[9px] font-black uppercase tracking-widest hover:scale-105 transition-all"
+                                                    className="bg-blue-500 text-white px-2 py-1 rounded text-[8px] font-bold uppercase tracking-widest hover:scale-105 transition-all"
                                                 >
-                                                    Marcar Enviado
+                                                    Enviado
                                                 </button>
                                             )}
                                         </div>
