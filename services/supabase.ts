@@ -472,3 +472,29 @@ export const uploadImage = async (file: File, bucket: string = 'slides'): Promis
     return data.publicUrl;
 };
 
+// --- App Settings ---
+
+export const fetchAppSetting = async (key: string): Promise<string | null> => {
+    const { data, error } = await supabase
+        .from('app_settings')
+        .select('value')
+        .eq('key', key)
+        .single();
+
+    if (error) {
+        console.warn(`Error fetching setting ${key}:`, error);
+        return null; // Fallback will be handled by caller
+    }
+    return data?.value || null;
+};
+
+export const updateAppSetting = async (key: string, value: string) => {
+    // Try to update first
+    const { error } = await supabase
+        .from('app_settings')
+        .upsert({ key, value, updated_at: new Date().toISOString() });
+
+    if (error) throw error;
+};
+
+

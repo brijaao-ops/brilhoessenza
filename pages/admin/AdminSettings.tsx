@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase, UserProfile, fetchTeam, createEmployee, UserPermissions, updateEmployeePermissions, deleteEmployee, fetchProfile } from '../../services/supabase';
+import { supabase, UserProfile, fetchTeam, createEmployee, UserPermissions, updateEmployeePermissions, deleteEmployee, fetchProfile, updateAppSetting, fetchAppSetting } from '../../services/supabase';
 
 const AdminSettings: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -69,6 +69,12 @@ const AdminSettings: React.FC = () => {
     if (saved.shippingLuanda) setShippingLuanda(saved.shippingLuanda);
     if (saved.shippingProvinces) setShippingProvinces(saved.shippingProvinces);
     if (saved.freeShippingThreshold) setFreeShippingThreshold(saved.freeShippingThreshold);
+    if (saved.freeShippingThreshold) setFreeShippingThreshold(saved.freeShippingThreshold);
+
+    // Sync with Database
+    fetchAppSetting('company_phone').then(phone => {
+      if (phone) setCompanyPhone(phone);
+    });
   }, []);
 
   const allTabs = [
@@ -106,7 +112,11 @@ const AdminSettings: React.FC = () => {
         enableIBAN, bankName, bankIBAN,
         shippingLuanda, shippingProvinces, freeShippingThreshold
       };
+
       localStorage.setItem('brilho_essenza_settings', JSON.stringify(settings));
+
+      // Save critical public settings to DB
+      updateAppSetting('company_phone', companyPhone).catch(err => console.error("DB Sync Error:", err));
 
       const toast = document.createElement('div');
       toast.className = "fixed bottom-8 right-8 bg-black text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest z-[200] shadow-2xl border border-primary/20 animate-slide-in";

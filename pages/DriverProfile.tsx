@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { fetchDriverById } from '../services/supabase';
+import { fetchDriverById, fetchAppSetting } from '../services/supabase';
 import { DeliveryDriver } from '../types';
 
 const DriverProfile: React.FC = () => {
@@ -8,16 +8,25 @@ const DriverProfile: React.FC = () => {
     const [driver, setDriver] = useState<DeliveryDriver | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [companyPhone, setCompanyPhone] = useState<string>('244923000000'); // Default fallback
 
     useEffect(() => {
         const loadDriver = async () => {
             if (!id) return;
             try {
-                const data = await fetchDriverById(id);
-                if (!data) {
+                const [driverData, phoneData] = await Promise.all([
+                    fetchDriverById(id),
+                    fetchAppSetting('company_phone')
+                ]);
+
+                if (!driverData) {
                     setError("Entregador não encontrado no banco de dados.");
                 } else {
-                    setDriver(data);
+                    setDriver(driverData);
+                }
+
+                if (phoneData) {
+                    setCompanyPhone(phoneData);
                 }
             } catch (err: any) {
                 console.error("Erro ao buscar entregador:", err);
@@ -30,16 +39,15 @@ const DriverProfile: React.FC = () => {
     }, [id]);
 
     const handleConfirmDelivery = () => {
-        const settings = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
-        const companyPhone = settings.companyPhone || "244900000000";
+        if (!driver) return;
 
-        const message = `*CONFIRMAÇÃO DE ENTREGA*\n\n` +
-            `Olá, confirmo que recebi minha encomenda através do entregador *${driver?.name}*.\n\n` +
-            `*Avaliação:* ⭐⭐⭐⭐⭐\n` +
-            `_Obrigado pelo serviço!_`;
+        // Mensagem de confirmação
+        const message = `Olá! Confirmo que recebi minha encomenda com o entregador ${driver.name} (Veículo: ${driver.vehicle_type} - ${driver.license_plate}).`;
 
-        const encodedMsg = encodeURIComponent(message);
-        window.open(`https://wa.me/${companyPhone.replace(/\D/g, '')}?text=${encodedMsg}`, '_blank');
+        // Link para WhatsApp da Empresa (usando o número carregado do banco)
+        const whatsappLink = `https://wa.me/${companyPhone}?text=${encodeURIComponent(message)}`;
+
+        window.open(whatsappLink, '_blank');
     };
 
     if (loading) {
