@@ -107,6 +107,15 @@ const Header: React.FC<HeaderProps> = ({
             </button>
           ))}
 
+          {/* Driver Portal - Desktop */}
+          <Link
+            to="/driver/login"
+            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 hover:text-primary transition-all border border-gray-200 dark:border-white/10 px-3 py-2 rounded-xl hover:border-primary/50"
+          >
+            <span className="material-symbols-outlined !text-sm">local_shipping</span>
+            Entregador
+          </Link>
+
         </nav>
 
         {/* Actions & Concierge Search */}
@@ -199,7 +208,7 @@ const Header: React.FC<HeaderProps> = ({
                   navigate('/driver/login');
                   setIsMenuOpen(false);
                 }}
-                className="text-sm font-black uppercase tracking-widest text-left py-4 border-b border-gray-100 dark:border-white/5 text-gray-400 hover:text-white"
+                className="text-sm font-black uppercase tracking-widest text-left py-4 border-b border-gray-100 dark:border-white/5 text-primary"
               >
                 <div className="flex items-center gap-2">
                   <span className="material-symbols-outlined !text-lg">local_shipping</span>
