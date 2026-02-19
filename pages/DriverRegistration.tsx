@@ -279,6 +279,7 @@ const DriverRegistration: React.FC = () => {
                                     value={formData.email}
                                     onChange={handleInputChange}
                                     placeholder="exemplo@email.com"
+                                    autoComplete="off"
                                     className="w-full bg-gray-50 dark:bg-white/5 border-none px-6 py-5 rounded-2xl font-bold focus:ring-2 focus:ring-primary outline-none"
                                 />
                             </div>
@@ -292,6 +293,7 @@ const DriverRegistration: React.FC = () => {
                                     value={formData.password}
                                     onChange={handleInputChange}
                                     placeholder="Mínimo 6 caracteres"
+                                    autoComplete="new-password"
                                     className="w-full bg-gray-50 dark:bg-white/5 border-none px-6 py-5 rounded-2xl font-bold focus:ring-2 focus:ring-primary outline-none"
                                 />
                             </div>
