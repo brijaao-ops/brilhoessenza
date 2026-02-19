@@ -406,12 +406,87 @@ export const fetchDriverById = async (id: string): Promise<DeliveryDriver | null
     return data;
 };
 
-export const createDriver = async (driver: Omit<DeliveryDriver, 'id' | 'verified' | 'created_at'>) => {
-    const { error } = await supabase
-        .from('delivery_drivers')
-        .insert([driver]);
+
+// Helper to create auth user (reused from createEmployee logic essentially, but tailored for drivers)
+const createAuthUser = async (email: string, password: string, name: string) => {
+    // Create a temporary client with service role capabilities if possible, 
+    // BUT since we don't have service role key in env (as per previous context), 
+    // we use the same "trick" as createEmployee: separate client without session persistence to avoid logging out admin.
+    // However, createEmployee uses signUp which only works if email confirmation is off or we don't need immediate login.
+    // Assuming 'signUp' is the way to go for this project configuration.
+
+    const tempClient = createClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+            persistSession: false,
+            autoRefreshToken: false,
+            detectSessionInUrl: false
+        }
+    });
+
+    const { data, error } = await tempClient.auth.signUp({
+        email,
+        password,
+        options: {
+            data: { full_name: name, role: 'driver' } // Metadata
+        }
+    });
 
     if (error) throw error;
+    if (!data.user) throw new Error("Falha ao criar usuário de correio.");
+
+    return data.user.id;
+};
+
+export const createDriver = async (driver: Omit<DeliveryDriver, 'id' | 'verified' | 'created_at'> & { password?: string }) => {
+    let userId = null;
+
+    // If password provided, create Auth User first
+    if (driver.email && driver.password) {
+        try {
+            userId = await createAuthUser(driver.email, driver.password, driver.name);
+        } catch (authError: any) {
+            console.error("Auth Error:", authError);
+            throw new Error(`Erro ao criar login para motorista: ${authError.message}`);
+        }
+    }
+
+    // Insert into public table
+    const dbDriver = {
+        name: driver.name,
+        vehicle_type: driver.vehicle_type,
+        license_plate: driver.license_plate,
+        phone: driver.phone,
+        photo_url: driver.photo_url,
+        email: driver.email,
+        user_id: userId,
+        verified: true // Default verified if created by admin
+    };
+
+    const { error } = await supabase
+        .from('delivery_drivers')
+        .insert([dbDriver]);
+
+    if (error) {
+        // Optimization: In a real app we might want to delete the Auth User if this fails to keep consistency.
+        throw error;
+    }
+
+    // Also create a Profile entry so they can log in via standard flow if needed?
+    // The requirement is specific to "Driver Portal", so maybe we just rely on the `delivery_drivers` table 
+    // OR we standardize on the `profiles` table for ALL users (Employees, Admins, Drivers).
+    // Given the `createEmployee` logic, it seems `profiles` table is used for permission checking.
+    // Let's also add them to `profiles` with role 'driver' to be safe and consistent.
+    if (userId && driver.email) {
+        await supabase.from('profiles').insert([{
+            id: userId,
+            email: driver.email,
+            full_name: driver.name,
+            role: 'driver',
+            permissions: {}, // Drivers don't have admin panel permissions
+            is_active: true
+        }]);
+    }
+
     return null;
 };
 

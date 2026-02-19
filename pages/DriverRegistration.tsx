@@ -9,6 +9,8 @@ const DriverRegistration: React.FC = () => {
     const { showToast } = useToast();
     const [formData, setFormData] = useState({
         name: '',
+        email: '',
+        password: '',
         address: '',
         transport_type: 'Mota',
         whatsapp: '',
@@ -296,7 +298,7 @@ const DriverRegistration: React.FC = () => {
 
                         <button
                             onClick={() => setStep(2)}
-                            disabled={!formData.name || formData.whatsapp.length !== 9}
+                            disabled={!formData.name || formData.whatsapp.length !== 9 || !formData.email || formData.password.length < 6}
                             className="w-full py-6 bg-black text-white dark:bg-primary dark:text-black rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] transition-all transform hover:scale-[1.02]"
                         >
                             Continuar para Biometria

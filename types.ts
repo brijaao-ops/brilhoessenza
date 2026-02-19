@@ -69,6 +69,9 @@ export interface DeliveryDriver {
   verified: boolean;
   active: boolean;
   created_at: string;
+  email?: string;
+  user_id?: string;
+  phone?: string; // Standardize phone/whatsapp access
 }
 
 export interface InventoryAlert {

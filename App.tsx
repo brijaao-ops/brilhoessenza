@@ -25,6 +25,9 @@ import AdminSlideForm from './pages/admin/AdminSlideForm';
 import AdminDrivers from './pages/admin/AdminDrivers';
 import DriverRegistration from './pages/DriverRegistration';
 import DriverProfile from './pages/DriverProfile';
+import DriverLogin from './pages/driver/DriverLogin';
+import DriverDashboard from './pages/driver/DriverDashboard';
+import OrderConfirmation from './pages/OrderConfirmation';
 import CheckoutModal from './components/CheckoutModal';
 import OrderSuccessModal from './components/OrderSuccessModal';
 import { Product, Order, Category, Slide, UserProfile } from './types';
@@ -570,6 +573,9 @@ const AppContent: React.FC = () => {
           <Route path="/atelier/:section" element={<AtelierInfo />} />
           <Route path="/entregador/cadastro" element={<DriverRegistration />} />
           <Route path="/entregador/:id" element={<DriverProfile />} />
+          <Route path="/driver/login" element={<DriverLogin />} />
+          <Route path="/driver/dashboard" element={<DriverDashboard />} />
+          <Route path="/confirmar/:token" element={<OrderConfirmation />} />
           <Route path="*" element={<div className="py-24 text-center font-black uppercase tracking-widest text-gray-400">Página não encontrada</div>} />
         </Routes>
       </main>
