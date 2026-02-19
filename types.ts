@@ -38,7 +38,7 @@ export interface Order {
   customer: string;
   phone?: string; // Contact for WhatsApp
   amount: number;
-  status: 'PAGO' | 'ENVIADO' | 'PENDENTE' | 'PEDIDO';
+  status: 'PAGO' | 'ENVIADO' | 'PENDENTE' | 'PEDIDO' | 'DELIVERED' | 'CANCELLED';
   date: string;
   time?: string;
   address?: string;

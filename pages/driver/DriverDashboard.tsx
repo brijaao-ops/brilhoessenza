@@ -88,10 +88,13 @@ const DriverDashboard: React.FC = () => {
                                 <div>
                                     <span className="text-[10px] font-black bg-primary/10 text-primary px-2 py-1 rounded uppercase tracking-wider">#{order.id.slice(0, 6)}</span>
                                 </div>
-                                <span className="text-[10px] font-bold text-gray-400">{new Date(order.created_at || '').toLocaleDateString('pt-BR')}</span>
+                                <div className="text-right">
+                                    <p className="text-[10px] font-bold text-gray-400">{order.date}</p>
+                                    <p className="text-[9px] font-black text-gray-300">{order.time}</p>
+                                </div>
                             </div>
 
-                            <h3 className="font-black text-lg leading-tight mb-1">{order.customer_name}</h3>
+                            <h3 className="font-black text-lg leading-tight mb-1">{order.customer}</h3>
                             <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 flex items-center gap-1">
                                 <span className="material-symbols-outlined text-[14px]">location_on</span>
                                 {order.municipality}, {order.neighborhood}
@@ -141,8 +144,8 @@ const DriverDashboard: React.FC = () => {
 
                         <div className="bg-white/10 rounded-xl p-4 w-full max-w-xs text-left">
                             <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-2">Resumo do Pedido</p>
-                            <p className="text-white font-bold text-sm truncate">{selectedOrder.customer_name}</p>
-                            <p className="text-gray-400 text-xs">{selectedOrder.items?.length} Itens • {new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(selectedOrder.total)}</p>
+                            <p className="text-white font-bold text-sm truncate">{selectedOrder.customer}</p>
+                            <p className="text-gray-400 text-xs">{selectedOrder.items?.length} Itens • {new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(selectedOrder.amount)}</p>
                         </div>
                     </div>
                 </div>
