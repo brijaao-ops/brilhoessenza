@@ -25,6 +25,7 @@ import AdminSlideForm from './pages/admin/AdminSlideForm';
 import AdminDrivers from './pages/admin/AdminDrivers';
 import DriverRegistration from './pages/DriverRegistration';
 import CheckoutModal from './components/CheckoutModal';
+import OrderSuccessModal from './components/OrderSuccessModal';
 import { Product, Order, Category, Slide, UserProfile } from './types';
 import { MOCK_PRODUCTS, MOCK_ORDERS } from './constants';
 import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile } from './services/supabase';
@@ -307,7 +308,10 @@ const AppContent: React.FC = () => {
     setIsCartOpen(false);
   };
 
-  const handleCheckoutConfirm = async (data: { name: string; phone: string; address: string; neighborhood: string; municipality: string; province: string; paymentMethod: 'multicaixa' | 'cash' | 'transfer' }) => {
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [lastPaymentMethod, setLastPaymentMethod] = useState<'multicaixa' | 'cash' | 'transfer' | 'express'>('multicaixa');
+
+  const handleCheckoutConfirm = async (data: { name: string; phone: string; address: string; neighborhood: string; municipality: string; province: string; paymentMethod: 'multicaixa' | 'cash' | 'transfer' | 'express' }) => {
     const settings = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
     const whatsapp = settings.companyPhone || "244900000000";
 
@@ -350,7 +354,7 @@ const AppContent: React.FC = () => {
       }));
 
       // WhatsApp Message
-      const paymentText = data.paymentMethod === 'multicaixa' ? 'Multicaixa Express' : data.paymentMethod === 'cash' ? 'Numerário' : 'Transferência Bancária';
+      const paymentText = data.paymentMethod === 'multicaixa' ? 'Multicaixa Express' : data.paymentMethod === 'cash' ? 'Numerário' : data.paymentMethod === 'transfer' ? 'Transferência Bancária' : 'Express';
 
       let message = `*SOLICITAÇÃO DE RESERVA - ${settings.companyName || 'BRILHO ESSENZA'}*\n\n`;
       message += `*Cliente:* ${data.name}\n`;
@@ -372,7 +376,11 @@ const AppContent: React.FC = () => {
 
       setCartItems([]);
       setIsCheckoutOpen(false);
-      alert("Reserva realizada com sucesso!");
+
+      // Open Success Modal
+      setLastPaymentMethod(data.paymentMethod);
+      setIsSuccessModalOpen(true);
+
     } catch (error) {
       console.error("Erro ao processar pedido", error);
       alert("Ocorreu um erro ao processar sua reserva. Por favor, tente novamente.");
@@ -569,6 +577,12 @@ const AppContent: React.FC = () => {
         onClose={() => setIsCheckoutOpen(false)}
         onConfirm={handleCheckoutConfirm}
         total={totalCart}
+      />
+
+      <OrderSuccessModal
+        isOpen={isSuccessModalOpen}
+        onClose={() => setIsSuccessModalOpen(false)}
+        paymentMethod={lastPaymentMethod}
       />
 
       {isCartOpen && (
