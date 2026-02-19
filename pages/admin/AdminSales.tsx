@@ -85,7 +85,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
-                            <tr className="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
+                            <tr className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
                                 <th className="px-4 py-3">ID Venda</th>
                                 <th className="px-4 py-3">Cliente</th>
                                 <th className="px-4 py-3">Entrega</th>
@@ -100,24 +100,24 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                         <tbody className="divide-y divide-gray-50 dark:divide-[#222115]">
                             {sales.map((o) => (
                                 <tr key={o.id} className="hover:bg-gray-50/50 dark:hover:bg-white/[0.01] transition-all">
-                                    <td className="px-4 py-3 font-bold text-primary text-[8px]">{o.id}</td>
-                                    <td className="px-4 py-3 font-medium text-[8px]">{o.customer}</td>
+                                    <td className="px-4 py-3 font-bold text-primary text-[10px]">{o.id}</td>
+                                    <td className="px-4 py-3 font-medium text-[10px]">{o.customer}</td>
                                     <td className="px-4 py-3">
                                         <div className="flex flex-col gap-0.5">
-                                            <span className="text-[8px] text-gray-800 dark:text-gray-200">{o.neighborhood || '---'}</span>
-                                            <span className="text-[8px] text-gray-400 uppercase tracking-wider">{(o.municipality || '')} {o.province && `| ${o.province}`}</span>
-                                            {o.address && <p className="text-[8px] text-gray-400 italic truncate max-w-[150px]" title={o.address}>{o.address}</p>}
+                                            <span className="text-[10px] text-gray-800 dark:text-gray-200">{o.neighborhood || '---'}</span>
+                                            <span className="text-[10px] text-gray-400 uppercase tracking-wider">{(o.municipality || '')} {o.province && `| ${o.province}`}</span>
+                                            {o.address && <p className="text-[10px] text-gray-400 italic truncate max-w-[150px]" title={o.address}>{o.address}</p>}
                                         </div>
                                     </td>
                                     <td className="px-4 py-3">
-                                        <div className="flex flex-col gap-0.5 text-[8px] text-gray-500">
+                                        <div className="flex flex-col gap-0.5 text-[10px] text-gray-500">
                                             {o.phone?.length === 9 ? `+244 ${o.phone}` : (o.phone || '---')}
                                         </div>
                                     </td>
-                                    <td className="px-4 py-3 font-bold text-[8px]">{o.amount.toLocaleString()} Kz</td>
-                                    <td className="px-4 py-3 text-[8px] text-gray-400">{o.date}</td>
+                                    <td className="px-4 py-3 font-bold text-[10px]">{o.amount.toLocaleString()} Kz</td>
+                                    <td className="px-4 py-3 text-[10px] text-gray-400">{o.date}</td>
                                     <td className="px-4 py-3">
-                                        <span className={`px-2 py-0.5 rounded text-[8px] font-bold uppercase tracking-widest ${o.status === 'PAGO' ? 'bg-green-500/10 text-green-500' :
+                                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${o.status === 'PAGO' ? 'bg-green-500/10 text-green-500' :
                                             o.status === 'PENDENTE' ? 'bg-orange-500/10 text-orange-500' :
                                                 'bg-blue-500/10 text-blue-500'
                                             }`}>
@@ -129,14 +129,14 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                             <div className="flex flex-col gap-0.5">
                                                 {o.validator_name && (
                                                     <div className="flex items-center gap-1">
-                                                        <span className="text-[7px] font-bold uppercase text-green-500 bg-green-500/10 px-1 rounded">Pago:</span>
-                                                        <span className="text-[8px] text-gray-400 truncate max-w-[70px]">{o.validator_name}</span>
+                                                        <span className="text-[9px] font-bold uppercase text-green-500 bg-green-500/10 px-1 rounded">Pago:</span>
+                                                        <span className="text-[10px] text-gray-400 truncate max-w-[70px]">{o.validator_name}</span>
                                                     </div>
                                                 )}
                                                 {o.deliverer_name && (
                                                     <div className="flex items-center gap-1">
-                                                        <span className="text-[7px] font-bold uppercase text-blue-500 bg-blue-500/10 px-1 rounded">Env:</span>
-                                                        <span className="text-[8px] text-gray-400 truncate max-w-[70px]">{o.deliverer_name}</span>
+                                                        <span className="text-[9px] font-bold uppercase text-blue-500 bg-blue-500/10 px-1 rounded">Env:</span>
+                                                        <span className="text-[10px] text-gray-400 truncate max-w-[70px]">{o.deliverer_name}</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -147,7 +147,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                                     <select
                                                         value={o.driver_id || ""}
                                                         onChange={(e) => handleAssignDriver(o.id, e.target.value)}
-                                                        className="text-[8px] bg-gray-50 dark:bg-white/5 border-none rounded p-1 outline-none w-full cursor-pointer"
+                                                        className="text-[10px] bg-gray-50 dark:bg-white/5 border-none rounded p-1 outline-none w-full cursor-pointer"
                                                     >
                                                         <option value="">Atribuir Entregador</option>
                                                         {drivers.map(d => (
@@ -155,14 +155,14 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                                         ))}
                                                     </select>
                                                 ) : (
-                                                    <span className="text-[8px] text-gray-400">
+                                                    <span className="text-[10px] text-gray-400">
                                                         {drivers.find(d => d.id === o.driver_id)?.name || 'Sem Entregador'}
                                                     </span>
                                                 )}
                                                 {o.driver && (userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
                                                     <button
                                                         onClick={() => notifyDriver(o, o.driver!)}
-                                                        className="text-[7px] font-bold uppercase text-primary hover:underline text-left"
+                                                        className="text-[9px] font-bold uppercase text-primary hover:underline text-left"
                                                     >
                                                         Reenviar WhatsApp
                                                     </button>
@@ -175,7 +175,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                             {o.status === 'PENDENTE' && (userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
                                                 <button
                                                     onClick={() => updateStatus(o.id, 'PAGO')}
-                                                    className="bg-green-500 text-white px-2 py-1 rounded text-[8px] font-bold uppercase tracking-widest hover:scale-105 transition-all"
+                                                    className="bg-green-500 text-white px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all"
                                                 >
                                                     Confirmar
                                                 </button>
@@ -183,7 +183,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                             {o.status === 'PAGO' && (userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
                                                 <button
                                                     onClick={() => updateStatus(o.id, 'ENVIADO')}
-                                                    className="bg-blue-500 text-white px-2 py-1 rounded text-[8px] font-bold uppercase tracking-widest hover:scale-105 transition-all"
+                                                    className="bg-blue-500 text-white px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all"
                                                 >
                                                     Enviado
                                                 </button>
