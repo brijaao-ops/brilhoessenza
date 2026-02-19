@@ -80,6 +80,7 @@ const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               <li><button onClick={() => handleCategoryClick('Cuidados com a Pele')} className="hover:text-white transition-colors">Skincare</button></li>
               <li><button onClick={() => handleCategoryClick('Maquiagem')} className="hover:text-white transition-colors">Beauty</button></li>
               <li><Link to="/entregador/cadastro" className="text-primary font-black animate-pulse hover:text-white transition-colors">QUERO SER ENTREGADOR</Link></li>
+              <li><Link to="/driver/login" className="hover:text-white transition-colors">Portal do Entregador</Link></li>
             </ul>
           </div>
 
