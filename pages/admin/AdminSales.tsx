@@ -66,7 +66,52 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
         }
     };
 
-    const totalAmount = sales.reduce((acc: number, curr: Order) => acc + curr.amount, 0);
+    const [statusFilter, setStatusFilter] = useState('ALL');
+    const [responsibleFilter, setResponsibleFilter] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+
+    const filteredSales = sales.filter(sale => {
+        // Status Filter
+        if (statusFilter !== 'ALL' && sale.status !== statusFilter) return false;
+
+        // Responsible Filter
+        if (responsibleFilter) {
+            const search = responsibleFilter.toLowerCase();
+            const validator = sale.validator_name?.toLowerCase() || '';
+            const deliverer = sale.deliverer_name?.toLowerCase() || '';
+            const driver = drivers.find(d => d.id === sale.driver_id)?.name.toLowerCase() || '';
+
+            if (!validator.includes(search) && !deliverer.includes(search) && !driver.includes(search)) {
+                return false;
+            }
+        }
+
+        // Date Filter
+        if (startDate || endDate) {
+            // Parse sale date (DD/MM/YYYY HH:MM)
+            const [datePart] = sale.date.split(' ');
+            const [day, month, year] = datePart.split('/').map(Number);
+            const saleDate = new Date(year, month - 1, day);
+            saleDate.setHours(0, 0, 0, 0);
+
+            if (startDate) {
+                const start = new Date(startDate);
+                start.setHours(0, 0, 0, 0);
+                if (saleDate < start) return false;
+            }
+
+            if (endDate) {
+                const end = new Date(endDate);
+                end.setHours(0, 0, 0, 0);
+                if (saleDate > end) return false;
+            }
+        }
+
+        return true;
+    });
+
+    const totalAmount = filteredSales.reduce((acc: number, curr: Order) => acc + curr.amount, 0);
 
     const [columns, setColumns] = useState({
         id: 90,
@@ -80,67 +125,82 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
         actions: 140
     });
 
-    const [resizingCol, setResizingCol] = useState<string | null>(null);
-    const [startX, setStartX] = useState(0);
-    const [startWidth, setStartWidth] = useState(0);
-
-    const startResize = (e: React.MouseEvent, colKey: string) => {
-        e.preventDefault();
-        setResizingCol(colKey);
-        setStartX(e.clientX);
-        // @ts-ignore
-        setStartWidth(columns[colKey]);
-        document.body.style.cursor = 'col-resize';
-        document.body.style.userSelect = 'none';
-    };
-
-    useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            if (!resizingCol) return;
-            const diff = e.clientX - startX;
-            setColumns(prev => ({
-                ...prev,
-                // @ts-ignore
-                [resizingCol]: Math.max(50, startWidth + diff)
-            }));
-        };
-
-        const handleMouseUp = () => {
-            if (resizingCol) {
-                setResizingCol(null);
-                document.body.style.cursor = 'default';
-                document.body.style.userSelect = 'auto';
-            }
-        };
-
-        if (resizingCol) {
-            window.addEventListener('mousemove', handleMouseMove);
-            window.addEventListener('mouseup', handleMouseUp);
-        }
-
-        return () => {
-            window.removeEventListener('mousemove', handleMouseMove);
-            window.removeEventListener('mouseup', handleMouseUp);
-        };
-    }, [resizingCol, startX, startWidth]);
-
-    const Resizer = ({ colKey }: { colKey: string }) => (
-        <div
-            onMouseDown={(e) => startResize(e, colKey)}
-            className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary z-20"
-        />
-    );
+    // ... existing resizing code ...
 
     return (
         <div className="p-4 lg:p-8 animate-fade-in h-screen flex flex-col overflow-hidden">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 shrink-0">
-                <div>
-                    <h2 className="text-2xl font-black uppercase tracking-tighter">Fluxo de <span className="text-primary italic">Vendas</span></h2>
-                    <p className="text-xs text-gray-500 font-medium">Histórico de transações confirmadas e em entrega.</p>
+            <div className="flex flex-col gap-6 mb-6 shrink-0">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <h2 className="text-2xl font-black uppercase tracking-tighter">Fluxo de <span className="text-primary italic">Vendas</span></h2>
+                        <p className="text-xs text-gray-500 font-medium">Histórico de transações confirmadas e em entrega.</p>
+                    </div>
+                    <div className="bg-white dark:bg-[#15140b] px-6 py-3 rounded-2xl border text-right shadow-sm">
+                        <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Receita (Filtrada)</p>
+                        <p className="text-xl font-black">{totalAmount.toLocaleString()} Kz</p>
+                    </div>
                 </div>
-                <div className="bg-white dark:bg-[#15140b] px-6 py-3 rounded-2xl border text-right shadow-sm">
-                    <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Receita Acumulada</p>
-                    <p className="text-xl font-black">{totalAmount.toLocaleString()} Kz</p>
+
+                {/* Filters */}
+                <div className="bg-white dark:bg-[#15140b] p-4 rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm flex flex-wrap gap-4 items-end">
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[9px] font-bold uppercase tracking-wider text-gray-500">Status</label>
+                        <select
+                            value={statusFilter}
+                            onChange={(e) => setStatusFilter(e.target.value)}
+                            className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-[#222115] rounded-lg px-3 py-2 text-xs font-medium outline-none focus:border-primary transition-colors min-w-[120px]"
+                        >
+                            <option value="ALL">Todos</option>
+                            <option value="PENDENTE">Pendente</option>
+                            <option value="PAGO">Pago</option>
+                            <option value="ENVIADO">Enviado</option>
+                        </select>
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[9px] font-bold uppercase tracking-wider text-gray-500">Responsável</label>
+                        <input
+                            type="text"
+                            value={responsibleFilter}
+                            onChange={(e) => setResponsibleFilter(e.target.value)}
+                            placeholder="Nome..."
+                            className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-[#222115] rounded-lg px-3 py-2 text-xs font-medium outline-none focus:border-primary transition-colors min-w-[150px]"
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[9px] font-bold uppercase tracking-wider text-gray-500">Data Inicial</label>
+                        <input
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                            className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-[#222115] rounded-lg px-3 py-2 text-xs font-medium outline-none focus:border-primary transition-colors"
+                        />
+                    </div>
+
+                    <div className="flex flex-col gap-1">
+                        <label className="text-[9px] font-bold uppercase tracking-wider text-gray-500">Data Final</label>
+                        <input
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                            className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-[#222115] rounded-lg px-3 py-2 text-xs font-medium outline-none focus:border-primary transition-colors"
+                        />
+                    </div>
+
+                    {(statusFilter !== 'ALL' || responsibleFilter || startDate || endDate) && (
+                        <button
+                            onClick={() => {
+                                setStatusFilter('ALL');
+                                setResponsibleFilter('');
+                                setStartDate('');
+                                setEndDate('');
+                            }}
+                            className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-red-500 hover:bg-red-50 rounded-lg transition-colors mb-0.5"
+                        >
+                            Limpar
+                        </button>
+                    )}
                 </div>
             </div>
 
@@ -179,7 +239,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50 dark:divide-[#222115]">
-                            {sales.map((o) => (
+                            {filteredSales.map((o) => (
                                 <tr key={o.id} className="hover:bg-gray-50/50 dark:hover:bg-white/[0.01] transition-all">
                                     <td className="px-4 py-2 font-bold text-primary text-[10px] border-r border-gray-50 dark:border-[#222115] truncate">{o.id}</td>
                                     <td className="px-4 py-2 font-medium text-[10px] border-r border-gray-50 dark:border-[#222115] truncate" title={o.customer}>{o.customer}</td>
@@ -275,7 +335,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                             ))}
                         </tbody>
                     </table>
-                    {sales.length === 0 && (
+                    {filteredSales.length === 0 && (
                         <div className="p-20 text-center">
                             <span className="material-symbols-outlined text-gray-200 !text-6xl mb-4">sell</span>
                             <p className="text-gray-400 font-bold uppercase tracking-widest text-[10px]">Nenhuma venda registrada</p>
