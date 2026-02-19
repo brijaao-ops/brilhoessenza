@@ -81,8 +81,8 @@ const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               <li><button onClick={() => handleCategoryClick('Maquiagem')} className="hover:text-white transition-colors">Beauty</button></li>
               <li><Link to="/entregador/cadastro" className="text-primary font-black animate-pulse hover:text-white transition-colors">QUERO SER ENTREGADOR</Link></li>
               <li>
-                <Link to="/driver/login" className="flex items-center gap-1.5 text-primary hover:text-white transition-colors">
-                  <span className="material-symbols-outlined !text-[14px]">local_shipping</span>
+                <Link to="/driver/login" className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-primary text-black rounded-lg font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/10">
+                  <span className="material-symbols-outlined !text-[18px]">local_shipping</span>
                   Portal do Entregador
                 </Link>
               </li>
@@ -96,7 +96,8 @@ const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               <li><Link to="/atelier/ingredientes" className="hover:text-white transition-colors">Pureza</Link></li>
               <li><button onClick={handleMaps} className="hover:text-white transition-colors">Boutiques</button></li>
               <li>
-                <Link to="/admin" className="inline-block mt-2 px-4 py-2 border border-primary/30 rounded-lg text-primary hover:bg-primary hover:text-black transition-all font-bold shadow-lg shadow-primary/10">
+                <Link to="/admin" className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-primary text-black rounded-lg font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/10">
+                  <span className="material-symbols-outlined !text-[18px]">admin_panel_settings</span>
                   Mesa de Gestão
                 </Link>
               </li>
