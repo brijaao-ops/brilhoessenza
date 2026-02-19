@@ -68,55 +68,136 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
 
     const totalAmount = sales.reduce((acc: number, curr: Order) => acc + curr.amount, 0);
 
+    const [columns, setColumns] = useState({
+        id: 80,
+        customer: 150,
+        delivery: 200,
+        contact: 100,
+        amount: 100,
+        date: 80,
+        status: 100,
+        responsible: 150,
+        actions: 120
+    });
+
+    const [resizingCol, setResizingCol] = useState<string | null>(null);
+    const [startX, setStartX] = useState(0);
+    const [startWidth, setStartWidth] = useState(0);
+
+    const startResize = (e: React.MouseEvent, colKey: string) => {
+        e.preventDefault();
+        setResizingCol(colKey);
+        setStartX(e.clientX);
+        // @ts-ignore
+        setStartWidth(columns[colKey]);
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+    };
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (!resizingCol) return;
+            const diff = e.clientX - startX;
+            setColumns(prev => ({
+                ...prev,
+                // @ts-ignore
+                [resizingCol]: Math.max(50, startWidth + diff)
+            }));
+        };
+
+        const handleMouseUp = () => {
+            if (resizingCol) {
+                setResizingCol(null);
+                document.body.style.cursor = 'default';
+                document.body.style.userSelect = 'auto';
+            }
+        };
+
+        if (resizingCol) {
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [resizingCol, startX, startWidth]);
+
+    const Resizer = ({ colKey }: { colKey: string }) => (
+        <div
+            onMouseDown={(e) => startResize(e, colKey)}
+            className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary z-20"
+        />
+    );
+
     return (
-        <div className="p-8 lg:p-12 animate-fade-in">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+        <div className="p-4 lg:p-8 animate-fade-in h-screen flex flex-col overflow-hidden">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 shrink-0">
                 <div>
-                    <h2 className="text-3xl font-black uppercase tracking-tighter">Fluxo de <span className="text-primary italic">Vendas</span></h2>
-                    <p className="text-sm text-gray-500 font-medium">Histórico de transações confirmadas e em entrega.</p>
+                    <h2 className="text-2xl font-black uppercase tracking-tighter">Fluxo de <span className="text-primary italic">Vendas</span></h2>
+                    <p className="text-xs text-gray-500 font-medium">Histórico de transações confirmadas e em entrega.</p>
                 </div>
-                <div className="bg-white dark:bg-[#15140b] px-8 py-4 rounded-2xl border text-right">
-                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Receita Acumulada</p>
-                    <p className="text-2xl font-black">{totalAmount.toLocaleString()} Kz</p>
+                <div className="bg-white dark:bg-[#15140b] px-6 py-3 rounded-2xl border text-right shadow-sm">
+                    <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Receita Acumulada</p>
+                    <p className="text-xl font-black">{totalAmount.toLocaleString()} Kz</p>
                 </div>
             </div>
 
-            <div className="bg-white dark:bg-[#15140b] rounded-[2.5rem] border border-gray-100 dark:border-[#222115] overflow-hidden shadow-sm">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left">
-                        <thead>
+            <div className="flex-1 bg-white dark:bg-[#15140b] rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm flex flex-col overflow-hidden">
+                <div className="flex-1 overflow-auto relative">
+                    <table className="w-full text-left border-collapse table-fixed" style={{ minWidth: Object.values(columns).reduce((a, b) => a + b, 0) }}>
+                        <thead className="sticky top-0 z-10 bg-white dark:bg-[#15140b] shadow-sm">
                             <tr className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
-                                <th className="px-4 py-3">ID Venda</th>
-                                <th className="px-4 py-3">Cliente</th>
-                                <th className="px-4 py-3">Entrega</th>
-                                <th className="px-4 py-3">Contacto</th>
-                                <th className="px-4 py-3">Valor</th>
-                                <th className="px-4 py-3">Data</th>
-                                <th className="px-4 py-3">Status</th>
-                                <th className="px-4 py-3 text-center">Responsáveis</th>
-                                <th className="px-4 py-3 text-right">Ações</th>
+                                <th style={{ width: columns.id }} className="px-4 py-3 relative border-r border-gray-50 dark:border-[#222115]">
+                                    ID Venda <Resizer colKey="id" />
+                                </th>
+                                <th style={{ width: columns.customer }} className="px-4 py-3 relative border-r border-gray-50 dark:border-[#222115]">
+                                    Cliente <Resizer colKey="customer" />
+                                </th>
+                                <th style={{ width: columns.delivery }} className="px-4 py-3 relative border-r border-gray-50 dark:border-[#222115]">
+                                    Entrega <Resizer colKey="delivery" />
+                                </th>
+                                <th style={{ width: columns.contact }} className="px-4 py-3 relative border-r border-gray-50 dark:border-[#222115]">
+                                    Contacto <Resizer colKey="contact" />
+                                </th>
+                                <th style={{ width: columns.amount }} className="px-4 py-3 relative border-r border-gray-50 dark:border-[#222115]">
+                                    Valor <Resizer colKey="amount" />
+                                </th>
+                                <th style={{ width: columns.date }} className="px-4 py-3 relative border-r border-gray-50 dark:border-[#222115]">
+                                    Data <Resizer colKey="date" />
+                                </th>
+                                <th style={{ width: columns.status }} className="px-4 py-3 relative border-r border-gray-50 dark:border-[#222115]">
+                                    Status <Resizer colKey="status" />
+                                </th>
+                                <th style={{ width: columns.responsible }} className="px-4 py-3 text-center relative border-r border-gray-50 dark:border-[#222115]">
+                                    Responsáveis <Resizer colKey="responsible" />
+                                </th>
+                                <th style={{ width: columns.actions }} className="px-4 py-3 text-right relative">
+                                    Ações <Resizer colKey="actions" />
+                                </th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-50 dark:divide-[#222115]">
                             {sales.map((o) => (
                                 <tr key={o.id} className="hover:bg-gray-50/50 dark:hover:bg-white/[0.01] transition-all">
-                                    <td className="px-4 py-3 font-bold text-primary text-[10px]">{o.id}</td>
-                                    <td className="px-4 py-3 font-medium text-[10px]">{o.customer}</td>
-                                    <td className="px-4 py-3">
-                                        <div className="flex flex-col gap-0.5">
-                                            <span className="text-[10px] text-gray-800 dark:text-gray-200">{o.neighborhood || '---'}</span>
-                                            <span className="text-[10px] text-gray-400 uppercase tracking-wider">{(o.municipality || '')} {o.province && `| ${o.province}`}</span>
-                                            {o.address && <p className="text-[10px] text-gray-400 italic truncate max-w-[150px]" title={o.address}>{o.address}</p>}
+                                    <td className="px-4 py-2 font-bold text-primary text-[10px] border-r border-gray-50 dark:border-[#222115] truncate">{o.id}</td>
+                                    <td className="px-4 py-2 font-medium text-[10px] border-r border-gray-50 dark:border-[#222115] truncate" title={o.customer}>{o.customer}</td>
+                                    <td className="px-4 py-2 border-r border-gray-50 dark:border-[#222115]">
+                                        <div className="flex flex-col gap-0.5 overflow-hidden">
+                                            <span className="text-[10px] text-gray-800 dark:text-gray-200 truncate" title={o.neighborhood}>{o.neighborhood || '---'}</span>
+                                            <span className="text-[10px] text-gray-400 uppercase tracking-wider truncate">{(o.municipality || '')} {o.province && `| ${o.province}`}</span>
+                                            {o.address && <p className="text-[10px] text-gray-400 italic truncate" title={o.address}>{o.address}</p>}
                                         </div>
                                     </td>
-                                    <td className="px-4 py-3">
-                                        <div className="flex flex-col gap-0.5 text-[10px] text-gray-500">
+                                    <td className="px-4 py-2 border-r border-gray-50 dark:border-[#222115]">
+                                        <div className="flex flex-col gap-0.5 text-[10px] text-gray-500 truncate">
                                             {o.phone?.length === 9 ? `+244 ${o.phone}` : (o.phone || '---')}
                                         </div>
                                     </td>
-                                    <td className="px-4 py-3 font-bold text-[10px]">{o.amount.toLocaleString()} Kz</td>
-                                    <td className="px-4 py-3 text-[10px] text-gray-400">{o.date}</td>
-                                    <td className="px-4 py-3">
+                                    <td className="px-4 py-2 font-bold text-[10px] border-r border-gray-50 dark:border-[#222115] truncate">{o.amount.toLocaleString()} Kz</td>
+                                    <td className="px-4 py-2 text-[10px] text-gray-400 border-r border-gray-50 dark:border-[#222115] truncate">{o.date}</td>
+                                    <td className="px-4 py-2 border-r border-gray-50 dark:border-[#222115]">
                                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${o.status === 'PAGO' ? 'bg-green-500/10 text-green-500' :
                                             o.status === 'PENDENTE' ? 'bg-orange-500/10 text-orange-500' :
                                                 'bg-blue-500/10 text-blue-500'
@@ -124,19 +205,19 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                             {o.status}
                                         </span>
                                     </td>
-                                    <td className="px-4 py-3">
-                                        <div className="flex flex-col gap-1">
+                                    <td className="px-4 py-2 border-r border-gray-50 dark:border-[#222115]">
+                                        <div className="flex flex-col gap-1 overflow-hidden">
                                             <div className="flex flex-col gap-0.5">
                                                 {o.validator_name && (
                                                     <div className="flex items-center gap-1">
-                                                        <span className="text-[9px] font-bold uppercase text-green-500 bg-green-500/10 px-1 rounded">Pago:</span>
-                                                        <span className="text-[10px] text-gray-400 truncate max-w-[70px]">{o.validator_name}</span>
+                                                        <span className="text-[9px] font-bold uppercase text-green-500 bg-green-500/10 px-1 rounded shrink-0">Pago:</span>
+                                                        <span className="text-[10px] text-gray-400 truncate">{o.validator_name}</span>
                                                     </div>
                                                 )}
                                                 {o.deliverer_name && (
                                                     <div className="flex items-center gap-1">
-                                                        <span className="text-[9px] font-bold uppercase text-blue-500 bg-blue-500/10 px-1 rounded">Env:</span>
-                                                        <span className="text-[10px] text-gray-400 truncate max-w-[70px]">{o.deliverer_name}</span>
+                                                        <span className="text-[9px] font-bold uppercase text-blue-500 bg-blue-500/10 px-1 rounded shrink-0">Env:</span>
+                                                        <span className="text-[10px] text-gray-400 truncate">{o.deliverer_name}</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -147,7 +228,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                                     <select
                                                         value={o.driver_id || ""}
                                                         onChange={(e) => handleAssignDriver(o.id, e.target.value)}
-                                                        className="text-[10px] bg-gray-50 dark:bg-white/5 border-none rounded p-1 outline-none w-full cursor-pointer"
+                                                        className="text-[10px] bg-gray-50 dark:bg-white/5 border-none rounded p-1 outline-none w-full cursor-pointer truncate"
                                                     >
                                                         <option value="">Atribuir Entregador</option>
                                                         {drivers.map(d => (
@@ -155,14 +236,14 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                                         ))}
                                                     </select>
                                                 ) : (
-                                                    <span className="text-[10px] text-gray-400">
+                                                    <span className="text-[10px] text-gray-400 truncate">
                                                         {drivers.find(d => d.id === o.driver_id)?.name || 'Sem Entregador'}
                                                     </span>
                                                 )}
                                                 {o.driver && (userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
                                                     <button
                                                         onClick={() => notifyDriver(o, o.driver!)}
-                                                        className="text-[9px] font-bold uppercase text-primary hover:underline text-left"
+                                                        className="text-[9px] font-bold uppercase text-primary hover:underline text-left truncate"
                                                     >
                                                         Reenviar WhatsApp
                                                     </button>
@@ -170,12 +251,12 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="px-4 py-3 text-right">
+                                    <td className="px-4 py-2 text-right">
                                         <div className="flex justify-end gap-2">
                                             {o.status === 'PENDENTE' && (userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
                                                 <button
                                                     onClick={() => updateStatus(o.id, 'PAGO')}
-                                                    className="bg-green-500 text-white px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all"
+                                                    className="bg-green-500 text-white px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all whitespace-nowrap"
                                                 >
                                                     Confirmar
                                                 </button>
@@ -183,7 +264,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                             {o.status === 'PAGO' && (userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
                                                 <button
                                                     onClick={() => updateStatus(o.id, 'ENVIADO')}
-                                                    className="bg-blue-500 text-white px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all"
+                                                    className="bg-blue-500 text-white px-2 py-1 rounded text-[10px] font-bold uppercase tracking-widest hover:scale-105 transition-all whitespace-nowrap"
                                                 >
                                                     Enviado
                                                 </button>
