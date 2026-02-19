@@ -193,6 +193,21 @@ const Header: React.FC<HeaderProps> = ({
               </button>
             ))}
 
+            {!isAuthenticated && (
+              <button
+                onClick={() => {
+                  navigate('/driver/login');
+                  setIsMenuOpen(false);
+                }}
+                className="text-sm font-black uppercase tracking-widest text-left py-4 border-b border-gray-100 dark:border-white/5 text-gray-400 hover:text-white"
+              >
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined !text-lg">local_shipping</span>
+                  Portal do Entregador
+                </div>
+              </button>
+            )}
+
             {/* Mobile Session Info */}
             {isAuthenticated && userProfile && (
               <div className="mt-8 p-6 bg-gray-50 dark:bg-white/5 rounded-3xl border border-gray-100 dark:border-white/5 flex flex-col gap-4">
