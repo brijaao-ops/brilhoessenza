@@ -39,11 +39,11 @@ const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
   };
 
   return (
-    <footer className="bg-[#0c0b06] text-white pt-32 pb-16 border-t border-white/5 relative overflow-hidden">
+    <footer className="bg-[#0c0b06] text-white pt-20 pb-16 border-t border-white/5 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
       <div className="max-w-[1400px] mx-auto px-8 lg:px-12">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-20 mb-32">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-10 mb-20">
 
           {/* Maison & Heritage */}
           <div className="lg:col-span-2">
@@ -75,13 +75,13 @@ const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
           {/* Menus de Luxo */}
           <div>
             <h5 className="font-black text-[9px] uppercase tracking-[0.4em] text-primary mb-10">Coleções</h5>
-            <ul className="flex flex-col gap-6 text-[10px] font-black uppercase tracking-widest text-gray-500">
+            <ul className="flex flex-col gap-3 text-[10px] font-black uppercase tracking-widest text-gray-500">
               <li><button onClick={() => handleCategoryClick('Fragrâncias')} className="hover:text-white transition-colors">Fragrâncias</button></li>
               <li><button onClick={() => handleCategoryClick('Cuidados com a Pele')} className="hover:text-white transition-colors">Skincare</button></li>
               <li><button onClick={() => handleCategoryClick('Maquiagem')} className="hover:text-white transition-colors">Beauty</button></li>
               <li><Link to="/entregador/cadastro" className="text-primary font-black animate-pulse hover:text-white transition-colors">QUERO SER ENTREGADOR</Link></li>
               <li>
-                <Link to="/driver/login" className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-primary text-black rounded-lg font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/10">
+                <Link to="/driver/login" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-black rounded-lg font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/10">
                   <span className="material-symbols-outlined !text-[18px]">local_shipping</span>
                   Portal do Entregador
                 </Link>
@@ -91,17 +91,17 @@ const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
 
           <div>
             <h5 className="font-black text-[9px] uppercase tracking-[0.4em] text-primary mb-10">O Atelier</h5>
-            <ul className="flex flex-col gap-6 text-[10px] font-black uppercase tracking-widest text-gray-500">
+            <ul className="flex flex-col gap-3 text-[10px] font-black uppercase tracking-widest text-gray-500">
               <li><Link to="/atelier/heranca" className="hover:text-white transition-colors">Herança</Link></li>
               <li><Link to="/atelier/ingredientes" className="hover:text-white transition-colors">Pureza</Link></li>
               <li><button onClick={handleMaps} className="hover:text-white transition-colors">Boutiques</button></li>
               <li>
-                <Link to="/admin" className="inline-flex items-center gap-2 mt-2 px-4 py-2 bg-primary text-black rounded-lg font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/10">
+                <Link to="/admin" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-black rounded-lg font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/10">
                   <span className="material-symbols-outlined !text-[18px]">admin_panel_settings</span>
                   Mesa de Gestão
                 </Link>
               </li>
-              <li><button onClick={handleConcierge} className="text-primary hover:brightness-110 transition-colors mt-2">Concierge VIP</button></li>
+              <li><button onClick={handleConcierge} className="text-primary hover:brightness-110 transition-colors">Concierge VIP</button></li>
             </ul>
           </div>
 
