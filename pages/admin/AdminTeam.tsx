@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { fetchTeam, createEmployee, updateEmployeePermissions, deleteEmployee, markFirstLoginComplete } from '../../services/supabase';
+import { fetchTeam, createEmployee, updateEmployeePermissions, deleteEmployee, markFirstLoginComplete, updateEmployeeProfile } from '../../services/supabase';
 import { UserProfile, UserPermissions } from '../../types';
 
 interface AdminTeamProps {
@@ -166,6 +166,10 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
                 { key: 'edit', label: 'Gerir' }
             ],
             sales: [
+                { key: 'view', label: 'Ver' },
+                { key: 'manage', label: 'Gerir' }
+            ],
+            drivers: [
                 { key: 'view', label: 'Ver' },
                 { key: 'manage', label: 'Gerir' }
             ]

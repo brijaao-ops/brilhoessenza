@@ -7,13 +7,24 @@ const DriverProfile: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const [driver, setDriver] = useState<DeliveryDriver | null>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
         const loadDriver = async () => {
             if (!id) return;
-            const data = await fetchDriverById(id);
-            setDriver(data);
-            setLoading(false);
+            try {
+                const data = await fetchDriverById(id);
+                if (!data) {
+                    setError("Entregador não encontrado no banco de dados.");
+                } else {
+                    setDriver(data);
+                }
+            } catch (err: any) {
+                console.error("Erro ao buscar entregador:", err);
+                setError(err.message || "Erro de conexão ao buscar entregador.");
+            } finally {
+                setLoading(false);
+            }
         };
         loadDriver();
     }, [id]);
@@ -39,12 +50,19 @@ const DriverProfile: React.FC = () => {
         );
     }
 
-    if (!driver) {
+    if (error || !driver) {
         return (
             <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-[#0f0e08] p-8 text-center">
                 <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">no_accounts</span>
                 <h1 className="text-xl font-black uppercase tracking-tighter mb-2">Entregador não encontrado</h1>
-                <p className="text-gray-400 text-sm">O perfil que você está procurando não existe ou foi desativado.</p>
+                <p className="text-gray-400 text-sm mb-4">O perfil que você está procurando não existe ou foi desativado.</p>
+                {/* Debug Info for User */}
+                <div className="bg-red-500/10 p-4 rounded-xl text-[10px] text-red-500 font-mono text-left max-w-xs mx-auto">
+                    <p className="font-bold mb-1">Detalhes do Erro:</p>
+                    <p>{error || "Dados nulos retornados"}</p>
+                    <p className="mt-2 text-gray-400">ID: {id}</p>
+                </div>
+                <button onClick={() => window.location.reload()} className="mt-6 text-primary font-bold text-xs uppercase tracking-widest underline">Tentar Novamente</button>
             </div>
         );
     }

@@ -401,7 +401,7 @@ export const fetchDriverById = async (id: string): Promise<DeliveryDriver | null
 
     if (error) {
         console.error('Error fetching driver:', error);
-        return null;
+        throw error;
     }
     return data;
 };
