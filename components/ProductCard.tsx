@@ -31,12 +31,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                     </span>
                 </div>
                 <div className="flex gap-2 pointer-events-auto">
-                    {product.salePrice && product.salePrice > 0 && product.salePrice < product.price && (
+                    {product.stock === 0 ? (
+                        <span className="px-2 py-1 bg-black text-white text-[9px] font-black uppercase tracking-widest rounded-md">
+                            Esgotado
+                        </span>
+                    ) : product.salePrice && product.salePrice > 0 && product.salePrice < product.price ? (
                         <span className="px-2 py-1 bg-red-600 text-white text-[9px] font-black uppercase tracking-widest rounded-md">
                             Oferta
                         </span>
-                    )}
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-500">
+                    ) : null}
+                    <span className={`text-[10px] font-black uppercase tracking-[0.2em] ${product.stock === 0 ? 'text-red-500' : 'text-gray-500'}`}>
                         Stop:{product.stock}
                     </span>
                 </div>
@@ -50,24 +54,33 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                         alt={product.name}
                         loading="lazy"
                         decoding="async"
-                        className="w-full h-full object-contain object-center group-hover:scale-110 transition-transform duration-700"
+                        className={`w-full h-full object-contain object-center transition-transform duration-700 ${product.stock === 0 ? 'grayscale opacity-60' : 'group-hover:scale-110'}`}
                     />
+                    {product.stock === 0 && (
+                        <div className="absolute inset-0 flex items-center justify-center z-10">
+                            <span className="bg-black/80 text-white px-4 py-2 text-xs font-black uppercase tracking-[0.3em] rounded-full backdrop-blur-sm transform -rotate-12 border border-white/20">
+                                Esgotado
+                            </span>
+                        </div>
+                    )}
                 </Link>
 
                 {/* Floating Cart Button */}
                 {/* Floating Cart Button */}
-                <button
-                    onClick={handleAddToCart}
-                    disabled={isAdded}
-                    className={`absolute bottom-4 right-4 size-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl z-30 ${isAdded
+                {product.stock > 0 && (
+                    <button
+                        onClick={handleAddToCart}
+                        disabled={isAdded}
+                        className={`absolute bottom-4 right-4 size-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl z-30 ${isAdded
                             ? 'bg-green-500 text-white opacity-100 translate-y-0 scale-110'
                             : 'bg-black text-white opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0'
-                        }`}
-                >
-                    <span className={`material-symbols-outlined !text-sm ${isAdded ? 'animate-bounce' : ''}`}>
-                        {isAdded ? 'check' : 'add_shopping_cart'}
-                    </span>
-                </button>
+                            }`}
+                    >
+                        <span className={`material-symbols-outlined !text-sm ${isAdded ? 'animate-bounce' : ''}`}>
+                            {isAdded ? 'check' : 'add_shopping_cart'}
+                        </span>
+                    </button>
+                )}
             </div>
 
             {/* Product Name - Smaller text, better wrapping */}

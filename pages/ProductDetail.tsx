@@ -15,7 +15,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
   const [isAdded, setIsAdded] = useState(false);
 
   const handleAddToCart = () => {
-    if (product) {
+    if (product && product.stock > 0) {
       onAddToCart(product);
       setIsAdded(true);
       setTimeout(() => setIsAdded(false), 1500);
@@ -114,21 +114,23 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
           <div className="flex flex-col gap-6">
             <button
               onClick={handleAddToCart}
-              disabled={isAdded}
+              disabled={isAdded || product.stock === 0}
               className={`w-full font-black py-7 rounded-[2rem] transition-all shadow-xl uppercase tracking-[0.3em] text-[11px] flex items-center justify-center gap-3 ${isAdded
                 ? 'bg-green-500 text-white scale-95 shadow-green-500/20'
-                : 'bg-primary text-black hover:brightness-110 shadow-primary/30 hover:scale-[1.02] active:scale-95'
+                : product.stock === 0
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
+                  : 'bg-primary text-black hover:brightness-110 shadow-primary/30 hover:scale-[1.02] active:scale-95'
                 }`}
             >
-              <span className="material-symbols-outlined !text-xl animate-bounce">
-                {isAdded ? 'check_circle' : 'shopping_cart_checkout'}
+              <span className={`material-symbols-outlined !text-xl ${isAdded ? 'animate-bounce' : ''}`}>
+                {isAdded ? 'check_circle' : product.stock === 0 ? 'block' : 'shopping_cart_checkout'}
               </span>
-              {isAdded ? 'Adicionado!' : 'Fazer Pedido'}
+              {isAdded ? 'Adicionado!' : product.stock === 0 ? 'Esgotado' : 'Fazer Pedido'}
             </button>
             <div className="flex items-center justify-center gap-6 text-[10px] font-black text-gray-400 uppercase tracking-widest">
               <div className="flex items-center gap-2">
-                <span className="size-2 rounded-full bg-green-500"></span>
-                <span>{product.stock} em Stock</span>
+                <span className={`size-2 rounded-full ${product.stock > 0 ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                <span>{product.stock > 0 ? `${product.stock} em Stock` : 'Indisponível'}</span>
               </div>
               <div className="size-1 rounded-full bg-gray-200"></div>
               <span>Entrega Exclusiva Luanda</span>
