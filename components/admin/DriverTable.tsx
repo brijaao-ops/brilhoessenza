@@ -5,30 +5,31 @@ interface DriverTableProps {
     drivers: DeliveryDriver[];
     onUpdate: (id: string, updates: Partial<DeliveryDriver>) => void;
     onDelete: (id: string) => void;
+    onViewCard: (driver: DeliveryDriver) => void;
     userProfile?: UserProfile | null;
 }
 
-const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, userProfile }) => {
+const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, onViewCard, userProfile }) => {
     const canManage = userProfile?.role === 'admin' || userProfile?.permissions?.drivers?.manage || userProfile?.permissions?.team?.manage;
+
     return (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto bg-white dark:bg-[#15140b] rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
             <table className="w-full text-left">
                 <thead>
-                    <tr className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
+                    <tr className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-100 dark:border-[#222115]">
                         <th className="px-8 py-6">Entregador</th>
                         <th className="px-8 py-6">Transporte</th>
                         <th className="px-8 py-6">Documentos Biométricos</th>
-                        <th className="px-8 py-6">Status</th>
                         <th className="px-8 py-6">Status</th>
                         {canManage && <th className="px-8 py-6 text-right">Ações</th>}
                     </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-50 dark:divide-[#222115]">
                     {drivers.map((d) => (
-                        <tr key={d.id} className="hover:bg-gray-50/50 dark:hover:bg-white/[0.01] transition-all">
+                        <tr key={d.id} className="hover:bg-gray-50/50 dark:hover:bg-white/[0.01] transition-all group">
                             <td className="px-8 py-6">
                                 <div className="flex items-center gap-4">
-                                    <div className="size-12 rounded-2xl overflow-hidden bg-gray-100 flex-shrink-0 border-2 border-primary/20">
+                                    <div className="size-12 rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/10 flex-shrink-0 border-2 border-primary/20">
                                         {d.selfie_url ? (
                                             <img src={d.selfie_url} alt={d.name} className="w-full h-full object-cover" />
                                         ) : (
@@ -38,26 +39,26 @@ const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, 
                                         )}
                                     </div>
                                     <div>
-                                        <p className="font-black text-sm uppercase tracking-tight">{d.name}</p>
+                                        <p className="font-black text-sm uppercase tracking-tight text-[#1c1a0d] dark:text-white">{d.name}</p>
                                         <p className="text-[10px] font-bold text-gray-400">{d.whatsapp}</p>
                                         <p className="text-[9px] text-gray-400 italic max-w-[150px] truncate">{d.address}</p>
                                     </div>
                                 </div>
                             </td>
                             <td className="px-8 py-6">
-                                <span className="px-3 py-1 bg-gray-100 dark:bg-white/5 rounded-lg text-[9px] font-black uppercase tracking-widest">
+                                <span className="px-3 py-1 bg-gray-100 dark:bg-white/5 rounded-lg text-[9px] font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white">
                                     {d.transport_type}
                                 </span>
                             </td>
                             <td className="px-8 py-6">
                                 <div className="flex gap-2">
                                     {d.id_front_url && (
-                                        <a href={d.id_front_url} target="_blank" rel="noreferrer" className="size-10 rounded-lg overflow-hidden border border-gray-100 hover:scale-110 transition-transform shadow-sm bg-white p-0.5">
+                                        <a href={d.id_front_url} target="_blank" rel="noreferrer" className="size-10 rounded-lg overflow-hidden border border-gray-100 dark:border-white/10 hover:scale-110 transition-transform shadow-sm bg-white dark:bg-black p-0.5">
                                             <img src={d.id_front_url} alt="BI Frente" className="w-full h-full object-cover rounded-md" />
                                         </a>
                                     )}
                                     {d.id_back_url && (
-                                        <a href={d.id_back_url} target="_blank" rel="noreferrer" className="size-10 rounded-lg overflow-hidden border border-gray-100 hover:scale-110 transition-transform shadow-sm bg-white p-0.5">
+                                        <a href={d.id_back_url} target="_blank" rel="noreferrer" className="size-10 rounded-lg overflow-hidden border border-gray-100 dark:border-white/10 hover:scale-110 transition-transform shadow-sm bg-white dark:bg-black p-0.5">
                                             <img src={d.id_back_url} alt="BI Verso" className="w-full h-full object-cover rounded-md" />
                                         </a>
                                     )}
@@ -76,29 +77,38 @@ const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, 
                             </td>
                             {canManage && (
                                 <td className="px-8 py-6 text-right">
-                                    <div className="flex justify-end gap-2">
+                                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        {d.verified && (
+                                            <button
+                                                onClick={() => onViewCard(d)}
+                                                className="size-8 rounded-lg bg-gray-100 dark:bg-white/10 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black flex items-center justify-center transition-colors text-gray-400"
+                                                title="Cartão Digital"
+                                            >
+                                                <span className="material-symbols-outlined text-sm">badge</span>
+                                            </button>
+                                        )}
                                         {!d.verified && (
                                             <button
                                                 onClick={() => onUpdate(d.id, { verified: true })}
-                                                className="p-2 text-green-500 hover:bg-green-500/10 rounded-xl transition-all"
+                                                className="size-8 flex items-center justify-center text-green-500 hover:bg-green-500/10 rounded-lg transition-all"
                                                 title="Verificar Biometria"
                                             >
-                                                <span className="material-symbols-outlined !text-lg">how_to_reg</span>
+                                                <span className="material-symbols-outlined text-lg">how_to_reg</span>
                                             </button>
                                         )}
                                         <button
                                             onClick={() => onUpdate(d.id, { active: !d.active })}
-                                            className={`p-2 rounded-xl transition-all ${d.active ? 'text-orange-500 hover:bg-orange-500/10' : 'text-blue-500 hover:bg-blue-500/10'}`}
+                                            className={`size-8 flex items-center justify-center rounded-lg transition-all ${d.active ? 'text-orange-500 hover:bg-orange-500/10' : 'text-blue-500 hover:bg-blue-500/10'}`}
                                             title={d.active ? "Desativar" : "Ativar"}
                                         >
-                                            <span className="material-symbols-outlined !text-lg">{d.active ? 'block' : 'check_circle'}</span>
+                                            <span className="material-symbols-outlined text-lg">{d.active ? 'block' : 'check_circle'}</span>
                                         </button>
                                         <button
                                             onClick={() => onDelete(d.id)}
-                                            className="p-2 text-red-500 hover:bg-red-500/10 rounded-xl transition-all"
+                                            className="size-8 flex items-center justify-center text-red-500 hover:bg-red-500/10 rounded-lg transition-all"
                                             title="Eliminar Perfil"
                                         >
-                                            <span className="material-symbols-outlined !text-lg">delete</span>
+                                            <span className="material-symbols-outlined text-lg">delete</span>
                                         </button>
                                     </div>
                                 </td>

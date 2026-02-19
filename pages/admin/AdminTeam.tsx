@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { UserProfile, fetchTeam, createEmployee, UserPermissions, updateEmployeeProfile, deleteEmployee } from '../../services/supabase';
+import { fetchTeam, createEmployee, updateEmployeePermissions, deleteEmployee, markFirstLoginComplete } from '../../services/supabase';
+import { UserProfile, UserPermissions } from '../../types';
 
 interface AdminTeamProps {
     userProfile: UserProfile | null;

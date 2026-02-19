@@ -6,6 +6,8 @@ import { fetchOrders, fetchProducts, fetchDrivers } from '../../services/supabas
 
 interface AdminDashboardProps {
   userProfile: UserProfile | null;
+  orders: Order[];
+  products: Product[];
 }
 
 const AdminDashboard: React.FC<AdminDashboardProps> = ({ userProfile }) => {

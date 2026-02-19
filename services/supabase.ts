@@ -392,6 +392,20 @@ export const fetchDrivers = async (): Promise<DeliveryDriver[]> => {
     return data;
 };
 
+export const fetchDriverById = async (id: string): Promise<DeliveryDriver | null> => {
+    const { data, error } = await supabase
+        .from('delivery_drivers')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+    if (error) {
+        console.error('Error fetching driver:', error);
+        return null;
+    }
+    return data;
+};
+
 export const createDriver = async (driver: Omit<DeliveryDriver, 'id' | 'verified' | 'created_at'>) => {
     const { error } = await supabase
         .from('delivery_drivers')

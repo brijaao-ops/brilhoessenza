@@ -63,6 +63,9 @@ export interface DeliveryDriver {
   id_front_url?: string;
   id_back_url?: string;
   selfie_url?: string;
+  photo_url?: string;
+  vehicle_type?: string;
+  license_plate?: string;
   verified: boolean;
   active: boolean;
   created_at: string;

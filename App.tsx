@@ -24,6 +24,7 @@ import AdminSlides from './pages/admin/AdminSlides';
 import AdminSlideForm from './pages/admin/AdminSlideForm';
 import AdminDrivers from './pages/admin/AdminDrivers';
 import DriverRegistration from './pages/DriverRegistration';
+import DriverProfile from './pages/DriverProfile';
 import CheckoutModal from './components/CheckoutModal';
 import OrderSuccessModal from './components/OrderSuccessModal';
 import { Product, Order, Category, Slide, UserProfile } from './types';
@@ -518,7 +519,7 @@ const AppContent: React.FC = () => {
         </aside>
         <main className="flex-1 overflow-y-auto relative">
           <Routes>
-            <Route path="/admin" element={<AdminDashboard orders={orders} products={products} />} />
+            <Route path="/admin" element={<AdminDashboard orders={orders} products={products} userProfile={userProfile} />} />
 
             <Route path="/admin/produtos" element={<AdminProducts products={products} onDelete={deleteProduct} userProfile={userProfile} />} />
             <Route path="/admin/produtos/novo" element={<AdminProductForm onSave={saveProduct} userProfile={userProfile} />} />
@@ -568,6 +569,7 @@ const AppContent: React.FC = () => {
           <Route path="/product/:id" element={<ProductDetail onAddToCart={handleAddToCart} products={products} />} />
           <Route path="/atelier/:section" element={<AtelierInfo />} />
           <Route path="/entregador/cadastro" element={<DriverRegistration />} />
+          <Route path="/entregador/:id" element={<DriverProfile />} />
           <Route path="*" element={<div className="py-24 text-center font-black uppercase tracking-widest text-gray-400">Página não encontrada</div>} />
         </Routes>
       </main>

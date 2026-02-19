@@ -4,6 +4,8 @@ import DriverTable from '../../components/admin/DriverTable';
 import { fetchDrivers, updateDriver, deleteDriver, supabase } from '../../services/supabase';
 import { useToast } from '../../contexts/ToastContext';
 
+import DriverCardModal from '../../components/admin/DriverCardModal';
+
 interface AdminDriversProps {
     userProfile?: UserProfile | null;
 }
@@ -13,6 +15,10 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
     const [drivers, setDrivers] = useState<DeliveryDriver[]>([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState<'all' | 'verified' | 'pending'>('all');
+
+    // Modal State
+    const [selectedDriver, setSelectedDriver] = useState<DeliveryDriver | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     useEffect(() => {
         loadDrivers();
@@ -51,6 +57,11 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
         }
     };
 
+    const handleViewCard = (driver: DeliveryDriver) => {
+        setSelectedDriver(driver);
+        setIsModalOpen(true);
+    };
+
     const filteredDrivers = drivers.filter(d => {
         if (filter === 'verified') return d.verified;
         if (filter === 'pending') return !d.verified;
@@ -82,8 +93,20 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
                     <p className="font-black uppercase tracking-widest text-xs text-gray-400">Nenhum entregador encontrado</p>
                 </div>
             ) : (
-                <DriverTable drivers={filteredDrivers} onUpdate={handleUpdate} onDelete={handleDelete} userProfile={userProfile} />
+                <DriverTable
+                    drivers={filteredDrivers}
+                    onUpdate={handleUpdate}
+                    onDelete={handleDelete}
+                    onViewCard={handleViewCard}
+                    userProfile={userProfile}
+                />
             )}
+
+            <DriverCardModal
+                driver={selectedDriver}
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            />
         </div>
     );
 };
