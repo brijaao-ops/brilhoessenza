@@ -125,7 +125,49 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
         actions: 140
     });
 
-    // ... existing resizing code ...
+    const [resizingCol, setResizingCol] = useState<string | null>(null);
+    const [startX, setStartX] = useState(0);
+    const [startWidth, setStartWidth] = useState(0);
+
+    const startResize = (e: React.MouseEvent, colKey: string) => {
+        e.preventDefault();
+        setResizingCol(colKey);
+        setStartX(e.clientX);
+        // @ts-ignore
+        setStartWidth(columns[colKey]);
+        document.body.style.cursor = 'col-resize';
+        document.body.style.userSelect = 'none';
+    };
+
+    useEffect(() => {
+        const handleMouseMove = (e: MouseEvent) => {
+            if (!resizingCol) return;
+            const diff = e.clientX - startX;
+            setColumns(prev => ({
+                ...prev,
+                // @ts-ignore
+                [resizingCol]: Math.max(50, startWidth + diff)
+            }));
+        };
+
+        const handleMouseUp = () => {
+            if (resizingCol) {
+                setResizingCol(null);
+                document.body.style.cursor = 'default';
+                document.body.style.userSelect = 'auto';
+            }
+        };
+
+        if (resizingCol) {
+            window.addEventListener('mousemove', handleMouseMove);
+            window.addEventListener('mouseup', handleMouseUp);
+        }
+
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('mouseup', handleMouseUp);
+        };
+    }, [resizingCol, startX, startWidth]);
 
     const Resizer = ({ colKey }: { colKey: string }) => (
         <div
