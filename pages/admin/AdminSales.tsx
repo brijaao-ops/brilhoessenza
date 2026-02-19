@@ -113,6 +113,45 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
 
     const totalAmount = filteredSales.reduce((acc: number, curr: Order) => acc + curr.amount, 0);
 
+    const handleExport = () => {
+        const headers = [
+            "ID Venda", "Cliente", "Telefone", "Bairro", "Município", "Província",
+            "Endereço Completo", "Valor (Kz)", "Data", "Status",
+            "Validador", "Entregador", "Motorista"
+        ];
+
+        const csvContent = [
+            headers.join(";"),
+            ...filteredSales.map(sale => {
+                const driverName = drivers.find(d => d.id === sale.driver_id)?.name || "N/A";
+                return [
+                    sale.id,
+                    `"${sale.customer || ''}"`,
+                    `"${sale.phone || ''}"`,
+                    `"${sale.neighborhood || ''}"`,
+                    `"${sale.municipality || ''}"`,
+                    `"${sale.province || ''}"`,
+                    `"${sale.address || ''}"`,
+                    sale.amount,
+                    `"${sale.date}"`,
+                    `"${sale.status}"`,
+                    `"${sale.validator_name || ''}"`,
+                    `"${sale.deliverer_name || ''}"`,
+                    `"${driverName}"`
+                ].join(";");
+            })
+        ].join("\n");
+
+        const blob = new Blob(["\uFEFF" + csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", `fluxo_vendas_${new Date().toISOString().split('T')[0]}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const [columns, setColumns] = useState({
         id: 90,
         customer: 200,
@@ -184,9 +223,18 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                         <h2 className="text-2xl font-black uppercase tracking-tighter">Fluxo de <span className="text-primary italic">Vendas</span></h2>
                         <p className="text-xs text-gray-500 font-medium">Histórico de transações confirmadas e em entrega.</p>
                     </div>
-                    <div className="bg-white dark:bg-[#15140b] px-6 py-3 rounded-2xl border text-right shadow-sm">
-                        <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Receita (Filtrada)</p>
-                        <p className="text-xl font-black">{totalAmount.toLocaleString()} Kz</p>
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={handleExport}
+                            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all shadow-sm hover:shadow-md"
+                        >
+                            <span className="material-symbols-outlined text-sm">download</span>
+                            Exportar CSV
+                        </button>
+                        <div className="bg-white dark:bg-[#15140b] px-6 py-3 rounded-2xl border text-right shadow-sm">
+                            <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Receita (Filtrada)</p>
+                            <p className="text-xl font-black">{totalAmount.toLocaleString()} Kz</p>
+                        </div>
                     </div>
                 </div>
 
