@@ -69,15 +69,15 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
     const totalAmount = sales.reduce((acc: number, curr: Order) => acc + curr.amount, 0);
 
     const [columns, setColumns] = useState({
-        id: 80,
-        customer: 150,
-        delivery: 200,
-        contact: 100,
-        amount: 100,
-        date: 80,
+        id: 90,
+        customer: 200,
+        delivery: 280,
+        contact: 120,
+        amount: 110,
+        date: 90,
         status: 100,
-        responsible: 150,
-        actions: 120
+        responsible: 200,
+        actions: 140
     });
 
     const [resizingCol, setResizingCol] = useState<string | null>(null);
