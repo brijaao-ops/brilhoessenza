@@ -51,6 +51,8 @@ export interface Order {
   productId?: string;
   driver_id?: string;
   driver?: DeliveryDriver;
+  delivery_token?: string;
+  delivery_confirmation_time?: string;
   items?: any[]; // Stores the cart items snapshot
 }
 

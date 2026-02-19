@@ -333,7 +333,8 @@ const AppContent: React.FC = () => {
       municipality: data.municipality,
       province: data.province,
       productId: cartItems.map(i => i.product.id).join(', '), // Store IDs as comma-separated string
-      items: cartItems // Store full cart structure
+      items: cartItems, // Store full cart structure
+      delivery_token: Math.random().toString(36).substring(2) + Date.now().toString(36) // Unique token for QR Code
     };
 
     try {
