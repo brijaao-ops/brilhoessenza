@@ -12,7 +12,11 @@ const OrderConfirmation: React.FC = () => {
 
     useEffect(() => {
         const fetchOrder = async () => {
-            if (!token) return;
+            if (!token) {
+                setError("Token de confirmação ausente.");
+                setLoading(false);
+                return;
+            }
             try {
                 // Call the secure RPC function we created
                 const { data, error } = await supabase.rpc('get_order_by_token', { token: token });
@@ -43,6 +47,7 @@ const OrderConfirmation: React.FC = () => {
             if (error) throw error;
             if (data === false) throw new Error("Pedido já entregue ou token inválido.");
 
+            // Update local state to reflect success immediately
             setSuccess(true);
         } catch (err: any) {
             alert("Erro ao confirmar: " + err.message);
@@ -130,7 +135,7 @@ const OrderConfirmation: React.FC = () => {
 
                     <div className="bg-gray-50 dark:bg-[#1c1a0d] rounded-xl p-4 flex justify-between items-center mb-8">
                         <span className="text-xs font-black uppercase tracking-wide">Total</span>
-                        <span className="text-lg font-black text-primary">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order.total || 0)}</span>
+                        <span className="text-lg font-black text-primary">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order.amount || 0)}</span>
                     </div>
 
                     <button

@@ -136,8 +136,34 @@ const DriverDashboard: React.FC = () => {
                                     size={200}
                                 />
                             ) : (
-                                <div className="size-[200px] flex items-center justify-center text-red-500 font-bold text-xs uppercase">
-                                    Token inválido. Contate o suporte.
+                                <div className="size-[200px] flex flex-col items-center justify-center gap-4">
+                                    <p className="text-red-500 font-bold text-xs uppercase">Código não gerado</p>
+                                    <button
+                                        onClick={async (e) => {
+                                            e.stopPropagation();
+                                            if (!selectedOrder) return;
+                                            try {
+                                                const newToken = Math.random().toString(36).substring(2) + Date.now().toString(36);
+                                                const { error } = await supabase
+                                                    .from('orders')
+                                                    .update({ delivery_token: newToken })
+                                                    .eq('id', selectedOrder.id);
+
+                                                if (error) throw error;
+
+                                                // Update local state instantly
+                                                setSelectedOrder({ ...selectedOrder, delivery_token: newToken });
+                                                setOrders(orders.map(o => o.id === selectedOrder.id ? { ...o, delivery_token: newToken } : o));
+
+                                            } catch (err) {
+                                                console.error("Erro ao gerar token:", err);
+                                                alert("Erro ao gerar código. Tente novamente.");
+                                            }
+                                        }}
+                                        className="bg-primary text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider shadow-lg hover:scale-105 transition-transform"
+                                    >
+                                        Gerar Código Agora
+                                    </button>
                                 </div>
                             )}
                         </div>
