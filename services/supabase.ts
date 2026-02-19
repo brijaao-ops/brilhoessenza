@@ -423,7 +423,7 @@ const createAuthUser = async (email: string, password: string, name: string) => 
         }
     });
 
-    const { data, error } = await tempClient.auth.signUp({
+    const { data: signUpData, error: signUpError } = await tempClient.auth.signUp({
         email,
         password,
         options: {
@@ -431,10 +431,57 @@ const createAuthUser = async (email: string, password: string, name: string) => 
         }
     });
 
-    if (error) throw error;
-    if (!data.user) throw new Error("Falha ao criar usuário de correio.");
+    if (signUpError) {
+        if (signUpError.message.includes("already registered") || signUpError.status === 422) {
+            throw new Error("Este email já está cadastrado. Tente outro.");
+        }
+        throw signUpError;
+    }
+    if (!signUpData.user) throw new Error("Falha ao criar usuário de correio.");
 
-    return data.user.id;
+    return signUpData.user.id;
+};
+
+export const createDriverCredentials = async (driverId: string, email: string, password: string) => {
+    // 1. Fetch driver name
+    const { data: driver, error: fetchError } = await supabase
+        .from('delivery_drivers')
+        .select('name')
+        .eq('id', driverId)
+        .single();
+
+    if (fetchError || !driver) throw new Error("Motorista não encontrado.");
+
+    // 2. Create Auth User
+    let userId = null;
+    try {
+        userId = await createAuthUser(email, password, driver.name);
+    } catch (err: any) {
+        throw new Error(err.message || "Erro ao criar login.");
+    }
+
+    // 3. Update Driver Record
+    const { error: updateError } = await supabase
+        .from('delivery_drivers')
+        .update({ user_id: userId, email: email })
+        .eq('id', driverId);
+
+    if (updateError) throw updateError;
+
+    // 4. Create Profile Entry (for consistency)
+    const { error: profileError } = await supabase.from('profiles').insert([{
+        id: userId,
+        email: email,
+        full_name: driver.name,
+        role: 'driver',
+        permissions: {},
+        is_active: true
+    }]);
+
+    if (profileError) {
+        console.error("Warning: Profile creation failed", profileError);
+        // Don't throw, primary flow worked
+    }
 };
 
 export const createDriver = async (driver: Omit<DeliveryDriver, 'id' | 'verified' | 'created_at'> & { password?: string }) => {

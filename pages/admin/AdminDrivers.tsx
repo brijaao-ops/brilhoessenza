@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { DeliveryDriver, UserProfile } from '../../types';
 import DriverTable from '../../components/admin/DriverTable';
-import { fetchDrivers, updateDriver, deleteDriver, supabase } from '../../services/supabase';
+import { fetchDrivers, updateDriver, deleteDriver, supabase, createDriverCredentials } from '../../services/supabase';
 import { useToast } from '../../contexts/ToastContext';
 
 import DriverCardModal from '../../components/admin/DriverCardModal';
+import DriverCredentialsModal from '../../components/admin/DriverCredentialsModal';
 
 interface AdminDriversProps {
     userProfile?: UserProfile | null;
@@ -19,6 +20,10 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
     // Modal State
     const [selectedDriver, setSelectedDriver] = useState<DeliveryDriver | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Credentials Modal
+    const [credDriver, setCredDriver] = useState<DeliveryDriver | null>(null);
+    const [isCredModalOpen, setIsCredModalOpen] = useState(false);
 
     useEffect(() => {
         loadDrivers();
@@ -62,6 +67,23 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
         setIsModalOpen(true);
     };
 
+    const handleEditCredentials = (driver: DeliveryDriver) => {
+        setCredDriver(driver);
+        setIsCredModalOpen(true);
+    };
+
+    const handleSaveCredentials = async (id: string, email: string, pass: string) => {
+        try {
+            await createDriverCredentials(id, email, pass);
+            showToast("Acesso criado com sucesso!", "success");
+            // Optionally reload drivers if needed, but not strictly required as it's a side effect
+        } catch (err: any) {
+            console.error(err);
+            showToast(err.message || "Erro ao criar acesso.", "error");
+            throw err; // Re-throw to let modal handle loading state if desired, though modal catches currently.
+        }
+    };
+
     const filteredDrivers = drivers.filter(d => {
         if (filter === 'verified') return d.verified;
         if (filter === 'pending') return !d.verified;
@@ -98,6 +120,7 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
                     onUpdate={handleUpdate}
                     onDelete={handleDelete}
                     onViewCard={handleViewCard}
+                    onEditCredentials={handleEditCredentials}
                     userProfile={userProfile}
                 />
             )}
@@ -106,6 +129,13 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
                 driver={selectedDriver}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
+            />
+
+            <DriverCredentialsModal
+                driver={credDriver}
+                isOpen={isCredModalOpen}
+                onClose={() => setIsCredModalOpen(false)}
+                onSave={handleSaveCredentials}
             />
         </div>
     );

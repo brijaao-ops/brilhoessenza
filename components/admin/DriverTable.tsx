@@ -6,10 +6,11 @@ interface DriverTableProps {
     onUpdate: (id: string, updates: Partial<DeliveryDriver>) => void;
     onDelete: (id: string) => void;
     onViewCard: (driver: DeliveryDriver) => void;
+    onEditCredentials: (driver: DeliveryDriver) => void;
     userProfile?: UserProfile | null;
 }
 
-const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, onViewCard, userProfile }) => {
+const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, onViewCard, onEditCredentials, userProfile }) => {
     const canManage = userProfile?.role === 'admin' || userProfile?.permissions?.drivers?.manage || userProfile?.permissions?.team?.manage;
 
     return (
@@ -109,6 +110,13 @@ const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, 
                                             title="Eliminar Perfil"
                                         >
                                             <span className="material-symbols-outlined text-lg">delete</span>
+                                        </button>
+                                        <button
+                                            onClick={() => onEditCredentials(d)}
+                                            className="size-8 flex items-center justify-center text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-black dark:hover:text-white rounded-lg transition-all"
+                                            title="Gerir Acesso"
+                                        >
+                                            <span className="material-symbols-outlined text-lg">key</span>
                                         </button>
                                     </div>
                                 </td>
