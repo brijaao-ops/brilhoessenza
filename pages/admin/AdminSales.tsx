@@ -127,6 +127,13 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
 
     // ... existing resizing code ...
 
+    const Resizer = ({ colKey }: { colKey: string }) => (
+        <div
+            onMouseDown={(e) => startResize(e, colKey)}
+            className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary z-20"
+        />
+    );
+
     return (
         <div className="p-4 lg:p-8 animate-fade-in h-screen flex flex-col overflow-hidden">
             <div className="flex flex-col gap-6 mb-6 shrink-0">
