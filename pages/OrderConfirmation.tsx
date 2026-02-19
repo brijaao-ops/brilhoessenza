@@ -38,15 +38,11 @@ const OrderConfirmation: React.FC = () => {
         if (!order) return;
         setConfirming(true);
         try {
-            const { error } = await supabase
-                .from('orders')
-                .update({
-                    status: 'DELIVERED',
-                    delivery_confirmation_time: new Date().toISOString()
-                })
-                .eq('id', order.id);
+            const { data, error } = await supabase.rpc('confirm_delivery', { token_input: token });
 
             if (error) throw error;
+            if (data === false) throw new Error("Pedido já entregue ou token inválido.");
+
             setSuccess(true);
         } catch (err: any) {
             alert("Erro ao confirmar: " + err.message);
