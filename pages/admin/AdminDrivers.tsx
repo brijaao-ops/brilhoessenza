@@ -6,6 +6,7 @@ import { useToast } from '../../contexts/ToastContext';
 
 import DriverCardModal from '../../components/admin/DriverCardModal';
 import DriverCredentialsModal from '../../components/admin/DriverCredentialsModal';
+import DriverCommissionModal from '../../components/admin/DriverCommissionModal';
 
 interface AdminDriversProps {
     userProfile?: UserProfile | null;
@@ -20,6 +21,9 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
     // Modal State
     const [selectedDriver, setSelectedDriver] = useState<DeliveryDriver | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Commission Modal
+    const [isCommissionOpen, setIsCommissionOpen] = useState(false);
 
     // Credentials Modal
     const [credDriver, setCredDriver] = useState<DeliveryDriver | null>(null);
@@ -98,10 +102,19 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
                     <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-[10px]">Gestão de parceiros logísticos</p>
                 </div>
 
-                <div className="flex gap-2 bg-gray-50 dark:bg-white/5 p-1.5 rounded-2xl border border-gray-100 dark:border-white/5">
-                    <button onClick={() => setFilter('all')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'all' ? 'bg-white dark:bg-[#1c1a0d] text-primary shadow-sm' : 'text-gray-400'}`}>Todos</button>
-                    <button onClick={() => setFilter('verified')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'verified' ? 'bg-white dark:bg-[#1c1a0d] text-primary shadow-sm' : 'text-gray-400'}`}>Verificados</button>
-                    <button onClick={() => setFilter('pending')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'pending' ? 'bg-white dark:bg-[#1c1a0d] text-primary shadow-sm' : 'text-gray-400'}`}>Pendentes</button>
+                <div className="flex items-center gap-3">
+                    <button
+                        onClick={() => setIsCommissionOpen(true)}
+                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 hover:from-primary/20 hover:to-primary/10 transition-all group"
+                    >
+                        <span className="material-symbols-outlined text-primary text-lg">payments</span>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">Comissões</span>
+                    </button>
+                    <div className="flex gap-2 bg-gray-50 dark:bg-white/5 p-1.5 rounded-2xl border border-gray-100 dark:border-white/5">
+                        <button onClick={() => setFilter('all')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'all' ? 'bg-white dark:bg-[#1c1a0d] text-primary shadow-sm' : 'text-gray-400'}`}>Todos</button>
+                        <button onClick={() => setFilter('verified')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'verified' ? 'bg-white dark:bg-[#1c1a0d] text-primary shadow-sm' : 'text-gray-400'}`}>Verificados</button>
+                        <button onClick={() => setFilter('pending')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'pending' ? 'bg-white dark:bg-[#1c1a0d] text-primary shadow-sm' : 'text-gray-400'}`}>Pendentes</button>
+                    </div>
                 </div>
             </div>
 
@@ -136,6 +149,12 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
                 isOpen={isCredModalOpen}
                 onClose={() => setIsCredModalOpen(false)}
                 onSave={handleSaveCredentials}
+            />
+
+            <DriverCommissionModal
+                isOpen={isCommissionOpen}
+                onClose={() => setIsCommissionOpen(false)}
+                drivers={drivers}
             />
         </div>
     );
