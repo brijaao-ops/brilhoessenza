@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { Product, Order, Category, Slide, UserProfile, UserPermissions, DeliveryDriver } from '../types';
+export type { UserProfile, UserPermissions };
 
 // @ts-ignore
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;

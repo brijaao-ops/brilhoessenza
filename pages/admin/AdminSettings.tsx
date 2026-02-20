@@ -72,9 +72,33 @@ const AdminSettings: React.FC = () => {
     if (saved.freeShippingThreshold) setFreeShippingThreshold(saved.freeShippingThreshold);
 
     // Sync with Database
-    fetchAppSetting('company_phone').then(phone => {
-      if (phone) setCompanyPhone(phone);
-    });
+    const syncFromDB = async () => {
+      const keys = [
+        'company_name', 'company_phone', 'company_address', 'heritage',
+        'shipping_policy', 'return_policy', 'brand_color', 'tax_rate',
+        'shipping_luanda', 'shipping_provinces', 'free_shipping_threshold'
+      ];
+
+      const loadedSettings: any = {};
+      for (const key of keys) {
+        const val = await fetchAppSetting(key);
+        if (val) loadedSettings[key] = val;
+      }
+
+      if (loadedSettings.company_name) setCompanyName(loadedSettings.company_name);
+      if (loadedSettings.company_phone) setCompanyPhone(loadedSettings.company_phone);
+      if (loadedSettings.company_address) setCompanyAddress(loadedSettings.company_address);
+      if (loadedSettings.heritage) setHeritage(loadedSettings.heritage);
+      if (loadedSettings.shipping_policy) setShippingPolicy(loadedSettings.shipping_policy);
+      if (loadedSettings.return_policy) setReturnPolicy(loadedSettings.return_policy);
+      if (loadedSettings.brand_color) setBrandColor(loadedSettings.brand_color);
+      if (loadedSettings.tax_rate) setTaxRate(loadedSettings.tax_rate);
+      if (loadedSettings.shipping_luanda) setShippingLuanda(loadedSettings.shipping_luanda);
+      if (loadedSettings.shipping_provinces) setShippingProvinces(loadedSettings.shipping_provinces);
+      if (loadedSettings.free_shipping_threshold) setFreeShippingThreshold(loadedSettings.free_shipping_threshold);
+    };
+
+    syncFromDB();
   }, []);
 
   const allTabs = [
@@ -114,9 +138,30 @@ const AdminSettings: React.FC = () => {
       };
 
       localStorage.setItem('brilho_essenza_settings', JSON.stringify(settings));
+      localStorage.setItem('brilho_essenza_settings_updated', Date.now().toString());
 
-      // Save critical public settings to DB
-      updateAppSetting('company_phone', companyPhone).catch(err => console.error("DB Sync Error:", err));
+      // Save all public settings to DB
+      const dbSyncs = [
+        updateAppSetting('company_name', companyName),
+        updateAppSetting('company_phone', companyPhone),
+        updateAppSetting('company_address', companyAddress),
+        updateAppSetting('heritage', heritage),
+        updateAppSetting('shipping_policy', shippingPolicy),
+        updateAppSetting('return_policy', returnPolicy),
+        updateAppSetting('brand_color', brandColor),
+        updateAppSetting('logo_url', logoUrl || ''), // Save logoUrl
+        updateAppSetting('tax_rate', taxRate),
+        updateAppSetting('enable_mcx', String(enableMCX)), // Convert boolean to string
+        updateAppSetting('mcx_phone', mcxPhone),
+        updateAppSetting('enable_iban', String(enableIBAN)), // Convert boolean to string
+        updateAppSetting('bank_name', bankName),
+        updateAppSetting('bank_iban', bankIBAN),
+        updateAppSetting('shipping_luanda', shippingLuanda),
+        updateAppSetting('shipping_provinces', shippingProvinces),
+        updateAppSetting('free_shipping_threshold', freeShippingThreshold)
+      ];
+
+      Promise.all(dbSyncs).catch(err => console.error("DB Sync Error:", err));
 
       const toast = document.createElement('div');
       toast.className = "fixed bottom-8 right-8 bg-black text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest z-[200] shadow-2xl border border-primary/20 animate-slide-in";

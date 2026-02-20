@@ -32,7 +32,7 @@ import CheckoutModal from './components/CheckoutModal';
 import OrderSuccessModal from './components/OrderSuccessModal';
 import { Product, Order, Category, Slide, UserProfile } from './types';
 import { MOCK_PRODUCTS, MOCK_ORDERS } from './constants';
-import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile } from './services/supabase';
+import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile, fetchAppSetting } from './services/supabase';
 import { ProductCardSkeleton } from './components/Skeletons';
 
 const AppContent: React.FC = () => {
@@ -86,6 +86,63 @@ const AppContent: React.FC = () => {
       }
     };
     loadData();
+  }, []);
+
+  // Fetch Settings from Supabase on Load
+  useEffect(() => {
+    const loadSettings = async () => {
+      const keys = [
+        'company_name', 'company_phone', 'company_address', 'heritage',
+        'shipping_policy', 'return_policy', 'brand_color', 'logo_url',
+        'tax_rate', 'enable_mcx', 'mcx_phone', 'enable_iban',
+        'bank_name', 'bank_iban', 'shipping_luanda', 'shipping_provinces',
+        'free_shipping_threshold'
+      ];
+
+      try {
+        const dbSettings: any = {};
+        for (const key of keys) {
+          const val = await fetchAppSetting(key);
+          if (val !== null) {
+            // Convert back to structured camelCase for local storage if needed
+            // But the app seems to expect snake_case in localStorage based on Footer.tsx
+            // Footer.tsx uses: settings.companyPhone, settings.companyAddress, settings.heritage, settings.companyName
+            // AdminSettings.tsx saves: companyName, companyPhone, companyAddress, heritage, etc.
+
+            // Mapping for compatibility with existing components
+            if (key === 'company_name') dbSettings.companyName = val;
+            if (key === 'company_phone') dbSettings.companyPhone = val;
+            if (key === 'company_address') dbSettings.companyAddress = val;
+            if (key === 'heritage') dbSettings.heritage = val;
+            if (key === 'shipping_policy') dbSettings.shippingPolicy = val;
+            if (key === 'return_policy') dbSettings.returnPolicy = val;
+            if (key === 'brand_color') dbSettings.brandColor = val;
+            if (key === 'logo_url') dbSettings.logoUrl = val;
+            if (key === 'tax_rate') dbSettings.taxRate = val;
+            if (key === 'mcx_phone') dbSettings.mcxPhone = val;
+            if (key === 'bank_name') dbSettings.bankName = val;
+            if (key === 'bank_iban') dbSettings.bankIBAN = val;
+            if (key === 'shipping_luanda') dbSettings.shippingLuanda = val;
+            if (key === 'shipping_provinces') dbSettings.shippingProvinces = val;
+            if (key === 'free_shipping_threshold') dbSettings.freeShippingThreshold = val;
+
+            // Booleans
+            if (key === 'enable_mcx') dbSettings.enableMCX = val === 'true';
+            if (key === 'enable_iban') dbSettings.enableIBAN = val === 'true';
+          }
+        }
+
+        if (Object.keys(dbSettings).length > 0) {
+          console.log("Sincronizando configurações do sistema...");
+          const current = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
+          const merged = { ...current, ...dbSettings };
+          localStorage.setItem('brilho_essenza_settings', JSON.stringify(merged));
+        }
+      } catch (e) {
+        console.error("Erro ao carregar configurações do Supabase:", e);
+      }
+    };
+    loadSettings();
   }, []);
 
   const [cartItems, setCartItems] = useState<{ product: Product, quantity: number }[]>([]);
