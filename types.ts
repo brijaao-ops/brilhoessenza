@@ -13,10 +13,11 @@ export interface Product {
   stock: number;
   bestSeller?: boolean;
   gender: 'masculino' | 'feminino' | 'unissexo';
-  created_by_name?: string;
   createdAt?: string;
   salePrice?: number;
   delivery_commission?: number; // % do preço que o entregador ganha
+  created_by_name?: string;
+  last_edited_by?: string;
   notes?: {
     top: string;
     heart: string;

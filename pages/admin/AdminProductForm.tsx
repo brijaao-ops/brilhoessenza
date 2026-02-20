@@ -65,6 +65,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
               description: product.description,
               bestSeller: product.bestSeller || false,
               created_by_name: product.created_by_name,
+              last_edited_by: product.last_edited_by,
               notes: product.notes || { top: '', heart: '', base: '' },
               delivery_commission: product.delivery_commission || 0
             });
@@ -86,7 +87,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
       id: isEditing ? id! : '',
       rating: isEditing ? (products.find(p => p.id === id)?.rating || 5) : 5,
       reviewsCount: isEditing ? (products.find(p => p.id === id)?.reviewsCount || 0) : 0,
-      created_by_name: userProfile?.full_name || 'Desconhecido'
+      created_by_name: isEditing
+        ? (products.find(p => p.id === id)?.created_by_name || userProfile?.full_name || 'Desconhecido')
+        : (userProfile?.full_name || 'Desconhecido'),
+      last_edited_by: userProfile?.full_name || 'Desconhecido'
     };
 
     try {
@@ -111,11 +115,21 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
             <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-tighter leading-none">
               {isEditing ? 'Refinar' : 'Novo'} <span className="text-primary italic">Tesouro</span>
             </h2>
-            {isEditing && formData.created_by_name && (
-              <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-2 flex items-center gap-2">
-                <span className="material-symbols-outlined !text-sm">person_edit</span>
-                Curadoria: <span className="text-primary">{formData.created_by_name}</span>
-              </p>
+            {isEditing && (
+              <div className="flex flex-col gap-1 mt-2">
+                {formData.created_by_name && (
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                    <span className="material-symbols-outlined !text-sm">person</span>
+                    Curadoria original: <span className="text-primary">{formData.created_by_name}</span>
+                  </p>
+                )}
+                {formData.last_edited_by && (
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                    <span className="material-symbols-outlined !text-sm">person_edit</span>
+                    Última edição: <span className="text-primary">{formData.last_edited_by}</span>
+                  </p>
+                )}
+              </div>
             )}
           </div>
         </div>

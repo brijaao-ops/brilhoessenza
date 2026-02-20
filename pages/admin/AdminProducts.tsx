@@ -180,6 +180,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
                 <th className="px-4 py-3 cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap" onClick={() => handleSort('rating')}>
                   <span className="inline-flex items-center">Rating<SortIcon col="rating" /></span>
                 </th>
+                <th className="px-4 py-3 whitespace-nowrap">Curadoria</th>
                 <th className="px-4 py-3 text-right whitespace-nowrap">Ações</th>
               </tr>
             </thead>
@@ -242,6 +243,18 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
                         <span className="text-[10px] font-bold">{p.rating}</span>
                       </div>
                     </td>
+                    <td className="px-4 py-3">
+                      <div className="flex flex-col">
+                        <span className="text-[9px] font-black uppercase text-gray-500 truncate max-w-[100px]" title={`Registado por: ${p.created_by_name || 'Desconhecido'}`}>
+                          {p.created_by_name?.split(' ')[0] || '—'}
+                        </span>
+                        {p.last_edited_by && p.last_edited_by !== p.created_by_name && (
+                          <span className="text-[8px] font-bold text-primary uppercase truncate max-w-[100px]" title={`Última edição: ${p.last_edited_by}`}>
+                            ed. {p.last_edited_by.split(' ')[0]}
+                          </span>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                         {canEdit && (
@@ -281,7 +294,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
           </table>
         )}
       </div>
-    </div>
+    </div >
   );
 };
 
