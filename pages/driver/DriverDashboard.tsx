@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase, signOut, getCurrentUser, fetchOrders } from '../../services/supabase';
-import { Order, DeliveryDriver } from '../../types';
+import { supabase, signOut, getCurrentUser, fetchOrders, fetchProducts } from '../../services/supabase';
+import { Order, DeliveryDriver, Product } from '../../types';
 import QRCode from 'react-qr-code';
 
 const DriverDashboard: React.FC = () => {
@@ -13,6 +13,7 @@ const DriverDashboard: React.FC = () => {
     const [activeTab, setActiveTab] = useState<'active' | 'history'>('active');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
+    const [productsMap, setProductsMap] = useState<Record<string, Product>>({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -41,7 +42,12 @@ const DriverDashboard: React.FC = () => {
 
     const loadOrders = async (driverId: string) => {
         try {
-            const allOrders = await fetchOrders();
+            const [allOrders, allProducts] = await Promise.all([fetchOrders(), fetchProducts()]);
+            // Build a map of product ID -> product for commission lookup
+            const pMap: Record<string, Product> = {};
+            allProducts.forEach((p: Product) => { pMap[p.id] = p; });
+            setProductsMap(pMap);
+
             const myOrders = allOrders.filter(o => o.driver_id === driverId);
             setActiveOrders(myOrders.filter(o => o.status !== 'DELIVERED' && o.status !== 'CANCELLED'));
             setDeliveredOrders(myOrders.filter(o => o.status === 'DELIVERED'));
@@ -89,16 +95,20 @@ const DriverDashboard: React.FC = () => {
 
     const totalHistoryAmount = filteredHistory.reduce((sum, o) => sum + (o.amount || 0), 0);
 
-    // Calculate driver commission for an order based on each item's delivery_commission %
+    // Calculate driver commission for an order using CURRENT product commission rates
+    const getItemCommission = (item: any): number => {
+        const product = item.product || item;
+        const productId = product.id || item.id || item.productId;
+        const currentProduct = productId ? productsMap[productId] : null;
+        const commissionPct = currentProduct?.delivery_commission || product.delivery_commission || 0;
+        const price = product.salePrice || product.sale_price || product.price || 0;
+        const qty = item.quantity || item.qty || 1;
+        return price * qty * commissionPct / 100;
+    };
+
     const calcOrderCommission = (order: Order): number => {
         if (!order.items || order.items.length === 0) return 0;
-        return order.items.reduce((sum: number, item: any) => {
-            const product = item.product || item;
-            const price = product.salePrice || product.sale_price || product.price || 0;
-            const qty = item.quantity || item.qty || 1;
-            const commissionPct = product.delivery_commission || 0;
-            return sum + (price * qty * commissionPct / 100);
-        }, 0);
+        return order.items.reduce((sum: number, item: any) => sum + getItemCommission(item), 0);
     };
 
     const totalEarnings = filteredHistory.reduce((sum, o) => sum + calcOrderCommission(o), 0);
@@ -183,8 +193,7 @@ const DriverDashboard: React.FC = () => {
                                                 const product = item.product || item;
                                                 const price = product.salePrice || product.sale_price || product.price || 0;
                                                 const qty = item.quantity || item.qty || 1;
-                                                const commPct = product.delivery_commission || 0;
-                                                const itemCommission = price * qty * commPct / 100;
+                                                const itemCommission = getItemCommission(item);
                                                 return (
                                                     <div key={idx} className="flex items-center justify-between text-[10px]">
                                                         <span className="font-bold truncate max-w-[150px]">{product.name || 'Produto'}</span>
@@ -321,8 +330,7 @@ const DriverDashboard: React.FC = () => {
                                                 const product = item.product || item;
                                                 const price = product.salePrice || product.sale_price || product.price || 0;
                                                 const qty = item.quantity || item.qty || 1;
-                                                const commPct = product.delivery_commission || 0;
-                                                const itemCommission = price * qty * commPct / 100;
+                                                const itemCommission = getItemCommission(item);
                                                 return (
                                                     <div key={idx} className="flex justify-between text-[9px]">
                                                         <span className="text-gray-400 truncate max-w-[140px]">{product.name || 'Produto'}</span>
