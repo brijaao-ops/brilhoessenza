@@ -102,8 +102,7 @@ const DriverDashboard: React.FC = () => {
         const currentProduct = productId ? productsMap[productId] : null;
         const commissionPct = currentProduct?.delivery_commission || product.delivery_commission || 0;
         const price = product.salePrice || product.sale_price || product.price || 0;
-        const qty = item.quantity || item.qty || 1;
-        return price * qty * commissionPct / 100;
+        return price * commissionPct / 100;
     };
 
     const calcOrderCommission = (order: Order): number => {
