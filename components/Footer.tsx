@@ -81,7 +81,7 @@ const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               <li><button onClick={() => handleCategoryClick('Maquiagem')} className="hover:text-white transition-colors">Beauty</button></li>
               <li><Link to="/entregador/cadastro" className="text-primary font-black animate-pulse hover:text-white transition-colors">QUERO SER ENTREGADOR</Link></li>
               <li>
-                <Link to="/driver/login" className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-black rounded-lg font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/10">
+                <Link to="/driver/login" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-black rounded-lg font-bold hover:brightness-110 transition-all shadow-lg shadow-primary/10">
                   <span className="material-symbols-outlined !text-[18px]">local_shipping</span>
                   Portal do Entregador
                 </Link>

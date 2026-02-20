@@ -50,6 +50,7 @@ const DriverLogin: React.FC = () => {
                         <input
                             type="email"
                             required
+                            autoComplete="off"
                             value={email}
                             onChange={e => setEmail(e.target.value)}
                             className="w-full bg-black/50 border border-white/10 text-white p-5 rounded-2xl outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all font-bold placeholder:text-gray-600"
@@ -62,6 +63,7 @@ const DriverLogin: React.FC = () => {
                         <input
                             type="password"
                             required
+                            autoComplete="new-password"
                             value={password}
                             onChange={e => setPassword(e.target.value)}
                             className="w-full bg-black/50 border border-white/10 text-white p-5 rounded-2xl outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 transition-all font-bold placeholder:text-gray-600"
