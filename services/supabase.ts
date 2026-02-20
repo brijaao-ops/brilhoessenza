@@ -189,7 +189,8 @@ export const fetchProducts = async (): Promise<Product[]> => {
         subCategory: p.sub_category,
         bestSeller: p.best_seller,
         createdAt: p.created_at,
-        salePrice: p.sale_price
+        salePrice: p.sale_price,
+        delivery_commission: p.delivery_commission || 0
     }));
 };
 
@@ -210,7 +211,8 @@ export const addProduct = async (product: Omit<Product, 'id'>) => {
         created_by_name: product.created_by_name,
         gender: product.gender,
         notes: product.notes,
-        sale_price: product.salePrice
+        sale_price: product.salePrice,
+        delivery_commission: product.delivery_commission || 0
     };
 
     const { data, error } = await supabase
@@ -239,6 +241,7 @@ export const updateProduct = async (id: string, product: Partial<Product>) => {
     if (product.created_by_name !== undefined) dbProduct.created_by_name = product.created_by_name;
     if (product.notes !== undefined) dbProduct.notes = product.notes;
     if (product.gender !== undefined) dbProduct.gender = product.gender;
+    if (product.delivery_commission !== undefined) dbProduct.delivery_commission = product.delivery_commission;
 
     const { error } = await supabase
         .from('products')

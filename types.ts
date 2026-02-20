@@ -16,6 +16,7 @@ export interface Product {
   created_by_name?: string;
   createdAt?: string;
   salePrice?: number;
+  delivery_commission?: number; // % do preço que o entregador ganha
   notes?: {
     top: string;
     heart: string;

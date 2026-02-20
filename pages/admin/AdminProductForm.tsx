@@ -39,7 +39,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
       top: '',
       heart: '',
       base: ''
-    }
+    },
+    delivery_commission: 0
   });
 
   useEffect(() => {
@@ -64,7 +65,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
               description: product.description,
               bestSeller: product.bestSeller || false,
               created_by_name: product.created_by_name,
-              notes: product.notes || { top: '', heart: '', base: '' }
+              notes: product.notes || { top: '', heart: '', base: '' },
+              delivery_commission: product.delivery_commission || 0
             });
           }
         }
@@ -141,6 +143,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
             salePrice={formData.salePrice || 0}
             stock={formData.stock}
             bestSeller={formData.bestSeller || false}
+            deliveryCommission={formData.delivery_commission || 0}
             onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
           />
         </div>

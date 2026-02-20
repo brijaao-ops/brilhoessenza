@@ -89,6 +89,20 @@ const DriverDashboard: React.FC = () => {
 
     const totalHistoryAmount = filteredHistory.reduce((sum, o) => sum + (o.amount || 0), 0);
 
+    // Calculate driver commission for an order based on each item's delivery_commission %
+    const calcOrderCommission = (order: Order): number => {
+        if (!order.items || order.items.length === 0) return 0;
+        return order.items.reduce((sum: number, item: any) => {
+            const product = item.product || item;
+            const price = product.salePrice || product.sale_price || product.price || 0;
+            const qty = item.quantity || item.qty || 1;
+            const commissionPct = product.delivery_commission || 0;
+            return sum + (price * qty * commissionPct / 100);
+        }, 0);
+    };
+
+    const totalEarnings = filteredHistory.reduce((sum, o) => sum + calcOrderCommission(o), 0);
+
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#0f0e08] pb-24">
             {/* Header */}
@@ -196,20 +210,27 @@ const DriverDashboard: React.FC = () => {
                 ) : (
                     /* ===== HISTORY TAB ===== */
                     <>
-                        {/* Stats Card */}
-                        <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-5 rounded-2xl text-white shadow-lg">
-                            <div className="flex items-center justify-between mb-3">
-                                <div>
-                                    <p className="text-[10px] font-bold uppercase tracking-widest opacity-80">Entregas Realizadas</p>
-                                    <p className="text-4xl font-black">{filteredHistory.length}</p>
+                        {/* Stats Cards */}
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="bg-gradient-to-br from-green-500 to-emerald-600 p-4 rounded-2xl text-white shadow-lg">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <div className="size-8 bg-white/20 rounded-xl flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-lg">verified</span>
+                                    </div>
+                                    <p className="text-[9px] font-bold uppercase tracking-widest opacity-80">Entregas</p>
                                 </div>
-                                <div className="size-14 bg-white/20 rounded-2xl flex items-center justify-center">
-                                    <span className="material-symbols-outlined text-3xl">verified</span>
-                                </div>
+                                <p className="text-3xl font-black">{filteredHistory.length}</p>
+                                <p className="text-[10px] opacity-70 font-medium mt-1">Valor: {new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(totalHistoryAmount)}</p>
                             </div>
-                            <div className="flex items-center justify-between text-sm">
-                                <span className="opacity-80 text-xs font-bold">Receita Total</span>
-                                <span className="font-black">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(totalHistoryAmount)}</span>
+                            <div className="bg-gradient-to-br from-amber-500 to-yellow-600 p-4 rounded-2xl text-white shadow-lg">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <div className="size-8 bg-white/20 rounded-xl flex items-center justify-center">
+                                        <span className="material-symbols-outlined text-lg">payments</span>
+                                    </div>
+                                    <p className="text-[9px] font-bold uppercase tracking-widest opacity-80">Meus Ganhos</p>
+                                </div>
+                                <p className="text-3xl font-black">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA', maximumFractionDigits: 0 }).format(totalEarnings)}</p>
+                                <p className="text-[10px] opacity-70 font-medium mt-1">Comissão acumulada</p>
                             </div>
                         </div>
 
@@ -272,6 +293,9 @@ const DriverDashboard: React.FC = () => {
                                         </div>
                                         <div className="text-right">
                                             <p className="text-xs font-black">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order.amount)}</p>
+                                            {calcOrderCommission(order) > 0 && (
+                                                <p className="text-[9px] font-bold text-green-600">+{calcOrderCommission(order).toLocaleString()} Kz</p>
+                                            )}
                                             <p className="text-[9px] text-gray-400">{order.date}</p>
                                         </div>
                                     </div>
