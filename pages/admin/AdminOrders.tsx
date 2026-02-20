@@ -67,12 +67,17 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
   const getProductDetails = (order: Order) => {
     // Prioritize 'items' structure if available
     if (order.items && order.items.length > 0) {
-      return order.items.map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        image: item.image,
-        quantity: item.quantity
-      }));
+      return order.items.map((item: any) => {
+        // Handle nested product structure: {product: {...}, quantity: N}
+        const product = item.product || item;
+        return {
+          id: product.id || item.id,
+          name: product.name || 'Produto',
+          image: product.image || '',
+          price: product.salePrice || product.sale_price || product.price || 0,
+          quantity: item.quantity || item.qty || 1
+        };
+      });
     }
 
     // Fallback to productId string
@@ -84,6 +89,7 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
           id: product.id,
           name: product.name,
           image: product.image,
+          price: product.price,
           quantity: 1
         } : null;
       }).filter(Boolean);
@@ -141,12 +147,24 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
                         <div className="flex flex-col gap-2">
                           {orderItems.length > 0 ? orderItems.map((item: any, idx: number) => (
                             <div key={`${o.id}-${idx}`} className="flex items-center gap-3">
-                              <div className="size-10 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
-                                <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                              </div>
+                              {item.image && (
+                                <div className="size-10 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
+                                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                                </div>
+                              )}
                               <div className="flex flex-col">
-                                <span className="text-xs font-black truncate max-w-[150px]">{item.name}</span>
-                                {item.quantity && <span className="text-[9px] text-gray-400 font-bold uppercase">Qtd: {item.quantity}</span>}
+                                <span className="text-xs font-black truncate max-w-[200px]">{item.name}</span>
+                                <div className="flex items-center gap-2 text-[9px] text-gray-400 font-bold uppercase">
+                                  <span>Qtd: {item.quantity}</span>
+                                  {item.price > 0 && (
+                                    <>
+                                      <span>•</span>
+                                      <span>{item.price.toLocaleString()} Kz</span>
+                                      <span>•</span>
+                                      <span className="text-gray-600 dark:text-gray-300">Sub: {(item.price * item.quantity).toLocaleString()} Kz</span>
+                                    </>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           )) : <span className="text-xs text-gray-400 italic">Sem detalhes</span>}
@@ -218,17 +236,24 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
                       <td className="px-8 py-5">
                         <div className="flex flex-col gap-2">
                           <span className="text-[9px] text-gray-400 font-mono">#{o.id.slice(0, 8)}</span>
-                          <div className="flex -space-x-2">
-                            {orderItems.map((item: any, idx) => (
-                              <img
-                                key={idx}
-                                src={item.image}
-                                alt={item.name}
-                                className="size-8 rounded-full border-2 border-white dark:border-black object-cover"
-                                title={item.name}
-                              />
-                            ))}
-                          </div>
+                          {orderItems.length > 0 ? orderItems.map((item: any, idx: number) => (
+                            <div key={idx} className="flex items-center gap-2">
+                              {item.image && (
+                                <img
+                                  src={item.image}
+                                  alt={item.name}
+                                  className="size-8 rounded-full border-2 border-white dark:border-black object-cover shrink-0"
+                                />
+                              )}
+                              <div className="flex flex-col">
+                                <span className="text-[10px] font-bold truncate max-w-[160px]">{item.name}</span>
+                                <span className="text-[9px] text-gray-400">
+                                  {item.quantity}x {item.price > 0 ? `${item.price.toLocaleString()} Kz` : ''}
+                                  {item.price > 0 && <span className="font-bold text-gray-500"> = {(item.price * item.quantity).toLocaleString()} Kz</span>}
+                                </span>
+                              </div>
+                            </div>
+                          )) : <span className="text-[9px] text-gray-400 italic">Sem detalhes</span>}
                         </div>
                       </td>
                       <td className="px-8 py-5">

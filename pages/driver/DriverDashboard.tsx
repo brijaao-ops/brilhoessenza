@@ -100,13 +100,32 @@ const DriverDashboard: React.FC = () => {
                                 {order.municipality}, {order.neighborhood}
                             </p>
 
-                            <div className="flex items-center justify-between border-t border-gray-100 dark:border-[#222115] pt-4">
-                                <div className="text-xs font-bold">
-                                    {order.items?.length || 0} Itens
-                                </div>
-                                <div className="flex items-center gap-2 text-primary font-black text-xs uppercase tracking-wide">
-                                    Entregar Agora
-                                    <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                            <div className="border-t border-gray-100 dark:border-[#222115] pt-3 mt-1">
+                                {order.items && order.items.length > 0 ? (
+                                    <div className="flex flex-col gap-1.5 mb-3">
+                                        {order.items.map((item: any, idx: number) => {
+                                            const product = item.product || item;
+                                            const price = product.salePrice || product.sale_price || product.price || 0;
+                                            const qty = item.quantity || item.qty || 1;
+                                            return (
+                                                <div key={idx} className="flex items-center justify-between text-[10px]">
+                                                    <span className="font-bold truncate max-w-[180px]">{product.name || 'Produto'}</span>
+                                                    <span className="text-gray-400 shrink-0">{qty}x {price > 0 ? `${price.toLocaleString()} Kz` : ''}</span>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <p className="text-[10px] text-gray-400 mb-3">Sem detalhes dos itens</p>
+                                )}
+                                <div className="flex items-center justify-between">
+                                    <div className="text-xs font-black">
+                                        {new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order.amount)}
+                                    </div>
+                                    <div className="flex items-center gap-2 text-primary font-black text-xs uppercase tracking-wide">
+                                        Entregar Agora
+                                        <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -170,8 +189,23 @@ const DriverDashboard: React.FC = () => {
 
                         <div className="bg-white/10 rounded-xl p-4 w-full max-w-xs text-left">
                             <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-2">Resumo do Pedido</p>
-                            <p className="text-white font-bold text-sm truncate">{selectedOrder.customer}</p>
-                            <p className="text-gray-400 text-xs">{selectedOrder.items?.length} Itens • {new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(selectedOrder.amount)}</p>
+                            <p className="text-white font-bold text-sm truncate mb-2">{selectedOrder.customer}</p>
+                            {selectedOrder.items && selectedOrder.items.length > 0 && (
+                                <div className="flex flex-col gap-1 mb-2">
+                                    {selectedOrder.items.map((item: any, idx: number) => {
+                                        const product = item.product || item;
+                                        const price = product.salePrice || product.sale_price || product.price || 0;
+                                        const qty = item.quantity || item.qty || 1;
+                                        return (
+                                            <div key={idx} className="flex justify-between text-[10px]">
+                                                <span className="text-gray-300 truncate mr-2">{product.name || 'Produto'}</span>
+                                                <span className="text-gray-400 shrink-0">{qty}x {price > 0 ? `${price.toLocaleString()} Kz` : ''}</span>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                            <p className="text-primary font-black text-xs">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(selectedOrder.amount)}</p>
                         </div>
                     </div>
                 </div>
