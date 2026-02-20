@@ -49,6 +49,31 @@ const OrderConfirmation: React.FC = () => {
 
             // Update local state to reflect success immediately
             setSuccess(true);
+
+            // Send WhatsApp notification to the company
+            try {
+                const settings = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
+                const companyPhone = settings.companyPhone || '244923000000';
+                const now = new Date();
+                const dateStr = now.toLocaleDateString('pt-AO');
+                const timeStr = now.toLocaleTimeString('pt-AO', { hour: '2-digit', minute: '2-digit' });
+                const totalFormatted = new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order.amount || 0);
+
+                let msg = `✅ *ENTREGA CONFIRMADA*\n\n`;
+                msg += `📦 *Pedido:* #${(order.id || '').slice(0, 8)}\n`;
+                msg += `👤 *Cliente:* ${order.customer || 'N/A'}\n`;
+                msg += `🚚 *Entregador:* ${order.driver?.name || 'N/A'}\n`;
+                msg += `💰 *Valor:* ${totalFormatted}\n`;
+                msg += `📅 *Confirmado em:* ${dateStr} às ${timeStr}\n`;
+                msg += `🔑 *Protocolo:* ${token}\n\n`;
+                msg += `_Confirmação automática via QR Code — Brilho Essenza_`;
+
+                const encoded = encodeURIComponent(msg);
+                window.open(`https://wa.me/${companyPhone.replace(/\D/g, '')}?text=${encoded}`, '_blank');
+            } catch (whatsappErr) {
+                console.error("WhatsApp notification failed:", whatsappErr);
+                // Don't block the confirmation flow if WhatsApp fails
+            }
         } catch (err: any) {
             alert("Erro ao confirmar: " + err.message);
         } finally {
