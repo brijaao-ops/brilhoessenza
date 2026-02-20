@@ -132,7 +132,7 @@ const DriverDashboard: React.FC = () => {
                         <div className="bg-white p-6 rounded-3xl mb-8 shadow-2xl shadow-primary/20">
                             {selectedOrder.delivery_token ? (
                                 <QRCode
-                                    value={`${window.location.origin}/#/confirmar/${selectedOrder.delivery_token}`}
+                                    value={`${window.location.href.split('#')[0]}#/confirmar/${selectedOrder.delivery_token}`}
                                     size={200}
                                 />
                             ) : (
