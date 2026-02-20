@@ -183,10 +183,17 @@ const DriverDashboard: React.FC = () => {
                                                 const product = item.product || item;
                                                 const price = product.salePrice || product.sale_price || product.price || 0;
                                                 const qty = item.quantity || item.qty || 1;
+                                                const commPct = product.delivery_commission || 0;
+                                                const itemCommission = price * qty * commPct / 100;
                                                 return (
                                                     <div key={idx} className="flex items-center justify-between text-[10px]">
-                                                        <span className="font-bold truncate max-w-[180px]">{product.name || 'Produto'}</span>
-                                                        <span className="text-gray-400 shrink-0">{qty}x {price > 0 ? `${price.toLocaleString()} Kz` : ''}</span>
+                                                        <span className="font-bold truncate max-w-[150px]">{product.name || 'Produto'}</span>
+                                                        <div className="flex items-center gap-2 shrink-0">
+                                                            <span className="text-gray-400">{qty}x {price > 0 ? `${price.toLocaleString()} Kz` : ''}</span>
+                                                            {itemCommission > 0 && (
+                                                                <span className="text-green-600 font-bold bg-green-500/10 px-1.5 py-0.5 rounded">+{itemCommission.toLocaleString()} Kz</span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 );
                                             })}
@@ -195,8 +202,13 @@ const DriverDashboard: React.FC = () => {
                                         <p className="text-[10px] text-gray-400 mb-3">Sem detalhes dos itens</p>
                                     )}
                                     <div className="flex items-center justify-between">
-                                        <div className="text-xs font-black">
-                                            {new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order.amount)}
+                                        <div>
+                                            <div className="text-xs font-black">
+                                                {new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order.amount)}
+                                            </div>
+                                            {calcOrderCommission(order) > 0 && (
+                                                <p className="text-[9px] font-bold text-green-600">Teu ganho: +{calcOrderCommission(order).toLocaleString()} Kz</p>
+                                            )}
                                         </div>
                                         <div className="flex items-center gap-2 text-primary font-black text-xs uppercase tracking-wide">
                                             Entregar Agora
@@ -307,11 +319,19 @@ const DriverDashboard: React.FC = () => {
                                         <div className="mt-2 pt-2 border-t border-gray-50 dark:border-[#222115] flex flex-col gap-1">
                                             {order.items.map((item: any, idx: number) => {
                                                 const product = item.product || item;
+                                                const price = product.salePrice || product.sale_price || product.price || 0;
                                                 const qty = item.quantity || item.qty || 1;
+                                                const commPct = product.delivery_commission || 0;
+                                                const itemCommission = price * qty * commPct / 100;
                                                 return (
-                                                    <div key={idx} className="flex justify-between text-[9px] text-gray-400">
-                                                        <span className="truncate max-w-[180px]">{product.name || 'Produto'}</span>
-                                                        <span>x{qty}</span>
+                                                    <div key={idx} className="flex justify-between text-[9px]">
+                                                        <span className="text-gray-400 truncate max-w-[140px]">{product.name || 'Produto'}</span>
+                                                        <div className="flex items-center gap-2 shrink-0">
+                                                            <span className="text-gray-400">x{qty}</span>
+                                                            {itemCommission > 0 && (
+                                                                <span className="text-green-600 font-bold">+{itemCommission.toLocaleString()} Kz</span>
+                                                            )}
+                                                        </div>
                                                     </div>
                                                 );
                                             })}
