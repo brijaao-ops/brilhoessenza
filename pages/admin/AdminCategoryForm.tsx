@@ -85,7 +85,7 @@ const AdminCategoryForm: React.FC = () => {
   };
 
   return (
-    <div className="p-8 lg:p-12 max-w-4xl mx-auto">
+    <div className="p-4 md:p-8 lg:p-12 max-w-4xl mx-auto">
       <div className="flex items-center gap-4 mb-10">
         <Link to="/admin/categorias" className="size-12 bg-white dark:bg-[#15140b] rounded-2xl flex items-center justify-center hover:bg-primary transition-all shadow-sm group">
           <span className="material-symbols-outlined group-hover:translate-x-[-2px] transition-transform">arrow_back</span>
@@ -98,9 +98,9 @@ const AdminCategoryForm: React.FC = () => {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 flex flex-col gap-8">
-          <div className="bg-white dark:bg-[#15140b] p-10 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+          <div className="bg-white dark:bg-[#15140b] p-6 lg:p-8 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
             <h4 className="font-black uppercase tracking-widest text-[10px] mb-8 text-primary">Detalhes da Estrutura</h4>
 
             <div className="flex flex-col gap-6">
@@ -119,7 +119,7 @@ const AdminCategoryForm: React.FC = () => {
 
               <div className="flex flex-col gap-4">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Ícone Representativo</label>
-                <div className="grid grid-cols-6 gap-3">
+                <div className="grid grid-cols-4 sm:grid-cols-6 gap-3">
                   {availableIcons.map(icon => (
                     <button
                       key={icon}
@@ -140,7 +140,7 @@ const AdminCategoryForm: React.FC = () => {
         </div>
 
         <div className="flex flex-col gap-8">
-          <div className="bg-white dark:bg-[#15140b] p-10 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+          <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
             <h4 className="font-black uppercase tracking-widest text-[10px] mb-8 text-primary">Visibilidade</h4>
             <div className="flex flex-col gap-6">
               <label className="flex items-center gap-4 cursor-pointer group">

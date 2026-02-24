@@ -40,18 +40,23 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
     }
   }, [slides.length]);
   const filteredProducts = products.filter(p => {
-    // 1. Search Filter
+    // 1. Search Filter (Defensive handling of missing fields)
+    const name = (p.name || "").toLowerCase();
+    const category = (p.category || "").toLowerCase();
+    const description = (p.description || "").toLowerCase();
+    const term = searchTerm.toLowerCase();
+
     const matchesSearch = searchTerm === "" ||
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.category.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      p.description.toLowerCase().includes(searchTerm.toLowerCase());
+      name.includes(term) ||
+      category.includes(term) ||
+      description.includes(term);
 
     // 2. Category / Special Filter
     let matchesCategory = true;
     if (selectedCategory === 'Novidades') {
-      matchesCategory = true; // Show all, but we will sort later
+      matchesCategory = true;
     } else if (selectedCategory === 'Ofertas') {
-      matchesCategory = (p.salePrice || 0) > 0 && (p.salePrice || 0) < p.price;
+      matchesCategory = (p.salePrice || 0) > 0 && (p.salePrice || 0) < (p.price || 0);
     } else if (selectedCategory !== null) {
       matchesCategory = p.category === selectedCategory;
     }
@@ -61,7 +66,7 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
     if (selectedCategory === 'Novidades') {
       return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
     }
-    return 0; // Keep default order (which is usually by ID or whatever fetch returned)
+    return 0;
   });
 
   return (
@@ -91,7 +96,7 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
                       </div>
                       <h2
                         className="text-5xl lg:text-8xl font-black leading-[0.9] mb-8 tracking-tighter text-white"
-                        dangerouslySetInnerHTML={{ __html: slide.title.replace(/\n/g, '<br />') }}
+                        dangerouslySetInnerHTML={{ __html: (slide.title || "").replace(/\n/g, '<br />') }}
                       />
                       <button
                         onClick={() => setIsQuizOpen(true)}
@@ -104,8 +109,17 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
                   </div>
                 </div>
               ))
+            ) : isLoading ? (
+              /* Skeleton for Hero */
+              <div className="absolute inset-0 bg-black/40 animate-pulse flex items-center px-8 lg:px-20">
+                <div className="space-y-6 w-full max-w-2xl">
+                  <div className="h-4 w-32 bg-white/10 rounded"></div>
+                  <div className="h-20 w-full bg-white/10 rounded-3xl"></div>
+                  <div className="h-20 w-2/3 bg-white/10 rounded-3xl"></div>
+                </div>
+              </div>
             ) : (
-              /* Fallback if no slides */
+              /* Fallback if no slides and done loading */
               <div className="absolute inset-0 flex items-center px-8 lg:px-20 text-white">
                 <div className="max-w-2xl">
                   <h2 className="text-6xl font-black mb-4 uppercase">Brilho <span className="text-primary italic">Essenza</span></h2>
@@ -153,13 +167,13 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
           </div>
         </div>
 
-        {isLoading ? (
+        {isLoading && products.length === 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
               <ProductSkeleton key={i} />
             ))}
           </div>
-        ) : hasError ? (
+        ) : hasError && products.length === 0 ? (
           <div className="py-48 text-center border-2 border-dashed border-red-200 dark:border-red-500/10 rounded-[5rem] animate-fade-up">
             <span className="material-symbols-outlined !text-8xl text-red-300 mb-8">wifi_off</span>
             <h4 className="text-2xl font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white mb-4">Falha na ligação</h4>

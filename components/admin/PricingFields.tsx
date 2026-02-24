@@ -12,7 +12,7 @@ interface PricingFieldsProps {
 
 export const PricingFields: React.FC<PricingFieldsProps> = ({ price, salePrice, stock, bestSeller, deliveryCommission, onChange }) => {
     return (
-        <div className="bg-white dark:bg-[#15140b] p-8 rounded-[2.5rem] border shadow-sm flex flex-col gap-6">
+        <div className="bg-white dark:bg-[#15140b] p-6 lg:p-8 rounded-2xl lg:rounded-[2.5rem] border shadow-sm flex flex-col gap-6">
             <h4 className="font-black uppercase tracking-widest text-[10px] mb-2 text-primary">Financeiro & Estoque</h4>
 
             <div className="flex flex-col gap-2">

@@ -85,36 +85,36 @@ const AdminSlideForm: React.FC = () => {
     };
 
     return (
-        <div className="p-8 lg:p-12 max-w-5xl mx-auto">
-            <div className="flex items-center gap-6 mb-12">
-                <Link to="/admin/slides" className="size-14 bg-white dark:bg-[#15140b] rounded-2xl flex items-center justify-center hover:bg-primary border border-gray-100 dark:border-white/5 transition-all shadow-sm">
+        <div className="p-4 md:p-8 lg:p-12 max-w-5xl mx-auto">
+            <div className="flex items-center gap-4 lg:gap-6 mb-8 lg:mb-12">
+                <Link to="/admin/slides" className="size-12 lg:size-14 bg-white dark:bg-[#15140b] rounded-2xl flex items-center justify-center hover:bg-primary border border-gray-100 dark:border-white/5 transition-all shadow-sm">
                     <span className="material-symbols-outlined">arrow_back</span>
                 </Link>
                 <div>
-                    <h2 className="text-4xl font-black uppercase tracking-tighter">
+                    <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tighter">
                         {isEditing ? 'Refinar' : 'Novo'} <span className="text-primary italic">Banner</span>
                     </h2>
-                    <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-2 px-1">Curadoria Visual da Home</p>
+                    <p className="text-[9px] lg:text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1 lg:mt-2 px-1">Curadoria Visual da Home</p>
                 </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
                 <div className="lg:col-span-12">
-                    <div className="bg-white dark:bg-[#15140b] p-10 rounded-[3rem] border border-gray-100 dark:border-white/5 shadow-sm space-y-10">
+                    <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[3rem] border border-gray-100 dark:border-white/5 shadow-sm space-y-8 lg:space-y-10">
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div className="flex flex-col gap-6 md:col-span-2">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
+                            <div className="flex flex-col gap-4 lg:gap-6 md:col-span-2">
                                 <div className="flex flex-col gap-2">
                                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Imagem de Fundo (Upload Local)</label>
-                                    <div className="flex items-center gap-4">
-                                        <label className="flex-1 flex items-center justify-center gap-3 bg-gray-50 dark:bg-black/20 p-5 rounded-2xl border-2 border-dashed border-gray-100 dark:border-white/5 hover:border-primary transition-all cursor-pointer group">
+                                    <div className="flex flex-col sm:flex-row items-center gap-4">
+                                        <label className="w-full sm:flex-1 flex items-center justify-center gap-3 bg-gray-50 dark:bg-black/20 p-4 lg:p-5 rounded-2xl border-2 border-dashed border-gray-100 dark:border-white/5 hover:border-primary transition-all cursor-pointer group">
                                             <span className="material-symbols-outlined text-gray-400 group-hover:text-primary transition-colors">upload_file</span>
-                                            <span className="text-xs font-bold text-gray-400 group-hover:text-primary transition-colors">
-                                                {selectedFile ? selectedFile.name : 'Clique para selecionar do dispositivo'}
+                                            <span className="text-[11px] font-bold text-gray-400 group-hover:text-primary transition-colors truncate">
+                                                {selectedFile ? selectedFile.name : 'Selecione imagem'}
                                             </span>
                                             <input type="file" className="hidden" accept="image/*" onChange={handleFileChange} />
                                         </label>
-                                        <div className="text-gray-300 font-black italic">OU</div>
+                                        <div className="text-gray-300 font-black italic text-xs">OU</div>
                                         <input
                                             type="url"
                                             value={formData.image_url.startsWith('data:') ? '' : formData.image_url}
@@ -122,14 +122,14 @@ const AdminSlideForm: React.FC = () => {
                                                 setFormData({ ...formData, image_url: e.target.value });
                                                 setSelectedFile(null);
                                             }}
-                                            className="flex-1 bg-gray-50 dark:bg-black/20 p-5 rounded-2xl font-bold outline-none border border-transparent focus:border-primary transition-all text-xs"
+                                            className="w-full sm:flex-1 bg-gray-50 dark:bg-black/20 p-4 lg:p-5 rounded-2xl font-bold outline-none border border-transparent focus:border-primary transition-all text-xs"
                                             placeholder="URL da Imagem Externa"
                                         />
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="aspect-video w-full bg-black/5 rounded-3xl overflow-hidden border-2 border-dashed border-gray-100 dark:border-white/5 mb-4 flex items-center justify-center md:col-span-2">
+                            <div className="aspect-video w-full bg-black/5 rounded-2xl lg:rounded-3xl overflow-hidden border-2 border-dashed border-gray-100 dark:border-white/5 mb-2 flex items-center justify-center md:col-span-2">
                                 {formData.image_url ? (
                                     <img src={formData.image_url} className="w-full h-full object-cover" alt="Preview" />
                                 ) : (
@@ -143,7 +143,7 @@ const AdminSlideForm: React.FC = () => {
                                     type="text"
                                     value={formData.subtitle}
                                     onChange={e => setFormData({ ...formData, subtitle: e.target.value })}
-                                    className="bg-gray-50 dark:bg-black/20 p-5 rounded-2xl font-bold outline-none text-xs"
+                                    className="bg-gray-50 dark:bg-black/20 p-4 lg:p-5 rounded-2xl font-bold outline-none text-xs"
                                     placeholder="Ex: Edição Limitada"
                                     required
                                 />
@@ -155,7 +155,7 @@ const AdminSlideForm: React.FC = () => {
                                     type="number"
                                     value={formData.order_index}
                                     onChange={e => setFormData({ ...formData, order_index: Number(e.target.value) })}
-                                    className="bg-gray-50 dark:bg-black/20 p-5 rounded-2xl font-bold outline-none text-xs"
+                                    className="bg-gray-50 dark:bg-black/20 p-4 lg:p-5 rounded-2xl font-bold outline-none text-xs"
                                 />
                             </div>
 
@@ -165,7 +165,7 @@ const AdminSlideForm: React.FC = () => {
                                     rows={2}
                                     value={formData.title}
                                     onChange={e => setFormData({ ...formData, title: e.target.value })}
-                                    className="bg-gray-50 dark:bg-black/20 p-5 rounded-2xl font-black text-2xl outline-none resize-none leading-tight"
+                                    className="bg-gray-50 dark:bg-black/20 p-4 lg:p-5 rounded-2xl font-black text-xl lg:text-2xl outline-none resize-none leading-tight"
                                     placeholder="Ex: Sua Essenza Inesquecível"
                                     required
                                 />
@@ -177,20 +177,20 @@ const AdminSlideForm: React.FC = () => {
                                     type="text"
                                     value={formData.button_text}
                                     onChange={e => setFormData({ ...formData, button_text: e.target.value })}
-                                    className="bg-gray-50 dark:bg-black/20 p-5 rounded-2xl font-bold outline-none text-xs"
+                                    className="bg-gray-50 dark:bg-black/20 p-4 lg:p-5 rounded-2xl font-bold outline-none text-xs"
                                 />
                             </div>
 
                             <div className="flex flex-col gap-2">
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center justify-between">
                                     Link de Destino
-                                    <span className="text-[9px] text-primary lowercase italic Normal">Dica: use #produtos para rolar até o catálogo</span>
+                                    <span className="text-[9px] text-primary lowercase italic Normal hidden sm:inline">Dica: use #produtos</span>
                                 </label>
                                 <input
                                     type="text"
                                     value={formData.button_link}
                                     onChange={e => setFormData({ ...formData, button_link: e.target.value })}
-                                    className="bg-gray-50 dark:bg-black/20 p-5 rounded-2xl font-bold outline-none text-xs"
+                                    className="bg-gray-50 dark:bg-black/20 p-4 lg:p-5 rounded-2xl font-bold outline-none text-xs"
                                     placeholder="#produtos ou /url"
                                 />
                             </div>
@@ -200,7 +200,7 @@ const AdminSlideForm: React.FC = () => {
                             <button
                                 type="submit"
                                 disabled={uploading}
-                                className={`bg-black dark:bg-white text-white dark:text-black font-black px-16 py-5 rounded-2xl uppercase tracking-widest text-xs shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center gap-3 ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                                className={`w-full sm:w-auto bg-black dark:bg-white text-white dark:text-black font-black px-12 lg:px-16 py-4 lg:py-5 rounded-xl lg:rounded-2xl uppercase tracking-widest text-[10px] lg:text-xs shadow-xl transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-3 ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
                                 {uploading && <span className="size-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>}
                                 {uploading ? 'Processando...' : (isEditing ? 'Salvar Alterações' : 'Publicar no Site')}

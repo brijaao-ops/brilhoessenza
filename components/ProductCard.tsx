@@ -71,8 +71,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                         onClick={handleAddToCart}
                         disabled={isAdded}
                         className={`absolute bottom-4 right-4 size-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl z-30 ${isAdded
-                                ? 'bg-green-500 text-white scale-110'
-                                : 'bg-black text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 translate-y-0 lg:translate-y-4 lg:group-hover:translate-y-0'
+                            ? 'bg-green-500 text-white scale-110'
+                            : 'bg-black text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 translate-y-0 lg:translate-y-4 lg:group-hover:translate-y-0'
                             }`}
                     >
                         <span className={`material-symbols-outlined !text-sm ${isAdded ? 'animate-bounce' : ''}`}>
@@ -85,20 +85,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
             {/* Product Name - Smaller text, better wrapping */}
             <div className="z-20 text-center px-6 mb-24 pointer-events-none">
                 <h3 className="text-lg font-black uppercase tracking-tight text-black leading-tight line-clamp-2">
-                    {product.name}
+                    {product.name || 'Produto Sem Nome'}
                 </h3>
             </div>
 
             {/* Price Bar - Currency next to price, no circle */}
             <div className="absolute bottom-0 left-0 w-full h-20 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center z-20 border-t border-gray-100">
-                {product.salePrice && product.salePrice > 0 && product.salePrice < product.price ? (
+                {(product.salePrice || 0) > 0 && (product.salePrice || 0) < (product.price || 0) ? (
                     <>
                         <span className="text-xs line-through text-black/40 font-bold mb-1">
-                            {product.price.toLocaleString('pt-AO', { minimumFractionDigits: 0 })} Kz
+                            {(product.price || 0).toLocaleString('pt-AO', { minimumFractionDigits: 0 })} Kz
                         </span>
                         <div className="flex items-baseline gap-1">
                             <span className="text-2xl font-black tracking-tighter text-red-600">
-                                {product.salePrice.toLocaleString('pt-AO', { minimumFractionDigits: 0 })}
+                                {(product.salePrice || 0).toLocaleString('pt-AO', { minimumFractionDigits: 0 })}
                             </span>
                             <span className="text-xs font-black text-red-600">Kz</span>
                         </div>
@@ -106,7 +106,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                 ) : (
                     <div className="flex items-baseline gap-1">
                         <span className="text-2xl font-black tracking-tighter text-black">
-                            {product.price.toLocaleString('pt-AO', { minimumFractionDigits: 0 })}
+                            {(product.price || 0).toLocaleString('pt-AO', { minimumFractionDigits: 0 })}
                         </span>
                         <span className="text-xs font-black text-black">Kz</span>
                     </div>

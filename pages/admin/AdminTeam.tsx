@@ -209,16 +209,16 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
     };
 
     return (
-        <div className="p-8 lg:p-12 animate-slide-in">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
+        <div className="p-4 md:p-8 lg:p-12 animate-slide-in">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 lg:mb-12 gap-6">
                 <div>
-                    <h2 className="text-3xl font-black uppercase tracking-tighter">Gestão de <span className="text-primary italic">Equipe</span></h2>
-                    <p className="text-sm text-gray-500 font-medium">Controle de acesso e colaboradores.</p>
+                    <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tighter">Gestão de <span className="text-primary italic">Equipe</span></h2>
+                    <p className="text-[11px] lg:text-sm text-gray-500 font-medium">Controle de acesso e colaboradores.</p>
                 </div>
                 {(userProfile?.role === 'admin' || userProfile?.permissions?.team?.edit || userProfile?.permissions?.team?.manage) && (
                     <button
                         onClick={() => setShowModal(true)}
-                        className="bg-primary text-black font-black px-8 py-4 rounded-2xl uppercase tracking-widest text-[10px] hover:brightness-110 shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center gap-2"
+                        className="bg-primary text-black font-black px-8 py-4 rounded-xl uppercase tracking-widest text-[10px] hover:brightness-110 shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center gap-2"
                     >
                         <span className="material-symbols-outlined !text-base">person_add</span>
                         Novo Funcionário
@@ -324,8 +324,8 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
 
             {/* Modal Criar Funcionário */}
             {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white dark:bg-[#15140b] w-full max-w-lg rounded-[2.5rem] p-10 relative">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white dark:bg-[#15140b] w-full max-w-lg rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 relative max-h-[90vh] overflow-y-auto">
                         <button onClick={() => setShowModal(false)} className="absolute top-8 right-8 text-gray-400 hover:text-red-500">
                             <span className="material-symbols-outlined">close</span>
                         </button>
@@ -368,8 +368,8 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
 
             {/* Modal Editar Funcionário */}
             {editingMember && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-6 bg-black/80 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white dark:bg-[#15140b] w-full max-w-lg rounded-[2.5rem] p-10 relative">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white dark:bg-[#15140b] w-full max-w-lg rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 relative max-h-[90vh] overflow-y-auto">
                         <button onClick={() => setEditingMember(null)} className="absolute top-8 right-8 text-gray-400 hover:text-red-500">
                             <span className="material-symbols-outlined">close</span>
                         </button>

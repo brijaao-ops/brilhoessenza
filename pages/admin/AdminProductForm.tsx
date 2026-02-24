@@ -104,29 +104,29 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
   };
 
   return (
-    <div className="p-6 lg:p-12 animate-fade-in">
+    <div className="p-4 md:p-8 lg:p-12 animate-fade-in">
       {/* Absolute/Sticky Header for Save Button */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-16">
-        <div className="flex items-center gap-6">
-          <Link to="/admin/produtos" className="size-14 bg-white dark:bg-[#15140b] rounded-2xl flex items-center justify-center hover:bg-primary border shrink-0 transition-all active:scale-95 shadow-sm">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 lg:mb-16">
+        <div className="flex items-center gap-4 lg:gap-6">
+          <Link to="/admin/produtos" className="size-12 lg:size-14 bg-white dark:bg-[#15140b] rounded-2xl flex items-center justify-center hover:bg-primary border shrink-0 transition-all active:scale-95 shadow-sm">
             <span className="material-symbols-outlined">arrow_back</span>
           </Link>
           <div>
-            <h2 className="text-3xl lg:text-4xl font-black uppercase tracking-tighter leading-none">
+            <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tighter leading-none">
               {isEditing ? 'Refinar' : 'Novo'} <span className="text-primary italic">Tesouro</span>
             </h2>
             {isEditing && (
-              <div className="flex flex-col gap-1 mt-2">
+              <div className="flex flex-col gap-0.5 mt-1 lg:mt-2">
                 {formData.created_by_name && (
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                    <span className="material-symbols-outlined !text-sm">person</span>
-                    Curadoria original: <span className="text-primary">{formData.created_by_name}</span>
+                  <p className="text-[9px] lg:text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                    <span className="material-symbols-outlined !text-xs lg:!text-sm">person</span>
+                    <span className="hidden xs:inline">Curadoria original:</span> <span className="text-primary">{formData.created_by_name}</span>
                   </p>
                 )}
                 {formData.last_edited_by && (
-                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                    <span className="material-symbols-outlined !text-sm">person_edit</span>
-                    Última edição: <span className="text-primary">{formData.last_edited_by}</span>
+                  <p className="text-[9px] lg:text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
+                    <span className="material-symbols-outlined !text-xs lg:!text-sm">person_edit</span>
+                    <span className="hidden xs:inline">Última edição:</span> <span className="text-primary">{formData.last_edited_by}</span>
                   </p>
                 )}
               </div>
@@ -136,9 +136,9 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
 
         <button
           onClick={handleSubmit}
-          className="bg-primary text-black font-black px-10 py-5 rounded-2xl uppercase tracking-widest text-[11px] shadow-2xl shadow-primary/20 hover:scale-[1.05] active:scale-95 transition-all flex items-center justify-center gap-3 whitespace-nowrap md:ml-auto"
+          className="bg-primary text-black font-black px-8 lg:px-10 py-4 lg:py-5 rounded-xl lg:rounded-2xl uppercase tracking-widest text-[10px] lg:text-[11px] shadow-2xl shadow-primary/20 hover:scale-[1.05] active:scale-95 transition-all flex items-center justify-center gap-3 whitespace-nowrap md:ml-auto"
         >
-          <span className="material-symbols-outlined !text-xl">save</span>
+          <span className="material-symbols-outlined !text-lg lg:!text-xl">save</span>
           {isEditing ? 'Salvar Refinamento' : 'Publicar Tesouro'}
         </button>
       </div>
@@ -163,8 +163,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
         </div>
 
         <div className="lg:col-span-8 flex flex-col gap-10">
-          <div className="bg-white dark:bg-[#15140b] p-10 rounded-[2.5rem] border shadow-sm text-black dark:text-white">
-            <h4 className="font-black uppercase tracking-widest text-[10px] mb-8 text-primary">Dados do Catálogo</h4>
+          <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border shadow-sm text-black dark:text-white">
+            <h4 className="font-black uppercase tracking-widest text-[10px] mb-6 lg:mb-8 text-primary">Dados do Catálogo</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="flex flex-col gap-2 md:col-span-2">
                 <label className="text-[10px] font-black text-gray-400 uppercase">Nome do Produto</label>
@@ -174,7 +174,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
               <div className="md:col-span-2">
                 <CategorySelect
                   category={formData.category}
-                  subCategory={formData.subCategory}
+                  subCategory={formData.subCategory || ''}
                   gender={formData.gender}
                   categories={categories}
                   onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}

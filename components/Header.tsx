@@ -73,6 +73,36 @@ const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-50 glass-effect border-b border-[#f4f2e7] dark:border-[#222115] shadow-sm">
+      {/* Session Notification Bar - Ultra Visible on Mobile & Desktop */}
+      {isAuthenticated && userProfile && (
+        <div className="bg-primary/90 backdrop-blur-md px-4 sm:px-8 py-2.5 flex items-center justify-between gap-4 border-b border-primary/20">
+          <div className="flex items-center gap-2 overflow-hidden">
+            <div className="size-6 bg-black text-primary rounded-lg flex items-center justify-center font-black text-[10px] shrink-0">
+              {userProfile.full_name?.charAt(0)}
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-tight text-black truncate">
+              Sessão: <span className="opacity-70">{userProfile.full_name}</span>
+            </p>
+          </div>
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              to="/admin"
+              className="bg-black text-primary px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:brightness-125 transition-all flex items-center gap-1.5 shadow-lg shadow-black/10"
+            >
+              <span className="material-symbols-outlined !text-xs">dashboard</span>
+              Gestão
+            </Link>
+            <button
+              onClick={onLogout}
+              className="bg-red-500 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-red-600 transition-all flex items-center gap-1.5 shadow-lg shadow-red-500/20"
+            >
+              <span className="material-symbols-outlined !text-xs">logout</span>
+              Sair
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="max-w-[1400px] mx-auto px-8 lg:px-12 py-6 flex items-center justify-between gap-12">
         {/* Boutique Branding */}
         <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-3 group shrink-0">

@@ -46,24 +46,24 @@ const AdminCustomers: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-8 lg:p-12">
-      <h2 className="text-3xl font-black uppercase tracking-tighter mb-12">Base de <span className="text-primary italic">Elite</span></h2>
+    <div className="p-4 md:p-8 lg:p-12">
+      <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tighter mb-8 lg:mb-12">Base de <span className="text-primary italic">Elite</span></h2>
       <div className="grid grid-cols-1 gap-6">
         {customers.length === 0 ? (
           <p className="text-gray-400 font-medium">Nenhum cliente registrado ainda.</p>
         ) : (
           customers.map((c, i) => (
-            <div key={i} className="bg-white dark:bg-[#15140b] p-8 rounded-[2rem] border border-gray-100 flex justify-between items-center hover:shadow-lg transition-all">
+            <div key={i} className="bg-white dark:bg-[#15140b] p-6 lg:p-8 rounded-2xl lg:rounded-[2rem] border border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-lg transition-all">
               <div>
-                <h4 className="font-black text-xl">{c.name}</h4>
-                <div className="flex gap-4 mt-1">
-                  <p className="text-sm text-gray-400 flex items-center gap-1"><span className="material-symbols-outlined text-[10px]">call</span> {c.phone.length === 9 ? `+244 ${c.phone}` : c.phone}</p>
-                  <p className="text-sm text-gray-400 flex items-center gap-1"><span className="material-symbols-outlined text-[10px]">receipt</span> {c.orders} Pedidos</p>
+                <h4 className="font-black text-lg lg:text-xl">{c.name}</h4>
+                <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">
+                  <p className="text-xs lg:text-sm text-gray-400 flex items-center gap-1"><span className="material-symbols-outlined text-[10px]">call</span> {c.phone.length === 9 ? `+244 ${c.phone}` : c.phone}</p>
+                  <p className="text-xs lg:text-sm text-gray-400 flex items-center gap-1"><span className="material-symbols-outlined text-[10px]">receipt</span> {c.orders} Pedidos</p>
                 </div>
               </div>
-              <div className="text-right">
-                <p className="text-[10px] font-black text-gray-400 uppercase">Total Gasto</p>
-                <p className="text-xl font-black text-green-600">{c.spent.toLocaleString()} Kz</p>
+              <div className="text-left sm:text-right">
+                <p className="text-[9px] lg:text-[10px] font-black text-gray-400 uppercase">Total Gasto</p>
+                <p className="text-lg lg:text-xl font-black text-green-600">{c.spent.toLocaleString()} Kz</p>
               </div>
             </div>
           ))

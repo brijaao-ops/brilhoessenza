@@ -32,7 +32,7 @@ import CheckoutModal from './components/CheckoutModal';
 import OrderSuccessModal from './components/OrderSuccessModal';
 import { Product, Order, Category, Slide, UserProfile } from './types';
 import { MOCK_PRODUCTS, MOCK_ORDERS } from './constants';
-import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile, fetchAppSetting } from './services/supabase';
+import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile, fetchAllAppSettings } from './services/supabase';
 import { ProductCardSkeleton } from './components/Skeletons';
 
 const AppContent: React.FC = () => {
@@ -43,101 +43,112 @@ const AppContent: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [hasLoadError, setHasLoadError] = useState(false);
 
-  // Initial Load with Seed Fallback
+  // Initial Load with Seed Fallback & Parallel Optimization
   useEffect(() => {
     const loadData = async () => {
-      setLoading(true);
+      // 1. STALE-WHILE-REVALIDATE: Check local storage for quick first render
       try {
-        let loadedProducts = await fetchProducts();
-        if (loadedProducts.length === 0) {
-          // Seed if empty
-          console.log("Seeding initial products...");
-          for (const p of MOCK_PRODUCTS) {
-            // @ts-ignore
-            await createProduct(p);
-          }
-          loadedProducts = await fetchProducts();
+        const cachedProducts = localStorage.getItem('brilho_cached_products');
+        const cachedCategories = localStorage.getItem('brilho_cached_categories');
+        const cachedSlides = localStorage.getItem('brilho_cached_slides');
+
+        if (cachedProducts) setProducts(JSON.parse(cachedProducts));
+        if (cachedCategories) setCategories(JSON.parse(cachedCategories));
+        if (cachedSlides) setSlides(JSON.parse(cachedSlides));
+      } catch (e) {
+        console.warn("Failed to parse cache", e);
+      }
+
+      setLoading(true);
+
+      // 2. INDEPENDENT FETCHING: Don't let one slow request block everything
+      const productsPromise = fetchProducts().then(async (loadedProducts) => {
+        if (loadedProducts.length === 0 && !localStorage.getItem('brilho_cached_products')) {
+          console.log("Seeding initial products in parallel...");
+          // Better: Filter only valid products and insert in parallel
+          const validMocks = MOCK_PRODUCTS.filter(p => p.name && p.price);
+          await Promise.all(validMocks.map(p => addProduct(p)));
+
+          const fresh = await fetchProducts();
+          setProducts(fresh);
+          localStorage.setItem('brilho_cached_products', JSON.stringify(fresh));
+        } else if (loadedProducts.length > 0) {
+          setProducts(loadedProducts);
+          localStorage.setItem('brilho_cached_products', JSON.stringify(loadedProducts));
         }
-        setProducts(loadedProducts);
+        setLoading(false);
+      }).catch(e => {
+        console.error("Products fetch fail", e);
+        if (products.length === 0) setHasLoadError(true);
+        setLoading(false);
+      });
 
-        let loadedOrders = await fetchOrders();
-        setOrders(loadedOrders);
-
-        let loadedCategories = await fetchCategories();
-        if (loadedCategories.length === 0) {
-          // Seed Categories if empty
+      const categoriesPromise = fetchCategories().then(loadedCategories => {
+        if (loadedCategories.length === 0 && !localStorage.getItem('brilho_cached_categories')) {
+          // Silent category seeding in background if needed
           const defaultCats = [
             { name: 'Fragrâncias', slug: 'fragrancias', icon: 'temp_preferences_custom', color: 'primary', active: true },
             { name: 'Cuidados com a Pele', slug: 'skincare', icon: 'spa', color: 'green-500', active: true },
             { name: 'Maquiagem', slug: 'maquiagem', icon: 'brush', color: 'pink-500', active: true },
             { name: 'Acessórios', slug: 'acessorios', icon: 'shopping_bag', color: 'blue-500', active: true }
           ];
-          for (const c of defaultCats) await createCategory(c);
-          loadedCategories = await fetchCategories();
+          Promise.all(defaultCats.map(c => createCategory(c))).then(() => fetchCategories().then(fresh => {
+            setCategories(fresh);
+            localStorage.setItem('brilho_cached_categories', JSON.stringify(fresh));
+          }));
+        } else if (loadedCategories.length > 0) {
+          setCategories(loadedCategories);
+          localStorage.setItem('brilho_cached_categories', JSON.stringify(loadedCategories));
         }
-        setCategories(loadedCategories);
+      }).catch(e => console.error("Categories fetch fail", e));
 
-        let loadedSlides = await fetchSlides();
-        setSlides(loadedSlides);
+      const slidesPromise = fetchSlides().then(loadedSlides => {
+        if (loadedSlides.length > 0) {
+          setSlides(loadedSlides);
+          localStorage.setItem('brilho_cached_slides', JSON.stringify(loadedSlides));
+        }
+      }).catch(e => console.error("Slides fetch fail", e));
 
-        // If we reach here successfully, clear any previous error
-        setHasLoadError(false);
-      } catch (error) {
-        console.error("Failed to load data from Supabase", error);
-        setHasLoadError(true);
-      } finally {
-        setLoading(false);
-      }
+      const ordersPromise = fetchOrders().then(o => setOrders(o)).catch(e => console.error("Orders fail", e));
+
+      // Initial Load Error only triggers if products fail and no cache exists
+      await Promise.allSettled([productsPromise, categoriesPromise, slidesPromise, ordersPromise]);
     };
     loadData();
   }, []);
 
-  // Fetch Settings from Supabase on Load
+  // Optimized Settings Fetching (Batched)
   useEffect(() => {
     const loadSettings = async () => {
-      const keys = [
-        'company_name', 'company_phone', 'company_address', 'heritage',
-        'shipping_policy', 'return_policy', 'brand_color', 'logo_url',
-        'tax_rate', 'enable_mcx', 'mcx_phone', 'enable_iban',
-        'bank_name', 'bank_iban', 'shipping_luanda', 'shipping_provinces',
-        'free_shipping_threshold'
-      ];
-
       try {
+        const allSettings = await fetchAllAppSettings();
+        if (Object.keys(allSettings).length === 0) return;
+
         const dbSettings: any = {};
-        for (const key of keys) {
-          const val = await fetchAppSetting(key);
-          if (val !== null) {
-            // Convert back to structured camelCase for local storage if needed
-            // But the app seems to expect snake_case in localStorage based on Footer.tsx
-            // Footer.tsx uses: settings.companyPhone, settings.companyAddress, settings.heritage, settings.companyName
-            // AdminSettings.tsx saves: companyName, companyPhone, companyAddress, heritage, etc.
 
-            // Mapping for compatibility with existing components
-            if (key === 'company_name') dbSettings.companyName = val;
-            if (key === 'company_phone') dbSettings.companyPhone = val;
-            if (key === 'company_address') dbSettings.companyAddress = val;
-            if (key === 'heritage') dbSettings.heritage = val;
-            if (key === 'shipping_policy') dbSettings.shippingPolicy = val;
-            if (key === 'return_policy') dbSettings.returnPolicy = val;
-            if (key === 'brand_color') dbSettings.brandColor = val;
-            if (key === 'logo_url') dbSettings.logoUrl = val;
-            if (key === 'tax_rate') dbSettings.taxRate = val;
-            if (key === 'mcx_phone') dbSettings.mcxPhone = val;
-            if (key === 'bank_name') dbSettings.bankName = val;
-            if (key === 'bank_iban') dbSettings.bankIBAN = val;
-            if (key === 'shipping_luanda') dbSettings.shippingLuanda = val;
-            if (key === 'shipping_provinces') dbSettings.shippingProvinces = val;
-            if (key === 'free_shipping_threshold') dbSettings.freeShippingThreshold = val;
+        // Mapping for compatibility with existing components (maintaining original keys used in App.tsx)
+        if (allSettings.company_name) dbSettings.companyName = allSettings.company_name;
+        if (allSettings.company_phone) dbSettings.companyPhone = allSettings.company_phone;
+        if (allSettings.company_address) dbSettings.companyAddress = allSettings.company_address;
+        if (allSettings.heritage) dbSettings.heritage = allSettings.heritage;
+        if (allSettings.shipping_policy) dbSettings.shippingPolicy = allSettings.shipping_policy;
+        if (allSettings.return_policy) dbSettings.returnPolicy = allSettings.return_policy;
+        if (allSettings.brand_color) dbSettings.brandColor = allSettings.brand_color;
+        if (allSettings.logo_url) dbSettings.logoUrl = allSettings.logo_url;
+        if (allSettings.tax_rate) dbSettings.taxRate = allSettings.tax_rate;
+        if (allSettings.mcx_phone) dbSettings.mcxPhone = allSettings.mcx_phone;
+        if (allSettings.bank_name) dbSettings.bankName = allSettings.bank_name;
+        if (allSettings.bank_iban) dbSettings.bankIBAN = allSettings.bank_iban;
+        if (allSettings.shipping_luanda) dbSettings.shippingLuanda = allSettings.shipping_luanda;
+        if (allSettings.shipping_provinces) dbSettings.shippingProvinces = allSettings.shipping_provinces;
+        if (allSettings.free_shipping_threshold) dbSettings.freeShippingThreshold = allSettings.free_shipping_threshold;
 
-            // Booleans
-            if (key === 'enable_mcx') dbSettings.enableMCX = val === 'true';
-            if (key === 'enable_iban') dbSettings.enableIBAN = val === 'true';
-          }
-        }
+        // Booleans
+        if (allSettings.enable_mcx) dbSettings.enableMCX = allSettings.enable_mcx === 'true';
+        if (allSettings.enable_iban) dbSettings.enableIBAN = allSettings.enable_iban === 'true';
 
         if (Object.keys(dbSettings).length > 0) {
-          console.log("Sincronizando configurações do sistema...");
+          console.log("Sincronizando configurações do sistema (Batched)...");
           const current = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
           const merged = { ...current, ...dbSettings };
           localStorage.setItem('brilho_essenza_settings', JSON.stringify(merged));
@@ -527,9 +538,9 @@ const AppContent: React.FC = () => {
     }
 
     return (
-      <div className="min-h-screen flex flex-col md:flex-row bg-[#fcfbf8] dark:bg-[#0f0e08]">
-        <aside className="w-full md:w-72 border-r border-gray-100 dark:border-[#222115] bg-white dark:bg-[#15140b] p-6 flex flex-col gap-8 shrink-0">
-          <Link to="/" onClick={resetFilters} className="flex items-center gap-2 mb-4">
+      <div className="min-h-screen flex flex-col md:flex-row bg-[#fcfbf8] dark:bg-[#0f0e08] overflow-x-hidden">
+        <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-gray-100 dark:border-[#222115] bg-white dark:bg-[#15140b] p-4 md:p-6 flex flex-col gap-4 md:gap-8 shrink-0">
+          <Link to="/" onClick={resetFilters} className="flex items-center gap-2 mb-2 md:mb-4">
             <div className="size-10 bg-primary rounded-xl flex items-center justify-center text-black font-black">BE</div>
             <div>
               <h1 className="font-black uppercase tracking-tighter text-sm">Brilho <span className="text-primary">Essenza</span></h1>
@@ -548,17 +559,27 @@ const AppContent: React.FC = () => {
               </div>
             </div>
           </Link>
-          <nav className="flex flex-col gap-1 overflow-y-auto pr-2">
+
+          {/* Mobile Tab Scroller */}
+          <nav className="flex md:flex-col gap-2 md:gap-1 overflow-x-auto md:overflow-y-auto pb-2 md:pb-0 scrollbar-hide">
             {visibleTabs.map((tab) => {
+              const isActive = location.pathname === tab.path || (tab.subItems && location.pathname.startsWith(tab.path));
+
               if (tab.subItems) {
                 return (
-                  <div key={tab.name} className="flex flex-col">
-                    <button onClick={() => setExpandedMenu(expandedMenu === tab.name.toLowerCase() ? null : tab.name.toLowerCase())} className={`flex items-center justify-between px-4 py-3 font-bold transition-colors ${location.pathname.startsWith(tab.path) ? 'text-primary' : 'text-gray-500'}`}>
-                      <div className="flex items-center gap-3"><span className="material-symbols-outlined">{tab.icon}</span> {tab.name}</div>
-                      <span className="material-symbols-outlined text-sm">{expandedMenu === tab.name.toLowerCase() ? 'expand_less' : 'expand_more'}</span>
+                  <div key={tab.name} className="flex flex-col shrink-0 md:shrink">
+                    <button
+                      onClick={() => setExpandedMenu(expandedMenu === tab.name.toLowerCase() ? null : tab.name.toLowerCase())}
+                      className={`flex items-center justify-between px-4 py-2.5 md:py-3 font-bold transition-colors whitespace-nowrap md:whitespace-normal ${isActive ? 'text-primary' : 'text-gray-500'}`}
+                    >
+                      <div className="flex items-center gap-2 md:gap-3">
+                        <span className="material-symbols-outlined !text-xl md:!text-base">{tab.icon}</span>
+                        <span className="text-xs md:text-sm">{tab.name}</span>
+                      </div>
+                      <span className="material-symbols-outlined text-sm hidden md:block">{expandedMenu === tab.name.toLowerCase() ? 'expand_less' : 'expand_more'}</span>
                     </button>
                     {expandedMenu === tab.name.toLowerCase() && (
-                      <div className="flex flex-col ml-8 border-l border-gray-100 dark:border-[#222115]">
+                      <div className="hidden md:flex flex-col ml-8 border-l border-gray-100 dark:border-[#222115]">
                         {tab.subItems.map(sub => (
                           <Link key={sub.path} to={sub.path} className={`px-4 py-2 text-sm font-bold transition-colors ${location.pathname === sub.path ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}>{sub.name}</Link>
                         ))}
@@ -568,13 +589,19 @@ const AppContent: React.FC = () => {
                 );
               }
               return (
-                <Link key={tab.path} to={tab.path} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${location.pathname === tab.path ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
-                  <span className="material-symbols-outlined">{tab.icon}</span> {tab.name}
+                <Link
+                  key={tab.path}
+                  to={tab.path}
+                  className={`flex items-center gap-2 md:gap-3 px-4 py-2.5 md:py-3 rounded-xl font-bold transition-all shrink-0 md:shrink whitespace-nowrap md:whitespace-normal ${location.pathname === tab.path ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5'}`}
+                >
+                  <span className="material-symbols-outlined !text-xl md:!text-base">{tab.icon}</span>
+                  <span className="text-xs md:text-sm">{tab.name}</span>
                 </Link>
               );
             })}
           </nav>
-          <div className="mt-auto flex flex-col gap-1">
+
+          <div className="mt-auto hidden md:flex flex-col gap-1">
             <Link to="/admin/configuracoes" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${location.pathname === '/admin/configuracoes' ? 'bg-primary text-black' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
               <span className="material-symbols-outlined">settings</span> Configurações
               {userProfile?.is_first_login && <span className="absolute right-2 top-3 size-2 bg-red-500 rounded-full animate-pulse"></span>}
@@ -582,7 +609,7 @@ const AppContent: React.FC = () => {
             <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 text-red-500 font-bold hover:bg-red-50 dark:hover:bg-red-500/5 rounded-xl transition-all"><span className="material-symbols-outlined">logout</span> Sair</button>
           </div>
         </aside>
-        <main className="flex-1 overflow-y-auto relative">
+        <main className="flex-1 min-h-0 overflow-y-auto">
           <Routes>
             <Route path="/admin" element={<AdminDashboard orders={orders} products={products} userProfile={userProfile} />} />
 

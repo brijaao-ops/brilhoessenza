@@ -69,33 +69,27 @@ const AdminSettings: React.FC = () => {
     if (saved.shippingLuanda) setShippingLuanda(saved.shippingLuanda);
     if (saved.shippingProvinces) setShippingProvinces(saved.shippingProvinces);
     if (saved.freeShippingThreshold) setFreeShippingThreshold(saved.freeShippingThreshold);
-    if (saved.freeShippingThreshold) setFreeShippingThreshold(saved.freeShippingThreshold);
 
-    // Sync with Database
+    // Sync with Database (Optimized Batched Sync)
     const syncFromDB = async () => {
-      const keys = [
-        'company_name', 'company_phone', 'company_address', 'heritage',
-        'shipping_policy', 'return_policy', 'brand_color', 'tax_rate',
-        'shipping_luanda', 'shipping_provinces', 'free_shipping_threshold'
-      ];
+      try {
+        const { fetchAllAppSettings } = await import('../../services/supabase');
+        const settings = await fetchAllAppSettings();
 
-      const loadedSettings: any = {};
-      for (const key of keys) {
-        const val = await fetchAppSetting(key);
-        if (val) loadedSettings[key] = val;
+        if (settings.company_name) setCompanyName(settings.company_name);
+        if (settings.company_phone) setCompanyPhone(settings.company_phone);
+        if (settings.company_address) setCompanyAddress(settings.company_address);
+        if (settings.heritage) setHeritage(settings.heritage);
+        if (settings.shipping_policy) setShippingPolicy(settings.shipping_policy);
+        if (settings.return_policy) setReturnPolicy(settings.return_policy);
+        if (settings.brand_color) setBrandColor(settings.brand_color);
+        if (settings.tax_rate) setTaxRate(settings.tax_rate);
+        if (settings.shipping_luanda) setShippingLuanda(settings.shipping_luanda);
+        if (settings.shipping_provinces) setShippingProvinces(settings.shipping_provinces);
+        if (settings.free_shipping_threshold) setFreeShippingThreshold(settings.free_shipping_threshold);
+      } catch (e) {
+        console.error("Error syncing settings from DB:", e);
       }
-
-      if (loadedSettings.company_name) setCompanyName(loadedSettings.company_name);
-      if (loadedSettings.company_phone) setCompanyPhone(loadedSettings.company_phone);
-      if (loadedSettings.company_address) setCompanyAddress(loadedSettings.company_address);
-      if (loadedSettings.heritage) setHeritage(loadedSettings.heritage);
-      if (loadedSettings.shipping_policy) setShippingPolicy(loadedSettings.shipping_policy);
-      if (loadedSettings.return_policy) setReturnPolicy(loadedSettings.return_policy);
-      if (loadedSettings.brand_color) setBrandColor(loadedSettings.brand_color);
-      if (loadedSettings.tax_rate) setTaxRate(loadedSettings.tax_rate);
-      if (loadedSettings.shipping_luanda) setShippingLuanda(loadedSettings.shipping_luanda);
-      if (loadedSettings.shipping_provinces) setShippingProvinces(loadedSettings.shipping_provinces);
-      if (loadedSettings.free_shipping_threshold) setFreeShippingThreshold(loadedSettings.free_shipping_threshold);
     };
 
     syncFromDB();
@@ -184,9 +178,9 @@ const AdminSettings: React.FC = () => {
     switch (activeTab) {
       case 0: // O Atelier
         return (
-          <div className="flex flex-col gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#15140b] p-10 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-xl font-black uppercase tracking-tight mb-8">Narrativa do Atelier</h4>
+          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
+            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Narrativa do Atelier</h4>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nome da Marca</label>
@@ -206,9 +200,9 @@ const AdminSettings: React.FC = () => {
         );
       case 1: // Aparência
         return (
-          <div className="flex flex-col gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#15140b] p-10 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-xl font-black uppercase tracking-tight mb-8">Identidade Visual</h4>
+          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
+            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Identidade Visual</h4>
               <div className="flex flex-col gap-8">
                 <div className="flex items-center gap-10">
                   <div className="size-32 bg-gray-100 dark:bg-white/5 rounded-3xl border-2 border-dashed border-gray-200 dark:border-[#222115] flex items-center justify-center relative group cursor-pointer overflow-hidden">
@@ -238,9 +232,9 @@ const AdminSettings: React.FC = () => {
         );
       case 2: // Apoio ao Cliente
         return (
-          <div className="flex flex-col gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#15140b] p-10 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-xl font-black uppercase tracking-tight mb-8">Políticas de Serviço</h4>
+          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
+            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Políticas de Serviço</h4>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">WhatsApp de Suporte (Concierge)</label>
@@ -260,9 +254,9 @@ const AdminSettings: React.FC = () => {
         );
       case 3: // Pagamentos & Taxas
         return (
-          <div className="flex flex-col gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#15140b] p-10 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-xl font-black uppercase tracking-tight mb-8">Fiscalidade & Moeda</h4>
+          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
+            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Fiscalidade & Moeda</h4>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Taxa de IVA (%)</label>
@@ -272,8 +266,8 @@ const AdminSettings: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white dark:bg-[#15140b] p-10 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-xl font-black uppercase tracking-tight mb-8">Métodos de Pagamento</h4>
+            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Métodos de Pagamento</h4>
               <div className="flex flex-col gap-8">
 
                 {/* MCX Express */}
@@ -328,29 +322,29 @@ const AdminSettings: React.FC = () => {
         );
       case 4: // Logística
         return (
-          <div className="flex flex-col gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#15140b] p-10 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-xl font-black uppercase tracking-tight mb-8">Zonas de Entrega</h4>
+          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
+            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Zonas de Entrega</h4>
               <div className="flex flex-col gap-6">
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0f0e08] rounded-xl">
                   <label className="text-xs font-black uppercase tracking-widest">Luanda (Capital)</label>
                   <div className="flex items-center gap-2">
-                    <input type="number" value={shippingLuanda} onChange={e => setShippingLuanda(e.target.value)} className="w-32 bg-white dark:bg-[#15140b] p-2 rounded-lg text-right font-bold outline-none border border-transparent focus:border-primary" />
+                    <input type="number" value={shippingLuanda} onChange={e => setShippingLuanda(e.target.value)} className="w-24 sm:w-32 bg-white dark:bg-[#15140b] p-2 rounded-lg text-right font-bold outline-none border border-transparent focus:border-primary" />
                     <span className="text-[10px] font-bold">Kz</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0f0e08] rounded-xl">
                   <label className="text-xs font-black uppercase tracking-widest">Outras Províncias</label>
                   <div className="flex items-center gap-2">
-                    <input type="number" value={shippingProvinces} onChange={e => setShippingProvinces(e.target.value)} className="w-32 bg-white dark:bg-[#15140b] p-2 rounded-lg text-right font-bold outline-none border border-transparent focus:border-primary" />
+                    <input type="number" value={shippingProvinces} onChange={e => setShippingProvinces(e.target.value)} className="w-24 sm:w-32 bg-white dark:bg-[#15140b] p-2 rounded-lg text-right font-bold outline-none border border-transparent focus:border-primary" />
                     <span className="text-[10px] font-bold">Kz</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-[#15140b] p-10 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-xl font-black uppercase tracking-tight mb-8">Ofertas de Frete</h4>
+            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Ofertas de Frete</h4>
               <div className="flex flex-col gap-2">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Frete Grátis para pedidos acima de:</label>
                 <div className="flex items-center gap-4">
@@ -363,9 +357,9 @@ const AdminSettings: React.FC = () => {
         );
       case 5: // Segurança
         return (
-          <div className="flex flex-col gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#15140b] p-10 rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-xl font-black uppercase tracking-tight mb-8">Credenciais de Acesso</h4>
+          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
+            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Credenciais de Acesso</h4>
               <div className="bg-red-50 dark:bg-red-900/10 p-6 rounded-2xl mb-6">
                 <p className="text-xs text-red-600 dark:text-red-400 font-bold">Atenção: A alteração da palavra-passe é imediata. Você precisará fazer login novamente com a nova credencial.</p>
               </div>
@@ -421,17 +415,17 @@ const AdminSettings: React.FC = () => {
   };
 
   return (
-    <div className="p-8 lg:p-12">
-      <div className="mb-12">
-        <h2 className="text-3xl font-black uppercase tracking-tighter">Mestre de <span className="text-primary italic">Configurações</span></h2>
-        <p className="text-sm text-gray-500 font-medium">Controle total sobre a experiência Brilho Essenza.</p>
+    <div className="p-4 md:p-8 lg:p-12">
+      <div className="mb-8 lg:mb-12">
+        <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tighter">Mestre de <span className="text-primary italic">Configurações</span></h2>
+        <p className="text-[11px] lg:text-sm text-gray-500 font-medium">Controle total sobre a experiência Brilho Essenza.</p>
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-        <nav className="flex flex-col gap-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
+        <nav className="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-4 lg:pb-0 scrollbar-hide shrink-0">
           {visibleTabs.map((tab) => (
-            <button key={tab.originalIndex} onClick={() => setActiveTab(tab.originalIndex)} className={`text-left px-6 py-5 rounded-2xl font-bold flex items-center gap-4 transition-all ${activeTab === tab.originalIndex ? 'bg-primary text-black shadow-lg shadow-primary/10' : 'text-gray-500 hover:bg-primary/5'}`}>
-              <span className="material-symbols-outlined">{tab.icon}</span>
-              <span className="text-[11px] font-black uppercase tracking-widest">{tab.name}</span>
+            <button key={tab.originalIndex} onClick={() => setActiveTab(tab.originalIndex)} className={`text-left px-5 lg:px-6 py-3.5 lg:py-5 rounded-xl lg:rounded-2xl font-bold flex items-center gap-3 lg:gap-4 transition-all whitespace-nowrap lg:whitespace-normal ${activeTab === tab.originalIndex ? 'bg-primary text-black shadow-lg shadow-primary/10' : 'text-gray-500 hover:bg-primary/5'}`}>
+              <span className="material-symbols-outlined !text-xl lg:!text-base">{tab.icon}</span>
+              <span className="text-[10px] lg:text-[11px] font-black uppercase tracking-widest">{tab.name}</span>
             </button>
           ))}
         </nav>

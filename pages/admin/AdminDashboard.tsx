@@ -123,16 +123,16 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ userProfile }) => {
   );
 
   return (
-    <div className="p-8 lg:p-12 pb-32 animate-fade-in">
-      <div className="flex flex-col xl:flex-row xl:items-end justify-between gap-8 mb-12">
+    <div className="p-4 md:p-8 lg:p-12 animate-fade-in">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 lg:mb-12">
         <div>
           <h2 className="text-3xl font-black uppercase tracking-tighter">Painel de <span className="text-primary italic">Controle</span></h2>
           <p className="text-sm text-gray-500 font-medium">Bem-vindo, {userProfile?.full_name || 'Admin'}. Visão geral do negócio.</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-        <div className="bg-white dark:bg-[#15140b] p-8 rounded-[2.5rem] border border-gray-100 dark:border-white/5 relative overflow-hidden group">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8 lg:mb-12">
+        <div className="bg-white dark:bg-[#15140b] p-6 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border border-gray-100 dark:border-white/5 relative overflow-hidden group">
           <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
             <span className="material-symbols-outlined !text-6xl text-primary">payments</span>
           </div>
@@ -167,9 +167,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ userProfile }) => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 mb-12">
-        <div className="xl:col-span-2 bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-[2.5rem] p-10 shadow-sm">
-          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10">Tendência de Vendas (Últimos dias)</h4>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8 lg:mb-12">
+        <div className="xl:col-span-2 bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 shadow-sm">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-6 lg:mb-10">Tendência de Vendas (Últimos dias)</h4>
           <div className="h-[350px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={salesData}>
@@ -198,8 +198,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ userProfile }) => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-[2.5rem] p-10 shadow-sm">
-          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10">Por Categoria</h4>
+        <div className="bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 shadow-sm">
+          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-6 lg:mb-10">Por Categoria</h4>
           <div className="h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -234,8 +234,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ userProfile }) => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-[2.5rem] p-10 shadow-sm">
-        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-10">Produtos Mais Vendidos</h4>
+      <div className="bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 shadow-sm">
+        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-6 lg:mb-10">Produtos Mais Vendidos</h4>
         <div className="space-y-6">
           {topProducts.map((p, i) => (
             <div key={p.name} className="flex items-center justify-between group">

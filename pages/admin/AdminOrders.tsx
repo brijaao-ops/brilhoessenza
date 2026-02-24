@@ -99,8 +99,8 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
   };
 
   return (
-    <div className="p-8 lg:p-12 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+    <div className="p-4 md:p-8 lg:p-12 animate-fade-in">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 lg:mb-12">
         <div>
           <h2 className="text-3xl font-black uppercase tracking-tighter">Gestão de <span className="text-primary italic">Pedidos</span></h2>
           <p className="text-sm text-gray-500 font-medium">Gerencie solicitações e atribua entregas.</p>

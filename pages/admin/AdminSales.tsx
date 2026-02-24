@@ -216,12 +216,12 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
     );
 
     return (
-        <div className="p-4 lg:p-8 animate-fade-in h-screen flex flex-col overflow-hidden">
-            <div className="flex flex-col gap-6 mb-6 shrink-0">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="p-4 md:p-8 lg:p-12 animate-fade-in h-screen flex flex-col overflow-hidden">
+            <div className="flex flex-col gap-6 mb-8 lg:mb-12 shrink-0">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
-                        <h2 className="text-2xl font-black uppercase tracking-tighter">Fluxo de <span className="text-primary italic">Vendas</span></h2>
-                        <p className="text-xs text-gray-500 font-medium">Histórico de transações confirmadas e em entrega.</p>
+                        <h2 className="text-xl lg:text-2xl font-black uppercase tracking-tighter">Fluxo de <span className="text-primary italic">Vendas</span></h2>
+                        <p className="text-[10px] lg:text-xs text-gray-500 font-medium">Histórico de transações confirmadas e em entrega.</p>
                     </div>
                     <div className="flex items-center gap-4">
                         <button
@@ -440,7 +440,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                     )}
                 </div>
             </div>
-        </div>
+        </div >
     );
 };
 

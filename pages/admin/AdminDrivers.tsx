@@ -95,10 +95,10 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
     });
 
     return (
-        <div className="p-8 lg:p-12 animate-fade-up">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-8 mb-12">
+        <div className="p-4 md:p-8 lg:p-12 animate-fade-up">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 lg:gap-8 mb-8 lg:mb-12">
                 <div>
-                    <h1 className="text-4xl font-black uppercase tracking-tighter mb-2">Equipa de <span className="text-primary italic">Entrega</span></h1>
+                    <h1 className="text-2xl lg:text-4xl font-black uppercase tracking-tighter mb-1 lg:mb-2">Equipa de <span className="text-primary italic">Entrega</span></h1>
                     <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-[10px]">Gestão de parceiros logísticos</p>
                 </div>
 

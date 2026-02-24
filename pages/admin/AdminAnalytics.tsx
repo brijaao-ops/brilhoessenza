@@ -76,8 +76,8 @@ const AdminAnalytics: React.FC = () => {
   }, []);
 
   return (
-    <div className="p-8 lg:p-12">
-      <h2 className="text-3xl font-black uppercase mb-12">Inteligência de <span className="text-primary italic">Mercado</span></h2>
+    <div className="p-4 md:p-8 lg:p-12">
+      <h2 className="text-2xl lg:text-3xl font-black uppercase mb-8 lg:mb-12">Inteligência de <span className="text-primary italic">Mercado</span></h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
         {[
@@ -85,15 +85,15 @@ const AdminAnalytics: React.FC = () => {
           { label: 'Ticket Médio', val: `${kpis.ticket.toLocaleString(undefined, { maximumFractionDigits: 0 })} Kz` },
           { label: 'LTV (Valor Cliente)', val: `${kpis.ltv.toLocaleString(undefined, { maximumFractionDigits: 0 })} Kz` },
         ].map((kpi, i) => (
-          <div key={i} className="bg-white p-8 rounded-[2rem] border border-gray-100 shadow-sm">
-            <p className="text-[10px] font-black text-gray-400 uppercase mb-4">{kpi.label}</p>
-            <h3 className="text-3xl font-black">{kpi.val}</h3>
+          <div key={i} className="bg-white p-6 lg:p-8 rounded-3xl lg:rounded-[2rem] border border-gray-100 shadow-sm">
+            <p className="text-[10px] font-black text-gray-400 uppercase mb-3 lg:mb-4">{kpi.label}</p>
+            <h3 className="text-2xl lg:text-3xl font-black">{kpi.val}</h3>
           </div>
         ))}
       </div>
 
-      <div className="bg-white p-10 rounded-[2.5rem] border mb-10">
-        <h4 className="font-black uppercase text-xs mb-8">Evolução de Receita Mensal (Kz)</h4>
+      <div className="bg-white p-6 lg:p-10 rounded-3xl lg:rounded-[2.5rem] border mb-8 lg:mb-10">
+        <h4 className="font-black uppercase text-[10px] lg:text-xs mb-6 lg:mb-8">Evolução de Receita Mensal (Kz)</h4>
         <div className="h-[350px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={revenueData}>
@@ -106,9 +106,9 @@ const AdminAnalytics: React.FC = () => {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
-        <div className="bg-white dark:bg-[#15140b] p-10 rounded-[2.5rem] border shadow-sm">
-          <h4 className="font-black uppercase text-[10px] mb-8 text-primary tracking-widest">Performance da Equipe</h4>
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-8 lg:mb-10">
+        <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-3xl lg:rounded-[2.5rem] border shadow-sm">
+          <h4 className="font-black uppercase text-[10px] mb-6 lg:mb-8 text-primary tracking-widest">Performance da Equipe</h4>
           <div className="flex flex-col gap-4">
             {teamStats.length > 0 ? teamStats.map((s, i) => (
               <div key={i} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/5 rounded-2xl">
@@ -122,9 +122,9 @@ const AdminAnalytics: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-black text-white p-10 rounded-[2.5rem] flex flex-col justify-center">
+        <div className="bg-black text-white p-6 lg:p-10 rounded-3xl lg:rounded-[2.5rem] flex flex-col justify-center">
           <p className="text-[10px] font-black text-primary uppercase tracking-[0.4em] mb-4">Lucro Líquido Real (40% Margem)</p>
-          <h3 className="text-5xl font-black tracking-tighter">{profit.toLocaleString()} Kz</h3>
+          <h3 className="text-3xl lg:text-5xl font-black tracking-tighter">{profit.toLocaleString()} Kz</h3>
           <p className="text-[9px] text-gray-500 mt-4 font-bold uppercase tracking-widest">Cálculo baseado em pedidos pagos e custo de catálogo.</p>
         </div>
       </div>

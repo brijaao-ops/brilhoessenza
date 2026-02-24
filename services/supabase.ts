@@ -173,7 +173,7 @@ export const updateUserPassword = async (password: string) => {
 export const fetchProducts = async (): Promise<Product[]> => {
     const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select('id, name, description, price, sale_price, image, category, sub_category, gender, stock, active, best_seller, reviews_count, created_at, cost_price, delivery_commission, last_edited_by')
         .order('created_at', { ascending: false });
 
     if (error) {
@@ -185,14 +185,16 @@ export const fetchProducts = async (): Promise<Product[]> => {
     // Assuming 1:1 mapping for now based on the migration, except specific fields.
     return data.map((p: any) => ({
         ...p,
-        costPrice: p.cost_price,
-        reviewsCount: p.reviews_count,
+        price: Number(p.price || 0),
+        costPrice: Number(p.cost_price || 0),
+        reviewsCount: Number(p.reviews_count || 0),
         subCategory: p.sub_category,
         bestSeller: p.best_seller,
         createdAt: p.created_at,
-        salePrice: p.sale_price,
-        delivery_commission: p.delivery_commission || 0,
-        last_edited_by: p.last_edited_by
+        salePrice: p.sale_price ? Number(p.sale_price) : undefined,
+        delivery_commission: Number(p.delivery_commission || 0),
+        last_edited_by: p.last_edited_by,
+        stock: Number(p.stock || 0)
     }));
 };
 
@@ -616,6 +618,23 @@ export const fetchAppSetting = async (key: string): Promise<string | null> => {
         return null; // Fallback will be handled by caller
     }
     return data?.value || null;
+};
+
+// Batch fetch all app settings for performance
+export const fetchAllAppSettings = async (): Promise<Record<string, string>> => {
+    const { data, error } = await supabase
+        .from('app_settings')
+        .select('key, value');
+
+    if (error) {
+        console.error('Error fetching all settings:', error);
+        return {};
+    }
+
+    return (data || []).reduce((acc: Record<string, string>, curr: any) => {
+        acc[curr.key] = curr.value;
+        return acc;
+    }, {});
 };
 
 export const updateAppSetting = async (key: string, value: string) => {
