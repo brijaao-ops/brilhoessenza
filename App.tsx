@@ -41,6 +41,7 @@ const AppContent: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [slides, setSlides] = useState<Slide[]>([]);
   const [loading, setLoading] = useState(true);
+  const [hasLoadError, setHasLoadError] = useState(false);
 
   // Initial Load with Seed Fallback
   useEffect(() => {
@@ -79,8 +80,11 @@ const AppContent: React.FC = () => {
         let loadedSlides = await fetchSlides();
         setSlides(loadedSlides);
 
+        // If we reach here successfully, clear any previous error
+        setHasLoadError(false);
       } catch (error) {
         console.error("Failed to load data from Supabase", error);
+        setHasLoadError(true);
       } finally {
         setLoading(false);
       }
@@ -626,7 +630,7 @@ const AppContent: React.FC = () => {
       />
       <main className="flex-1 max-w-[1280px] mx-auto px-4 lg:px-10 w-full">
         <Routes>
-          <Route path="/" element={<Home onAddToCart={handleAddToCart} products={products} slides={slides} searchTerm={searchTerm} selectedCategory={selectedCategory} onCategorySelect={setSelectedCategory} />} />
+          <Route path="/" element={<Home onAddToCart={handleAddToCart} products={products} slides={slides} searchTerm={searchTerm} selectedCategory={selectedCategory} onCategorySelect={setSelectedCategory} isLoading={loading} hasError={hasLoadError} />} />
           <Route path="/product/:id" element={<ProductDetail onAddToCart={handleAddToCart} products={products} />} />
           <Route path="/atelier/:section" element={<AtelierInfo />} />
           <Route path="/entregador/cadastro" element={<DriverRegistration />} />

@@ -54,12 +54,21 @@ const AdminSlides: React.FC = () => {
                         <div key={slide.id} className="bg-white dark:bg-[#15140b] rounded-[2.5rem] overflow-hidden border border-gray-100 dark:border-[#222115] group hover:shadow-2xl transition-all">
                             <div className="aspect-video relative overflow-hidden bg-gray-100 dark:bg-black">
                                 <img src={slide.image_url} alt={slide.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity gap-4">
+                                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity gap-4 lg:flex hidden">
                                     <Link to={`/admin/slides/editar/${slide.id}`} className="size-12 bg-white text-black rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-xl">
                                         <span className="material-symbols-outlined">edit</span>
                                     </Link>
                                     <button onClick={() => handleDelete(slide.id)} className="size-12 bg-red-500 text-white rounded-full flex items-center justify-center hover:scale-110 transition-all shadow-xl">
                                         <span className="material-symbols-outlined">delete</span>
+                                    </button>
+                                </div>
+                                {/* Mobile: always-visible action buttons */}
+                                <div className="absolute top-3 left-3 flex gap-2 lg:hidden">
+                                    <Link to={`/admin/slides/editar/${slide.id}`} className="size-9 bg-white/90 text-black rounded-xl flex items-center justify-center shadow-lg active:scale-95 transition-all">
+                                        <span className="material-symbols-outlined text-sm">edit</span>
+                                    </Link>
+                                    <button onClick={() => handleDelete(slide.id)} className="size-9 bg-red-500/90 text-white rounded-xl flex items-center justify-center shadow-lg active:scale-95 transition-all">
+                                        <span className="material-symbols-outlined text-sm">delete</span>
                                     </button>
                                 </div>
                                 <div className="absolute top-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest backdrop-blur-md border border-white/10">

@@ -78,7 +78,7 @@ const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, 
                             </td>
                             {canManage && (
                                 <td className="px-8 py-6 text-right">
-                                    <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="flex justify-end gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity flex-wrap">
                                         {d.verified && (
                                             <button
                                                 onClick={() => onViewCard(d)}

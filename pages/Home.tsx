@@ -12,9 +12,11 @@ interface HomeProps {
   onCategorySelect: (cat: string | null) => void;
   products: Product[];
   slides: Slide[];
+  isLoading?: boolean;
+  hasError?: boolean;
 }
 
-const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, onCategorySelect, products, slides }) => {
+const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, onCategorySelect, products, slides, isLoading = false, hasError = false }) => {
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [email, setEmail] = React.useState('');
   const [subscribed, setSubscribed] = React.useState(false);
@@ -151,17 +153,30 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
           </div>
         </div>
 
-        {products.length === 0 ? (
+        {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
               <ProductSkeleton key={i} />
             ))}
+          </div>
+        ) : hasError ? (
+          <div className="py-48 text-center border-2 border-dashed border-red-200 dark:border-red-500/10 rounded-[5rem] animate-fade-up">
+            <span className="material-symbols-outlined !text-8xl text-red-300 mb-8">wifi_off</span>
+            <h4 className="text-2xl font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white mb-4">Falha na ligação</h4>
+            <p className="text-gray-400 font-medium mb-10 max-w-sm mx-auto">Não foi possível carregar os produtos. Verifique a sua ligação à internet e tente novamente.</p>
+            <button onClick={() => window.location.reload()} className="px-10 py-4 bg-[#1c1a0d] dark:bg-white text-white dark:text-black text-[10px] font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all">Tentar Novamente</button>
           </div>
         ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
             {filteredProducts.map((p) => (
               <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} />
             ))}
+          </div>
+        ) : products.length === 0 ? (
+          <div className="py-48 text-center border-2 border-dashed border-gray-200 dark:border-white/5 rounded-[5rem] animate-fade-up">
+            <span className="material-symbols-outlined !text-8xl text-primary/20 mb-8">inventory_2</span>
+            <h4 className="text-2xl font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white mb-4">Catálogo vazio</h4>
+            <p className="text-gray-400 font-medium mb-10 max-w-sm mx-auto">Nenhum produto foi encontrado no catálogo. Adicione produtos no painel administrativo.</p>
           </div>
         ) : (
           <div className="py-48 text-center border-2 border-dashed border-gray-200 dark:border-white/5 rounded-[5rem] animate-fade-up">

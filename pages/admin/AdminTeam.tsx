@@ -235,22 +235,18 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
                 ) : team.map(member => (
                     <div key={member.id} className={`bg-white dark:bg-[#15140b] p-8 rounded-[2rem] border ${member.is_active === false ? 'border-red-500/30' : 'border-gray-100 dark:border-[#222115]'} shadow-sm relative group overflow-hidden transition-all ${member.is_active === false ? 'opacity-70 bg-gray-50 dark:bg-black/20' : ''}`}>
 
-                        <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                {(userProfile?.role === 'admin' || userProfile?.permissions?.team?.edit || userProfile?.permissions?.team?.manage) && (
-                                    <>
-                                        <button onClick={() => startEdit(member)} className="size-8 bg-black dark:bg-white text-white dark:text-black rounded-lg flex items-center justify-center hover:scale-110 transition-transform shadow-lg" title="Editar Perfil">
-                                            <span className="material-symbols-outlined text-sm">edit</span>
-                                        </button>
-                                        {member.role !== 'admin' && (
-                                            <button onClick={() => handleDelete(member.id)} className="size-8 bg-red-500 text-white rounded-lg flex items-center justify-center hover:scale-110 transition-transform shadow-lg" title="Remover Acesso">
-                                                <span className="material-symbols-outlined text-sm">delete</span>
-                                            </button>
-                                        )}
-                                    </>
+                        {(userProfile?.role === 'admin' || userProfile?.permissions?.team?.edit || userProfile?.permissions?.team?.manage) && (
+                            <div className="absolute top-4 right-4 flex gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                <button onClick={() => startEdit(member)} className="size-8 bg-black dark:bg-white text-white dark:text-black rounded-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-lg" title="Editar Perfil">
+                                    <span className="material-symbols-outlined text-sm">edit</span>
+                                </button>
+                                {member.role !== 'admin' && (
+                                    <button onClick={() => handleDelete(member.id)} className="size-8 bg-red-500 text-white rounded-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-lg" title="Remover Acesso">
+                                        <span className="material-symbols-outlined text-sm">delete</span>
+                                    </button>
                                 )}
                             </div>
-                        </div>
+                        )}
 
                         <div className="flex items-center gap-4 mb-6">
                             <div className="size-12 bg-gray-100 dark:bg-[#0f0e08] rounded-full flex items-center justify-center font-black text-gray-500 uppercase">

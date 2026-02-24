@@ -65,15 +65,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                     )}
                 </Link>
 
-                {/* Floating Cart Button */}
-                {/* Floating Cart Button */}
+                {/* Floating Cart Button - Always visible on mobile, hover on desktop */}
                 {product.stock > 0 && (
                     <button
                         onClick={handleAddToCart}
                         disabled={isAdded}
                         className={`absolute bottom-4 right-4 size-10 rounded-full flex items-center justify-center transition-all duration-300 shadow-xl z-30 ${isAdded
-                            ? 'bg-green-500 text-white opacity-100 translate-y-0 scale-110'
-                            : 'bg-black text-white opacity-0 group-hover:opacity-100 translate-y-4 group-hover:translate-y-0'
+                                ? 'bg-green-500 text-white scale-110'
+                                : 'bg-black text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 translate-y-0 lg:translate-y-4 lg:group-hover:translate-y-0'
                             }`}
                     >
                         <span className={`material-symbols-outlined !text-sm ${isAdded ? 'animate-bounce' : ''}`}>
