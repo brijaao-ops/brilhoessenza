@@ -291,7 +291,7 @@ const AppContent: React.FC = () => {
 
   useEffect(() => {
     if (location.pathname.includes('/admin/produtos') || location.pathname.includes('/admin/categorias') || location.pathname.includes('/admin/estoque')) {
-      setExpandedMenu('produtos');
+      setExpandedMenu('atelier');
     } else if (location.pathname.includes('/admin/pedidos') || location.pathname.includes('/admin/pagamentos') || location.pathname.includes('/admin/logistica')) {
       setExpandedMenu('pedidos');
     }
@@ -308,7 +308,9 @@ const AppContent: React.FC = () => {
     await signOut();
     setIsAuthenticated(false);
     setUserProfile(null);
-    window.location.href = '/';
+    // Force a full reload to clear all states and redirect to home
+    window.location.replace('/');
+    window.location.reload();
   };
 
   const saveProduct = async (product: Product) => {
