@@ -645,7 +645,7 @@ const AppContent: React.FC = () => {
                 })}
               </nav>
 
-              <div className="mt-auto hidden md:flex flex-col gap-2 pt-4 border-t border-gray-100 dark:border-[#222115]">
+              <div className="mt-auto flex flex-col gap-2 pt-4 border-t border-gray-100 dark:border-[#222115] pb-safe">
                 <Link to="/admin/configuracoes" className={`flex items-center gap-3 px-4 py-3 font-bold rounded-xl transition-all ${location.pathname === '/admin/configuracoes' ? 'bg-primary text-black' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
                   <span className="material-symbols-outlined">settings</span>
                   <span className="text-sm">Configurações</span>
@@ -657,7 +657,7 @@ const AppContent: React.FC = () => {
                 </button>
               </div>
             </aside>
-            <main className="flex-1 overflow-y-auto min-h-0">
+            <main className="flex-1 overflow-hidden min-h-0">
               <Routes>
                 <Route path="/admin" element={<AdminDashboard orders={orders} products={products} userProfile={userProfile} />} />
                 <Route path="/admin/produtos" element={<AdminProducts products={products} onDelete={deleteProduct} userProfile={userProfile} />} />
@@ -721,6 +721,8 @@ const AppContent: React.FC = () => {
                   onCategorySelect={setSelectedCategory}
                   slides={slides}
                   onRetry={() => loadAllData(true)}
+                  isLoading={loading}
+                  hasError={hasLoadError}
                 />
               } />
               <Route path="/produto/:id" element={<ProductDetail products={products} onAddToCart={handleAddToCart} />} />
