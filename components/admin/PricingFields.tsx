@@ -62,7 +62,7 @@ export const PricingFields: React.FC<PricingFieldsProps> = ({
     const isGoodMargin = margin ? Number(margin) >= 30 : null;
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="bg-white dark:bg-[#15140b] p-5 md:p-8 rounded-2xl border shadow-sm flex flex-col gap-4">
             {/* Section Header */}
             <div className="flex items-center gap-2 px-1">
                 <span className="material-symbols-outlined !text-base text-primary">payments</span>
