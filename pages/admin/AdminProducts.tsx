@@ -74,7 +74,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
   const canDelete = userProfile?.role === 'admin' || userProfile?.permissions?.products?.delete;
 
   return (
-    <div className="p-6 lg:p-10 flex flex-col h-full">
+    <div className="p-6 lg:p-10 flex flex-col h-full overflow-auto">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 flex-shrink-0">
         <div>
@@ -148,7 +148,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
 
       {/* Table */}
       {/* Multi-Format List (Desktop Table / Mobile Cards) */}
-      <div className="flex-1 overflow-auto bg-white dark:bg-[#15140b] rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm">
+      <div className="bg-white dark:bg-[#15140b] rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm overflow-x-auto md:overflow-visible min-h-0">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-12 min-h-[300px]">
             <span className="material-symbols-outlined !text-5xl text-gray-200 dark:text-gray-700">inventory_2</span>
