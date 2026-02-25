@@ -599,7 +599,7 @@ const AppContent: React.FC = () => {
                 </div>
               </Link>
 
-              <nav className="flex md:flex-col gap-2 md:gap-1 overflow-x-auto md:overflow-y-auto pb-2 md:pb-0 scrollbar-hide flex-1 min-w-0">
+              <nav className="flex flex-col gap-2 md:gap-1 overflow-y-auto pb-2 md:pb-0 scrollbar-hide flex-1 min-w-0">
                 {visibleTabs.map((tab) => {
                   const isActive = location.pathname === tab.path || (tab.subItems && location.pathname.startsWith(tab.path));
 
@@ -657,7 +657,7 @@ const AppContent: React.FC = () => {
                 </button>
               </div>
             </aside>
-            <main className="flex-1 overflow-hidden min-h-0">
+            <main className="flex-1 overflow-y-auto min-h-0">
               <Routes>
                 <Route path="/admin" element={<AdminDashboard orders={orders} products={products} userProfile={userProfile} />} />
                 <Route path="/admin/produtos" element={<AdminProducts products={products} onDelete={deleteProduct} userProfile={userProfile} />} />
