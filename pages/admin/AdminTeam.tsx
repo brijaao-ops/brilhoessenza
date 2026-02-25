@@ -4,11 +4,12 @@ import { UserProfile, UserPermissions } from '../../types';
 
 interface AdminTeamProps {
     userProfile: UserProfile | null;
+    team: UserProfile[];
+    setTeam: React.Dispatch<React.SetStateAction<UserProfile[]>>;
 }
 
-const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) => {
-    const [team, setTeam] = useState<UserProfile[]>([]);
-    const [loading, setLoading] = useState(true);
+const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: AdminTeamProps) => {
+    const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
 
     // Form State
@@ -32,22 +33,11 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
     const [editPerms, setEditPerms] = useState<UserPermissions>({});
     const [updating, setUpdating] = useState(false);
 
-    useEffect(() => {
-        loadTeam();
-    }, []);
-
     const loadTeam = async () => {
-        try {
-            setError(null);
-            setLoading(true);
-            const data = await fetchTeam();
-            setTeam(data || []);
-        } catch (err: any) {
-            console.error("Error loading team:", err);
-            setError(err.message || String(err));
-        } finally {
-            setLoading(false);
-        }
+        // Now handled by loadAllData in App.tsx
+        // But we keep the function for re-fetches after mutations if needed, 
+        // ideally App.tsx should expose a refresh function.
+        // For now, we manually update the state in handlers.
     };
 
     const handleCreate = async (e: React.FormEvent) => {

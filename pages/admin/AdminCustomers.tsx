@@ -10,12 +10,15 @@ interface CustomerStat {
   lastOrderDate: string;
 }
 
-const AdminCustomers: React.FC = () => {
+interface AdminCustomersProps {
+  orders: Order[];
+}
+
+const AdminCustomers: React.FC<AdminCustomersProps> = ({ orders }) => {
   const [customers, setCustomers] = useState<CustomerStat[]>([]);
 
   useEffect(() => {
     const loadCustomers = async () => {
-      const orders = await fetchOrders();
       const customerMap = new Map<string, CustomerStat>();
 
       orders.forEach((order) => {

@@ -30,16 +30,23 @@ import DriverDashboard from './pages/driver/DriverDashboard';
 import OrderConfirmation from './pages/OrderConfirmation';
 import CheckoutModal from './components/CheckoutModal';
 import OrderSuccessModal from './components/OrderSuccessModal';
-import { Product, Order, Category, Slide, UserProfile } from './types';
+import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile, fetchAllAppSettings, fetchTeam, fetchDrivers } from './services/supabase';
+import { Product, Order, Category, Slide, UserProfile, DeliveryDriver } from './types';
 import { MOCK_PRODUCTS, MOCK_ORDERS } from './constants';
-import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile, fetchAllAppSettings } from './services/supabase';
 import { ProductCardSkeleton } from './components/Skeletons';
 
 const AppContent: React.FC = () => {
+  // Auth State (Moved up to be available for data fetching)
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [slides, setSlides] = useState<Slide[]>([]);
+  const [team, setTeam] = useState<UserProfile[]>([]);
+  const [drivers, setDrivers] = useState<DeliveryDriver[]>([]);
   const [loading, setLoading] = useState(true);
   const [hasLoadError, setHasLoadError] = useState(false);
 
@@ -64,25 +71,34 @@ const AppContent: React.FC = () => {
 
     // Always fetch fresh from DB — works regardless of who is logged in
     try {
-      const [dbProducts, dbCategories, dbSlides] = await Promise.all([
-        fetchProducts(),
-        fetchCategories(),
-        fetchSlides()
-      ]);
-
+      const dbProducts = await fetchProducts();
       if (dbProducts.length > 0) {
         setProducts(dbProducts);
         localStorage.setItem('brilho_products_v4', JSON.stringify(dbProducts));
-      } else {
-        setHasLoadError(true);
       }
+
+      const dbCategories = await fetchCategories();
       if (dbCategories.length > 0) {
         setCategories(dbCategories);
         localStorage.setItem('brilho_categories_v4', JSON.stringify(dbCategories));
       }
+
+      const dbSlides = await fetchSlides();
       if (dbSlides.length > 0) {
         setSlides(dbSlides);
         localStorage.setItem('brilho_slides_v4', JSON.stringify(dbSlides));
+      }
+
+      // Fetch admin-only data if authenticated
+      if (isAuthenticated) {
+        const [dbTeam, dbDrivers, dbOrders] = await Promise.all([
+          fetchTeam().catch(() => []),
+          fetchDrivers().catch(() => []),
+          fetchOrders().catch(() => [])
+        ]);
+        setTeam(dbTeam);
+        setDrivers(dbDrivers);
+        setOrders(dbOrders);
       }
     } catch (e) {
       console.error('Fetch error:', e);
@@ -96,8 +112,7 @@ const AppContent: React.FC = () => {
   // Initial load on mount
   useEffect(() => {
     loadAllData();
-    fetchOrders().then(o => setOrders(o)).catch(e => console.error('Orders fail', e));
-  }, []);
+  }, [isAuthenticated, userProfile?.id]);
 
   // Optimized Settings Fetching (Batched)
   useEffect(() => {
@@ -149,10 +164,6 @@ const AppContent: React.FC = () => {
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
 
-  // Auth State
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [isAuthLoading, setIsAuthLoading] = useState(true);
 
   // Check Auth Session & Profile
   useEffect(() => {
@@ -303,13 +314,7 @@ const AppContent: React.FC = () => {
     setTimeout(() => loadAllData(), 100);
   };
 
-  // Re-fetch data when auth state changes to ensure admin sees fresh data (bypassing RLS)
-  useEffect(() => {
-    if (isAuthenticated) {
-      loadAllData();
-      fetchOrders().then(o => setOrders(o)).catch(e => console.error('Admin sync fail:', e));
-    }
-  }, [isAuthenticated, userProfile?.id]);
+  // Data synchronization is now handled in the main useEffect with loadAllData logic
 
   const saveProduct = async (product: Product) => {
     try {
@@ -618,11 +623,11 @@ const AppContent: React.FC = () => {
                 <Route path="/admin/vendas" element={<AdminSales orders={orders} setOrders={setOrders} userProfile={userProfile} />} />
                 <Route path="/admin/pagamentos" element={<AdminPayments orders={orders} />} />
                 <Route path="/admin/logistica" element={<AdminLogistics />} />
-                <Route path="/admin/entregadores" element={<AdminDrivers userProfile={userProfile} />} />
-                <Route path="/admin/clientes" element={<AdminCustomers />} />
-                <Route path="/admin/analytics" element={<AdminAnalytics />} />
+                <Route path="/admin/entregadores" element={<AdminDrivers drivers={drivers} setDrivers={setDrivers} userProfile={userProfile} />} />
+                <Route path="/admin/clientes" element={<AdminCustomers orders={orders} />} />
+                <Route path="/admin/analytics" element={<AdminAnalytics orders={orders} products={products} />} />
                 <Route path="/admin/configuracoes" element={<AdminSettings />} />
-                <Route path="/admin/equipe" element={<AdminTeam userProfile={userProfile} />} />
+                <Route path="/admin/equipe" element={<AdminTeam team={team} setTeam={setTeam} userProfile={userProfile} />} />
                 <Route path="/admin/slides" element={<AdminSlides />} />
                 <Route path="/admin/slides/novo" element={<AdminSlideForm />} />
                 <Route path="/admin/slides/editar/:id" element={<AdminSlideForm />} />

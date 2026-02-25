@@ -10,7 +10,7 @@ interface AdminDashboardProps {
   products: Product[];
 }
 
-const AdminDashboard: React.FC<AdminDashboardProps> = ({ userProfile }) => {
+const AdminDashboard: React.FC<AdminDashboardProps> = ({ userProfile, orders, products }) => {
   const [stats, setStats] = useState({
     totalSales: 0,
     totalOrders: 0,
@@ -27,94 +27,87 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ userProfile }) => {
   const COLORS = ['#f2d00d', '#1c1a0d', '#4a4a4a', '#8a8a8a', '#c2c2c2'];
 
   useEffect(() => {
-    const loadDashboardData = async () => {
-      try {
-        const [orders, products] = await Promise.all([
-          fetchOrders(),
-          fetchProducts()
-        ]);
+    if (!orders || !products) return;
 
-        // Calculate Basic Stats
-        const totalSales = orders.reduce((acc, order) => acc + (order.amount || 0), 0);
-        const pending = orders.filter(o => o.status === 'PEDIDO').length;
-        const paidOrders = orders.filter(o => o.status === 'PAGO').length;
-        const avgTicket = orders.length > 0 ? totalSales / orders.length : 0;
+    setLoading(true);
+    try {
+      // Calculate Basic Stats
+      const totalSales = orders.reduce((acc, order) => acc + (order.amount || 0), 0);
+      const pending = orders.filter(o => o.status === 'PEDIDO').length;
+      const paidOrders = orders.filter(o => o.status === 'PAGO').length;
+      const avgTicket = orders.length > 0 ? totalSales / orders.length : 0;
 
-        setStats({
-          totalSales,
-          totalOrders: orders.length,
-          pendingOrders: pending,
-          totalProducts: products.length,
-          paidOrdersCount: paidOrders,
-          avgTicket
-        });
+      setStats({
+        totalSales,
+        totalOrders: orders.length,
+        pendingOrders: pending,
+        totalProducts: products.length,
+        paidOrdersCount: paidOrders,
+        avgTicket
+      });
 
-        // Chart Data (Sales by Date)
-        const salesByDate: Record<string, number> = {};
-        orders.forEach(o => {
-          if (o.date) {
-            // Assuming format dd/mm/yyyy based on previous code context
-            salesByDate[o.date] = (salesByDate[o.date] || 0) + (o.amount || 0);
+      // Chart Data (Sales by Date)
+      const salesByDate: Record<string, number> = {};
+      orders.forEach(o => {
+        if (o.date) {
+          salesByDate[o.date] = (salesByDate[o.date] || 0) + (o.amount || 0);
+        }
+      });
+
+      const sortedDates = Object.keys(salesByDate).sort((a, b) => {
+        const [da, ma, ya] = a.split('/').map(Number);
+        const [db, mb, yb] = b.split('/').map(Number);
+        return new Date(ya, ma - 1, da).getTime() - new Date(yb, mb - 1, db).getTime();
+      }).slice(-7);
+
+      const chartData = sortedDates.map(date => ({
+        name: date.substring(0, 5), // dd/mm
+        value: salesByDate[date]
+      }));
+      setSalesData(chartData);
+
+      // Category Breakdown
+      const categoryMap: Record<string, number> = {};
+      orders.forEach(o => {
+        const orderAny = o as any;
+        if (orderAny.product_id || orderAny.productId) {
+          const pId = orderAny.product_id || orderAny.productId;
+          const product = products.find(p => p.id === pId);
+          if (product) {
+            categoryMap[product.category] = (categoryMap[product.category] || 0) + (o.amount || 0);
           }
-        });
+        }
+      });
+      const catData = Object.entries(categoryMap).map(([name, value]) => ({ name, value }));
+      setCategoryData(catData);
 
-        const sortedDates = Object.keys(salesByDate).sort((a, b) => {
-          const [da, ma, ya] = a.split('/').map(Number);
-          const [db, mb, yb] = b.split('/').map(Number);
-          return new Date(ya, ma - 1, da).getTime() - new Date(yb, mb - 1, db).getTime();
-        }).slice(-7);
-
-        const chartData = sortedDates.map(date => ({
-          name: date.substring(0, 5), // dd/mm
-          value: salesByDate[date]
-        }));
-        setSalesData(chartData);
-
-        // Category Breakdown
-        const categoryMap: Record<string, number> = {};
-        orders.forEach(o => {
-          const orderAny = o as any;
-          if (orderAny.product_id || orderAny.productId) { // Try both snake_case and camelCase
-            const pId = orderAny.product_id || orderAny.productId;
-            const product = products.find(p => p.id === pId);
-            if (product) {
-              categoryMap[product.category] = (categoryMap[product.category] || 0) + (o.amount || 0);
+      // Top Products
+      const productSalesMap: Record<string, { name: string, qty: number, revenue: number }> = {};
+      orders.forEach(o => {
+        const orderAny = o as any;
+        if (orderAny.product_id || orderAny.productId) {
+          const pId = orderAny.product_id || orderAny.productId;
+          const product = products.find(p => p.id === pId);
+          if (product) {
+            if (!productSalesMap[pId]) {
+              productSalesMap[pId] = { name: product.name, qty: 0, revenue: 0 };
             }
+            productSalesMap[pId].qty += 1;
+            productSalesMap[pId].revenue += o.amount;
           }
-        });
-        const catData = Object.entries(categoryMap).map(([name, value]) => ({ name, value }));
-        setCategoryData(catData);
+        }
+      });
+      const topProds = Object.values(productSalesMap)
+        .sort((a, b) => b.qty - a.qty)
+        .slice(0, 5);
+      setTopProducts(topProds);
 
-        // Top Products
-        const productSalesMap: Record<string, { name: string, qty: number, revenue: number }> = {};
-        orders.forEach(o => {
-          const orderAny = o as any;
-          if (orderAny.product_id || orderAny.productId) {
-            const pId = orderAny.product_id || orderAny.productId;
-            const product = products.find(p => p.id === pId);
-            if (product) {
-              if (!productSalesMap[pId]) {
-                productSalesMap[pId] = { name: product.name, qty: 0, revenue: 0 };
-              }
-              productSalesMap[pId].qty += 1;
-              productSalesMap[pId].revenue += o.amount;
-            }
-          }
-        });
-        const topProds = Object.values(productSalesMap)
-          .sort((a, b) => b.qty - a.qty)
-          .slice(0, 5);
-        setTopProducts(topProds);
-
-      } catch (error) {
-        console.error("Erro ao carregar dashboard:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadDashboardData();
-  }, []);
+    } catch (error) {
+      console.error("Erro ao processar dashboard:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [orders, products]);
 
   if (loading) return (
     <div className="p-12 flex justify-center">

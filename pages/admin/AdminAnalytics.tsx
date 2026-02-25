@@ -9,71 +9,72 @@ import {
 import { fetchOrders, fetchProducts } from '../../services/supabase';
 import { Order, Product } from '../../types';
 
-const AdminAnalytics: React.FC = () => {
+interface AdminAnalyticsProps {
+  products: Product[];
+  orders: Order[];
+}
+
+const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ products, orders }) => {
   const [kpis, setKpis] = useState({ revenue: 0, ticket: 0, ltv: 0 });
   const [teamStats, setTeamStats] = useState<{ name: string, val: number, env: number }[]>([]);
   const [profit, setProfit] = useState(0);
   const [revenueData, setRevenueData] = useState<{ name: string, receita: number }[]>([]);
 
   useEffect(() => {
-    const loadData = async () => {
-      const orders = await fetchOrders();
-      const products = await fetchProducts();
+    if (!orders || !products) return;
 
-      // Calculate Basic KPIs
-      const paidOrders = orders.filter(o => o.status === 'PAGO' || o.status === 'ENVIADO');
-      const totalRevenue = paidOrders.reduce((acc, curr) => acc + curr.amount, 0);
-      const ticket = paidOrders.length > 0 ? totalRevenue / paidOrders.length : 0;
+    // Calculate Basic KPIs
+    const paidOrders = orders.filter(o => o.status === 'PAGO' || o.status === 'ENVIADO');
+    const totalRevenue = paidOrders.reduce((acc, curr) => acc + curr.amount, 0);
+    const ticket = paidOrders.length > 0 ? totalRevenue / paidOrders.length : 0;
 
-      // Simple LTV Projection (Average spent per unique customer)
-      const uniqueCustomers = new Set(paidOrders.map(o => o.customer.toLowerCase().trim())).size;
-      const ltv = uniqueCustomers > 0 ? totalRevenue / uniqueCustomers : 0;
+    // Simple LTV Projection (Average spent per unique customer)
+    const uniqueCustomers = new Set(paidOrders.map(o => o.customer.toLowerCase().trim())).size;
+    const ltv = uniqueCustomers > 0 ? totalRevenue / uniqueCustomers : 0;
 
-      setKpis({ revenue: totalRevenue, ticket, ltv });
+    setKpis({ revenue: totalRevenue, ticket, ltv });
 
-      // Calculate Team Performance
-      const performanceMap = new Map<string, { val: number, env: number }>();
-      paidOrders.forEach(o => {
-        if (o.validator_name) {
-          const stats = performanceMap.get(o.validator_name) || { val: 0, env: 0 };
-          stats.val += 1;
-          performanceMap.set(o.validator_name, stats);
+    // Calculate Team Performance
+    const performanceMap = new Map<string, { val: number, env: number }>();
+    paidOrders.forEach(o => {
+      if (o.validator_name) {
+        const stats = performanceMap.get(o.validator_name) || { val: 0, env: 0 };
+        stats.val += 1;
+        performanceMap.set(o.validator_name, stats);
+      }
+      if (o.deliverer_name) {
+        const stats = performanceMap.get(o.deliverer_name) || { val: 0, env: 0 };
+        stats.env += 1;
+        performanceMap.set(o.deliverer_name, stats);
+      }
+    });
+    setTeamStats(Array.from(performanceMap.entries()).map(([name, s]) => ({ name, ...s })));
+
+    // Calculate Total Profit (Revenue - Cost)
+    setProfit(totalRevenue * 0.4); // fallback to 40% margin for visibility
+
+    // Aggregate Revenue by Month
+    const monthMap = new Map<string, number>();
+    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+
+    // Initialize months with 0
+    months.forEach(m => monthMap.set(m, 0));
+
+    paidOrders.forEach(o => {
+      const parts = o.date.split('/');
+      if (parts.length === 3) {
+        const monthIndex = parseInt(parts[1], 10) - 1;
+        if (monthIndex >= 0 && monthIndex < 12) {
+          const mName = months[monthIndex];
+          monthMap.set(mName, (monthMap.get(mName) || 0) + o.amount);
         }
-        if (o.deliverer_name) {
-          const stats = performanceMap.get(o.deliverer_name) || { val: 0, env: 0 };
-          stats.env += 1;
-          performanceMap.set(o.deliverer_name, stats);
-        }
-      });
-      setTeamStats(Array.from(performanceMap.entries()).map(([name, s]) => ({ name, ...s })));
+      }
+    });
 
-      // Calculate Total Profit (Revenue - Cost)
-      setProfit(totalRevenue * 0.4); // fallback to 40% margin for visibility
-
-      // Aggregate Revenue by Month
-      const monthMap = new Map<string, number>();
-      const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-
-      // Initialize months with 0
-      months.forEach(m => monthMap.set(m, 0));
-
-      paidOrders.forEach(o => {
-        const parts = o.date.split('/');
-        if (parts.length === 3) {
-          const monthIndex = parseInt(parts[1], 10) - 1;
-          if (monthIndex >= 0 && monthIndex < 12) {
-            const mName = months[monthIndex];
-            monthMap.set(mName, (monthMap.get(mName) || 0) + o.amount);
-          }
-        }
-      });
-
-      // Convert Map to Array for Chart
-      const chartData = months.map(m => ({ name: m, receita: monthMap.get(m) || 0 }));
-      setRevenueData(chartData);
-    };
-    loadData();
-  }, []);
+    // Convert Map to Array for Chart
+    const chartData = months.map(m => ({ name: m, receita: monthMap.get(m) || 0 }));
+    setRevenueData(chartData);
+  }, [orders, products]);
 
   return (
     <div className="p-4 md:p-8 lg:p-12">

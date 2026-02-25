@@ -9,13 +9,14 @@ import DriverCredentialsModal from '../../components/admin/DriverCredentialsModa
 import DriverCommissionModal from '../../components/admin/DriverCommissionModal';
 
 interface AdminDriversProps {
-    userProfile?: UserProfile | null;
+    userProfile: UserProfile | null;
+    drivers: DeliveryDriver[];
+    setDrivers: React.Dispatch<React.SetStateAction<DeliveryDriver[]>>;
 }
 
-const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
+const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile, drivers, setDrivers }) => {
     const { showToast } = useToast();
-    const [drivers, setDrivers] = useState<DeliveryDriver[]>([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState<'all' | 'verified' | 'pending'>('all');
 
     // Modal State
@@ -29,20 +30,8 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile }) => {
     const [credDriver, setCredDriver] = useState<DeliveryDriver | null>(null);
     const [isCredModalOpen, setIsCredModalOpen] = useState(false);
 
-    useEffect(() => {
-        loadDrivers();
-    }, []);
-
     const loadDrivers = async () => {
-        setLoading(true);
-        try {
-            const data = await fetchDrivers();
-            setDrivers(data);
-        } catch (error) {
-            console.error('Error loading drivers:', error);
-        } finally {
-            setLoading(false);
-        }
+        // Now handled by loadAllData in App.tsx
     };
 
     const handleUpdate = async (id: string, updates: Partial<DeliveryDriver>) => {
