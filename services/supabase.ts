@@ -178,7 +178,7 @@ export const fetchProducts = async (): Promise<Product[]> => {
 
     if (error) {
         console.error('Error fetching products:', error);
-        return [];
+        throw error;
     }
 
     // Map snake_case database fields to camelCase application interface if needed.
@@ -192,8 +192,9 @@ export const fetchProducts = async (): Promise<Product[]> => {
         bestSeller: p.best_seller,
         createdAt: p.created_at,
         salePrice: p.sale_price ? Number(p.sale_price) : undefined,
-        delivery_commission: Number(p.delivery_commission || 0),
-        last_edited_by: p.last_edited_by,
+        deliveryCommission: Number(p.delivery_commission || 0),
+        createdByName: p.created_by_name,
+        lastEditedBy: p.last_edited_by,
         stock: Number(p.stock || 0)
     }));
 };
@@ -212,12 +213,12 @@ export const addProduct = async (product: Omit<Product, 'id'>) => {
         description: product.description,
         stock: product.stock,
         best_seller: product.bestSeller,
-        created_by_name: product.created_by_name,
+        created_by_name: product.createdByName,
         gender: product.gender,
         notes: product.notes,
         sale_price: product.salePrice,
-        delivery_commission: product.delivery_commission || 0,
-        last_edited_by: product.last_edited_by
+        delivery_commission: product.deliveryCommission || 0,
+        last_edited_by: product.lastEditedBy
     };
 
     const { data, error } = await supabase
@@ -243,12 +244,11 @@ export const updateProduct = async (id: string, product: Partial<Product>) => {
     if (product.description !== undefined) dbProduct.description = product.description;
     if (product.stock !== undefined) dbProduct.stock = product.stock;
     if (product.bestSeller !== undefined) dbProduct.best_seller = product.bestSeller;
-    if (product.created_by_name !== undefined) dbProduct.created_by_name = product.created_by_name;
+    if (product.createdByName !== undefined) dbProduct.created_by_name = product.createdByName;
     if (product.notes !== undefined) dbProduct.notes = product.notes;
     if (product.gender !== undefined) dbProduct.gender = product.gender;
-    if (product.delivery_commission !== undefined) dbProduct.delivery_commission = product.delivery_commission;
-    if (product.last_edited_by !== undefined) dbProduct.last_edited_by = product.last_edited_by;
-    if (product.created_by_name !== undefined) dbProduct.created_by_name = product.created_by_name;
+    if (product.deliveryCommission !== undefined) dbProduct.delivery_commission = product.deliveryCommission;
+    if (product.lastEditedBy !== undefined) dbProduct.last_edited_by = product.lastEditedBy;
 
     const { error } = await supabase
         .from('products')
@@ -277,7 +277,7 @@ export const fetchOrders = async (): Promise<Order[]> => {
 
     if (error) {
         console.error('Error fetching orders:', error);
-        return [];
+        throw error;
     }
     return data;
 };
@@ -312,7 +312,7 @@ export const fetchCategories = async (): Promise<Category[]> => {
 
     if (error) {
         console.error('Error fetching categories:', error);
-        return [];
+        throw error;
     }
     return data;
 };
@@ -356,7 +356,7 @@ export const fetchSlides = async (): Promise<Slide[]> => {
 
     if (error) {
         console.error('Error fetching slides:', error);
-        return [];
+        throw error;
     }
     return data;
 };

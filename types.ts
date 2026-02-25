@@ -15,9 +15,9 @@ export interface Product {
   gender: 'masculino' | 'feminino' | 'unissexo';
   createdAt?: string;
   salePrice?: number;
-  delivery_commission?: number; // % do preço que o entregador ganha
-  created_by_name?: string;
-  last_edited_by?: string;
+  deliveryCommission?: number; // % do preço que o entregador ganha
+  createdByName?: string;
+  lastEditedBy?: string;
   notes?: {
     top: string;
     heart: string;

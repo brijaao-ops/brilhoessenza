@@ -51,11 +51,18 @@ const AppContent: React.FC = () => {
   const [hasLoadError, setHasLoadError] = useState(false);
 
   // Simple, reliable public data loader — no seeding, no mock injection
-  const loadAllData = async () => {
-    setLoading(true);
+  const loadAllData = async (isRetry = false) => {
+    // Prevent fetching admin data before profile is ready (RLS race condition)
+    if (isAuthenticated && !userProfile && !isRetry) {
+      console.log("Waiting for user profile before loading admin data...");
+      setLoading(true);
+      return;
+    }
+
+    setLoading(!isRetry);
     setHasLoadError(false);
 
-    // Show cached data immediately while fresh data loads
+    // Initial cache load for performance
     try {
       const cp = localStorage.getItem('brilho_products_v4');
       const cc = localStorage.getItem('brilho_categories_v4');
@@ -69,44 +76,54 @@ const AppContent: React.FC = () => {
       localStorage.removeItem('brilho_slides_v4');
     }
 
-    // Always fetch fresh from DB — works regardless of who is logged in
+    // PHASE 1: Public Data (Critical for Home Page)
     try {
-      const dbProducts = await fetchProducts();
+      const [dbProducts, dbCategories, dbSlides] = await Promise.all([
+        fetchProducts(),
+        fetchCategories(),
+        fetchSlides()
+      ]);
+
       if (dbProducts.length > 0) {
         setProducts(dbProducts);
         localStorage.setItem('brilho_products_v4', JSON.stringify(dbProducts));
       }
-
-      const dbCategories = await fetchCategories();
       if (dbCategories.length > 0) {
         setCategories(dbCategories);
         localStorage.setItem('brilho_categories_v4', JSON.stringify(dbCategories));
       }
-
-      const dbSlides = await fetchSlides();
       if (dbSlides.length > 0) {
         setSlides(dbSlides);
         localStorage.setItem('brilho_slides_v4', JSON.stringify(dbSlides));
       }
-
-      // Fetch admin-only data if authenticated
-      if (isAuthenticated) {
-        const [dbTeam, dbDrivers, dbOrders] = await Promise.all([
-          fetchTeam().catch(() => []),
-          fetchDrivers().catch(() => []),
-          fetchOrders().catch(() => [])
-        ]);
-        setTeam(dbTeam);
-        setDrivers(dbDrivers);
-        setOrders(dbOrders);
-      }
     } catch (e) {
-      console.error('Fetch error:', e);
-      const cached = localStorage.getItem('brilho_products_v4');
-      if (!cached || JSON.parse(cached).length === 0) setHasLoadError(true);
-    } finally {
-      setLoading(false);
+      console.error('Critical Public Fetch Error:', e);
+      // Only set load error if no data at all (including cache)
+      if (products.length === 0) setHasLoadError(true);
     }
+
+    // PHASE 2: Admin Data (Contextual)
+    if (isAuthenticated && userProfile) {
+      try {
+        const [dbTeam, dbDrivers, dbOrders] = await Promise.all([
+          fetchTeam(),
+          fetchDrivers(),
+          fetchOrders()
+        ]);
+        setTeam(dbTeam || []);
+        setDrivers(dbDrivers || []);
+        setOrders(dbOrders || []);
+      } catch (e) {
+        console.error('Non-critical Admin Fetch Error:', e);
+        // If we are on an admin page, we SHOULD show an error/retry
+        const isAdminRoute = window.location.pathname.startsWith('/admin');
+        if (isAdminRoute) {
+          setHasLoadError(true);
+        }
+      }
+    }
+
+    setLoading(false);
   };
 
   // Initial load on mount
@@ -536,18 +553,28 @@ const AppContent: React.FC = () => {
                 <div>
                   <h1 className="font-black uppercase tracking-tighter text-sm">Brilho <span className="text-primary">Essenza</span></h1>
                   <span className="text-[10px] text-gray-400 font-bold uppercase">Gestão Luxo</span>
-                  <div className="mt-1 bg-gray-50 dark:bg-white/5 rounded px-2 py-1">
+                  <div className="mt-1 bg-gray-50 dark:bg-white/5 rounded px-2 py-1 relative group">
                     {userProfile ? (
                       <>
                         <p className="text-[10px] font-bold text-primary truncate max-w-[150px]">{userProfile.full_name}</p>
                         <p className="text-[9px] text-gray-400 font-medium uppercase tracking-wider">{userProfile.role === 'admin' ? 'Administrador' : 'Equipe'}</p>
                       </>
                     ) : (
-                      <div className="text-[10px] font-bold text-gray-400 leading-tight">
+                      <div className="text-[10px] font-bold text-gray-400 leading-tight flex items-center gap-2">
+                        <div className="size-2 bg-primary rounded-full animate-pulse"></div>
                         Autenticando...
                       </div>
                     )}
                   </div>
+                  {hasLoadError && (
+                    <button
+                      onClick={() => loadAllData(true)}
+                      className="mt-2 w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 text-[9px] font-black py-2 rounded-lg transition-all flex items-center justify-center gap-1 uppercase tracking-wider border border-red-500/20"
+                    >
+                      <span className="material-symbols-outlined !text-xs">sync</span>
+                      Tentar Novamente
+                    </button>
+                  )}
                 </div>
               </Link>
 

@@ -9,7 +9,7 @@ interface AdminProductsProps {
   userProfile: UserProfile | null;
 }
 
-type SortKey = 'name' | 'category' | 'price' | 'salePrice' | 'costPrice' | 'stock' | 'delivery_commission' | 'gender' | 'rating' | 'createdAt';
+type SortKey = 'name' | 'category' | 'price' | 'salePrice' | 'costPrice' | 'stock' | 'deliveryCommission' | 'gender' | 'rating' | 'createdAt';
 type SortDir = 'asc' | 'desc';
 
 const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userProfile }) => {
@@ -180,8 +180,8 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
                     <th className="px-4 py-3 cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap" onClick={() => handleSort('stock')}>
                       <span className="inline-flex items-center">Stock<SortIcon col="stock" /></span>
                     </th>
-                    <th className="px-4 py-3 cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap" onClick={() => handleSort('delivery_commission')}>
-                      <span className="inline-flex items-center">Comissão<SortIcon col="delivery_commission" /></span>
+                    <th className="px-4 py-3 cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap" onClick={() => handleSort('deliveryCommission')}>
+                      <span className="inline-flex items-center">Comissão<SortIcon col="deliveryCommission" /></span>
                     </th>
                     <th className="px-4 py-3 cursor-pointer hover:text-primary transition-colors text-right whitespace-nowrap" onClick={() => handleSort('rating')}>
                       <span className="inline-flex items-center">Rating<SortIcon col="rating" /></span>
@@ -192,7 +192,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
                 </thead>
                 <tbody className="divide-y divide-gray-50 dark:divide-[#222115]">
                   {filtered.map(p => {
-                    const comm = p.delivery_commission || 0;
+                    const comm = p.deliveryCommission || 0;
                     const commAmount = (p.salePrice || p.price) * comm / 100;
                     return (
                       <tr key={p.id} className="hover:bg-primary/[0.02] transition-colors text-[11px] group">
@@ -251,12 +251,12 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex flex-col">
-                            <span className="text-[9px] font-black uppercase text-gray-500 truncate max-w-[100px]" title={`Registado por: ${p.created_by_name || 'Desconhecido'}`}>
-                              {p.created_by_name?.split(' ')[0] || '—'}
+                            <span className="text-[10px] font-black uppercase text-gray-500 truncate max-w-[100px]" title={`Registado por: ${p.createdByName || 'Desconhecido'}`}>
+                              {p.createdByName?.split(' ')[0] || '—'}
                             </span>
-                            {p.last_edited_by && p.last_edited_by !== p.created_by_name && (
-                              <span className="text-[8px] font-bold text-primary uppercase truncate max-w-[100px]" title={`Última edição: ${p.last_edited_by}`}>
-                                ed. {p.last_edited_by.split(' ')[0]}
+                            {p.lastEditedBy && p.lastEditedBy !== p.createdByName && (
+                              <span className="text-[10px] font-bold text-primary uppercase truncate max-w-[100px]" title={`Última edição: ${p.lastEditedBy}`}>
+                                ed. {p.lastEditedBy.split(' ')[0]}
                               </span>
                             )}
                           </div>
