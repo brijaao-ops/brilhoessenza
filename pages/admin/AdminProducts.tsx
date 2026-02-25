@@ -148,7 +148,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
 
       {/* Table */}
       {/* Multi-Format List (Desktop Table / Mobile Cards) */}
-      <div className="flex-1 overflow-auto md:overflow-visible bg-white dark:bg-[#15140b] rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm">
+      <div className="flex-1 overflow-auto bg-white dark:bg-[#15140b] rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-12 min-h-[300px]">
             <span className="material-symbols-outlined !text-5xl text-gray-200 dark:text-gray-700">inventory_2</span>

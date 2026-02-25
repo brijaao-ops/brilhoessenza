@@ -657,7 +657,7 @@ const AppContent: React.FC = () => {
                 </button>
               </div>
             </aside>
-            <main className="flex-1 overflow-y-auto min-h-0">
+            <main className="flex-1 overflow-hidden min-h-0">
               <Routes>
                 <Route path="/admin" element={<AdminDashboard orders={orders} products={products} userProfile={userProfile} />} />
                 <Route path="/admin/produtos" element={<AdminProducts products={products} onDelete={deleteProduct} userProfile={userProfile} />} />
