@@ -226,23 +226,23 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile }: AdminTeamProps) =>
                 )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {loading ? (
                     <div className="col-span-full p-12 text-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
                         <p className="text-gray-500 font-bold">Carregando equipe...</p>
                     </div>
                 ) : team.map(member => (
-                    <div key={member.id} className={`bg-white dark:bg-[#15140b] p-8 rounded-[2rem] border ${member.is_active === false ? 'border-red-500/30' : 'border-gray-100 dark:border-[#222115]'} shadow-sm relative group overflow-hidden transition-all ${member.is_active === false ? 'opacity-70 bg-gray-50 dark:bg-black/20' : ''}`}>
+                    <div key={member.id} className={`bg-white dark:bg-[#15140b] p-6 md:p-8 rounded-2xl md:rounded-[2rem] border ${member.is_active === false ? 'border-red-500/30' : 'border-gray-100 dark:border-[#222115]'} shadow-sm relative group overflow-hidden transition-all ${member.is_active === false ? 'opacity-70 bg-gray-50 dark:bg-black/20' : ''}`}>
 
                         {(userProfile?.role === 'admin' || userProfile?.permissions?.team?.edit || userProfile?.permissions?.team?.manage) && (
-                            <div className="absolute top-4 right-4 flex gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                                <button onClick={() => startEdit(member)} className="size-8 bg-black dark:bg-white text-white dark:text-black rounded-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-lg" title="Editar Perfil">
-                                    <span className="material-symbols-outlined text-sm">edit</span>
+                            <div className="absolute top-6 right-6 flex gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                                <button onClick={() => startEdit(member)} className="size-9 bg-black dark:bg-white text-white dark:text-black rounded-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-lg" title="Editar Perfil">
+                                    <span className="material-symbols-outlined text-base">edit</span>
                                 </button>
                                 {member.role !== 'admin' && (
-                                    <button onClick={() => handleDelete(member.id)} className="size-8 bg-red-500 text-white rounded-lg flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-lg" title="Remover Acesso">
-                                        <span className="material-symbols-outlined text-sm">delete</span>
+                                    <button onClick={() => handleDelete(member.id)} className="size-9 bg-red-500 text-white rounded-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-lg" title="Remover Acesso">
+                                        <span className="material-symbols-outlined text-base">delete</span>
                                     </button>
                                 )}
                             </div>

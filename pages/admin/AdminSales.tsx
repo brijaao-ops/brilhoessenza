@@ -239,13 +239,14 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                 </div>
 
                 {/* Filters */}
-                <div className="bg-white dark:bg-[#15140b] p-4 rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm flex flex-wrap gap-4 items-end">
+                {/* Filters */}
+                <div className="bg-white dark:bg-[#15140b] p-4 rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm grid grid-cols-2 md:grid-cols-4 gap-4 items-end">
                     <div className="flex flex-col gap-1">
                         <label className="text-[9px] font-bold uppercase tracking-wider text-gray-500">Status</label>
                         <select
                             value={statusFilter}
                             onChange={(e) => setStatusFilter(e.target.value)}
-                            className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-[#222115] rounded-lg px-3 py-2 text-xs font-medium outline-none focus:border-primary transition-colors min-w-[120px]"
+                            className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-[#222115] rounded-xl px-3 py-2.5 text-[10px] font-bold uppercase tracking-widest outline-none focus:border-primary transition-colors w-full"
                         >
                             <option value="ALL">Todos</option>
                             <option value="PENDENTE">Pendente</option>
@@ -261,7 +262,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                             value={responsibleFilter}
                             onChange={(e) => setResponsibleFilter(e.target.value)}
                             placeholder="Nome..."
-                            className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-[#222115] rounded-lg px-3 py-2 text-xs font-medium outline-none focus:border-primary transition-colors min-w-[150px]"
+                            className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-[#222115] rounded-xl px-3 py-2.5 text-[10px] font-bold placeholder:text-gray-300 outline-none focus:border-primary transition-colors w-full"
                         />
                     </div>
 
@@ -271,7 +272,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                             type="date"
                             value={startDate}
                             onChange={(e) => setStartDate(e.target.value)}
-                            className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-[#222115] rounded-lg px-3 py-2 text-xs font-medium outline-none focus:border-primary transition-colors"
+                            className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-[#222115] rounded-xl px-3 py-2 text-[10px] font-bold outline-none focus:border-primary transition-colors w-full"
                         />
                     </div>
 
@@ -281,7 +282,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                             type="date"
                             value={endDate}
                             onChange={(e) => setEndDate(e.target.value)}
-                            className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-[#222115] rounded-lg px-3 py-2 text-xs font-medium outline-none focus:border-primary transition-colors"
+                            className="bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-[#222115] rounded-xl px-3 py-2 text-[10px] font-bold outline-none focus:border-primary transition-colors w-full"
                         />
                     </div>
 
@@ -293,16 +294,17 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                 setStartDate('');
                                 setEndDate('');
                             }}
-                            className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-red-500 hover:bg-red-50 rounded-lg transition-colors mb-0.5"
+                            className="col-span-full md:col-auto px-4 py-2.5 text-[9px] font-black uppercase tracking-[0.2em] text-red-500 bg-red-500/5 rounded-xl hover:bg-red-500/10 transition-colors"
                         >
-                            Limpar
+                            Limpar Filtros
                         </button>
                     )}
                 </div>
             </div>
 
             <div className="flex-1 bg-white dark:bg-[#15140b] rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm flex flex-col overflow-hidden">
-                <div className="flex-1 overflow-auto relative">
+                {/* Desktop View */}
+                <div className="hidden md:block flex-1 overflow-auto relative">
                     <table className="w-full text-left border-collapse table-fixed" style={{ minWidth: Object.values(columns).reduce((a, b) => a + b, 0) }}>
                         <thead className="sticky top-0 z-10 bg-white dark:bg-[#15140b] shadow-sm">
                             <tr className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
@@ -339,22 +341,22 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                             {filteredSales.map((o) => (
                                 <tr key={o.id} className="hover:bg-gray-50/50 dark:hover:bg-white/[0.01] transition-all">
                                     <td className="px-4 py-2 font-bold text-primary text-[10px] border-r border-gray-50 dark:border-[#222115] truncate">{o.id}</td>
-                                    <td className="px-4 py-2 font-medium text-[10px] border-r border-gray-50 dark:border-[#222115] truncate" title={o.customer}>{o.customer}</td>
-                                    <td className="px-4 py-2 border-r border-gray-50 dark:border-[#222115]">
+                                    <td className="px-4 py-2 font-medium text-[10px] border-r border-gray-100 dark:border-[#222115] truncate" title={o.customer}>{o.customer}</td>
+                                    <td className="px-4 py-2 border-r border-gray-100 dark:border-[#222115]">
                                         <div className="flex flex-col gap-0.5 overflow-hidden">
                                             <span className="text-[10px] text-gray-800 dark:text-gray-200 truncate" title={o.neighborhood}>{o.neighborhood || '---'}</span>
                                             <span className="text-[10px] text-gray-400 uppercase tracking-wider truncate">{(o.municipality || '')} {o.province && `| ${o.province}`}</span>
                                             {o.address && <p className="text-[10px] text-gray-400 italic truncate" title={o.address}>{o.address}</p>}
                                         </div>
                                     </td>
-                                    <td className="px-4 py-2 border-r border-gray-50 dark:border-[#222115]">
+                                    <td className="px-4 py-2 border-r border-gray-100 dark:border-[#222115]">
                                         <div className="flex flex-col gap-0.5 text-[10px] text-gray-500 truncate">
                                             {o.phone?.length === 9 ? `+244 ${o.phone}` : (o.phone || '---')}
                                         </div>
                                     </td>
-                                    <td className="px-4 py-2 font-bold text-[10px] border-r border-gray-50 dark:border-[#222115] truncate">{o.amount.toLocaleString()} Kz</td>
-                                    <td className="px-4 py-2 text-[10px] text-gray-400 border-r border-gray-50 dark:border-[#222115] truncate">{o.date}</td>
-                                    <td className="px-4 py-2 border-r border-gray-50 dark:border-[#222115]">
+                                    <td className="px-4 py-2 font-bold text-[10px] border-r border-gray-100 dark:border-[#222115] truncate">{o.amount.toLocaleString()} Kz</td>
+                                    <td className="px-4 py-2 text-[10px] text-gray-400 border-r border-gray-100 dark:border-[#222115] truncate">{o.date}</td>
+                                    <td className="px-4 py-2 border-r border-gray-100 dark:border-[#222115]">
                                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-widest ${o.status === 'PAGO' ? 'bg-green-500/10 text-green-500' :
                                             o.status === 'PENDENTE' ? 'bg-orange-500/10 text-orange-500' :
                                                 'bg-blue-500/10 text-blue-500'
@@ -362,7 +364,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                                             {o.status}
                                         </span>
                                     </td>
-                                    <td className="px-4 py-2 border-r border-gray-50 dark:border-[#222115]">
+                                    <td className="px-4 py-2 border-r border-gray-100 dark:border-[#222115]">
                                         <div className="flex flex-col gap-1 overflow-hidden">
                                             <div className="flex flex-col gap-0.5">
                                                 {o.validator_name && (
@@ -432,6 +434,48 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                {/* Mobile View */}
+                <div className="md:hidden flex-1 overflow-auto divide-y divide-gray-50 dark:divide-white/5 p-2">
+                    {filteredSales.map((o) => (
+                        <div key={o.id} className="p-4 flex flex-col gap-4">
+                            <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest">
+                                <span className="text-gray-400 font-mono">#{o.id.split('-')[0]}</span>
+                                <span className={`px-2 py-0.5 rounded ${o.status === 'PAGO' ? 'bg-green-500/10 text-green-500' : o.status === 'PENDENTE' ? 'bg-orange-500/10 text-orange-500' : 'bg-blue-500/10 text-blue-500'}`}>{o.status}</span>
+                            </div>
+
+                            <div className="flex justify-between items-end">
+                                <div>
+                                    <p className="text-sm font-black text-[#1c1a0d] dark:text-white uppercase leading-none mb-1">{o.customer}</p>
+                                    <p className="text-[10px] font-bold text-gray-400">{o.phone || '---'}</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">{o.date}</p>
+                                    <p className="text-sm font-black text-primary italic leading-none">{o.amount.toLocaleString()} Kz</p>
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3 py-3 border-y border-gray-50 dark:border-white/5">
+                                <div>
+                                    <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Localização</p>
+                                    <p className="text-[10px] font-bold truncate">{o.neighborhood}, {o.municipality}</p>
+                                </div>
+                                <div>
+                                    <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-1">Responsável</p>
+                                    <p className="text-[10px] font-bold truncate">{o.validator_name || o.deliverer_name || 'N/A'}</p>
+                                </div>
+                            </div>
+
+                            {(userProfile?.role === 'admin' || userProfile?.permissions?.sales?.edit || userProfile?.permissions?.sales?.manage) && (
+                                <div className="flex gap-2">
+                                    {o.status === 'PENDENTE' && <button onClick={() => updateStatus(o.id, 'PAGO')} className="flex-1 bg-green-500 text-white font-black py-3 rounded-xl text-[10px] uppercase tracking-widest shadow-lg">Confirmar</button>}
+                                    {o.status === 'PAGO' && <button onClick={() => updateStatus(o.id, 'ENVIADO')} className="flex-1 bg-blue-500 text-white font-black py-3 rounded-xl text-[10px] uppercase tracking-widest shadow-lg">Enviado</button>}
+                                    <a href={`https://wa.me/${o.phone?.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="size-11 bg-green-500/10 text-green-500 rounded-xl flex items-center justify-center border border-green-500/20"><span className="material-symbols-outlined text-base">chat</span></a>
+                                </div>
+                            )}
+                        </div>
+                    ))}
                     {filteredSales.length === 0 && (
                         <div className="p-20 text-center">
                             <span className="material-symbols-outlined text-gray-200 !text-6xl mb-4">sell</span>

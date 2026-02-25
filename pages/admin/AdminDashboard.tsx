@@ -132,45 +132,45 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ userProfile }) => {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8 lg:mb-12">
-        <div className="bg-white dark:bg-[#15140b] p-6 lg:p-8 rounded-3xl lg:rounded-[2.5rem] border border-gray-100 dark:border-white/5 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-            <span className="material-symbols-outlined !text-6xl text-primary">payments</span>
+        <div className="bg-white dark:bg-[#15140b] p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] border border-gray-100 dark:border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 md:p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+            <span className="material-symbols-outlined !text-4xl md:!text-6xl text-primary">payments</span>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Vendas Totais</p>
-          <h3 className="text-3xl font-black text-[#1c1a0d] dark:text-white">
-            {stats.totalSales.toLocaleString()} <span className="text-sm text-primary">Kz</span>
+          <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Vendas Totais</p>
+          <h3 className="text-2xl md:text-3xl font-black text-[#1c1a0d] dark:text-white">
+            {stats.totalSales.toLocaleString()} <span className="text-xs md:text-sm text-primary">Kz</span>
           </h3>
         </div>
 
-        <div className="bg-white dark:bg-[#15140b] p-8 rounded-[2.5rem] border border-gray-100 dark:border-white/5 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-            <span className="material-symbols-outlined !text-6xl text-blue-500">shopping_bag</span>
+        <div className="bg-white dark:bg-[#15140b] p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] border border-gray-100 dark:border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 md:p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+            <span className="material-symbols-outlined !text-4xl md:!text-6xl text-blue-500">shopping_bag</span>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Pedidos Totais</p>
-          <h3 className="text-3xl font-black text-[#1c1a0d] dark:text-white">{stats.totalOrders}</h3>
+          <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Pedidos Totais</p>
+          <h3 className="text-2xl md:text-3xl font-black text-[#1c1a0d] dark:text-white">{stats.totalOrders}</h3>
         </div>
 
-        <div className="bg-white dark:bg-[#15140b] p-8 rounded-[2.5rem] border border-gray-100 dark:border-white/5 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-            <span className="material-symbols-outlined !text-6xl text-orange-500">pending_actions</span>
+        <div className="bg-white dark:bg-[#15140b] p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] border border-gray-100 dark:border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 md:p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+            <span className="material-symbols-outlined !text-4xl md:!text-6xl text-orange-500">pending_actions</span>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Pedidos Pendentes</p>
-          <h3 className="text-3xl font-black text-[#1c1a0d] dark:text-white">{stats.pendingOrders}</h3>
+          <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Pedidos Pendentes</p>
+          <h3 className="text-2xl md:text-3xl font-black text-[#1c1a0d] dark:text-white">{stats.pendingOrders}</h3>
         </div>
 
-        <div className="bg-white dark:bg-[#15140b] p-8 rounded-[2.5rem] border border-gray-100 dark:border-white/5 relative overflow-hidden group">
-          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
-            <span className="material-symbols-outlined !text-6xl text-purple-500">inventory_2</span>
+        <div className="bg-white dark:bg-[#15140b] p-6 md:p-8 rounded-2xl md:rounded-[2.5rem] border border-gray-100 dark:border-white/5 relative overflow-hidden group">
+          <div className="absolute top-0 right-0 p-4 md:p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+            <span className="material-symbols-outlined !text-4xl md:!text-6xl text-purple-500">inventory_2</span>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Produtos Ativos</p>
-          <h3 className="text-3xl font-black text-[#1c1a0d] dark:text-white">{stats.totalProducts}</h3>
+          <p className="text-[9px] md:text-[10px] font-black uppercase tracking-widest text-gray-400 mb-2">Produtos Ativos</p>
+          <h3 className="text-2xl md:text-3xl font-black text-[#1c1a0d] dark:text-white">{stats.totalProducts}</h3>
         </div>
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 lg:gap-8 mb-8 lg:mb-12">
-        <div className="xl:col-span-2 bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 shadow-sm">
-          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-6 lg:mb-10">Tendência de Vendas (Últimos dias)</h4>
-          <div className="h-[350px] w-full">
+        <div className="xl:col-span-2 bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-3xl md:rounded-[2.5rem] p-6 md:p-10 shadow-sm">
+          <h4 className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-6 md:mb-10">Tendência de Vendas (Últimos dias)</h4>
+          <div className="h-[250px] md:h-[350px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={salesData}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} strokeOpacity={0.05} />
@@ -198,9 +198,9 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ userProfile }) => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 shadow-sm">
-          <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-6 lg:mb-10">Por Categoria</h4>
-          <div className="h-[250px] w-full">
+        <div className="bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-3xl md:rounded-[2.5rem] p-6 md:p-10 shadow-sm">
+          <h4 className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-6 md:mb-10">Por Categoria</h4>
+          <div className="h-[200px] md:h-[250px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -234,8 +234,8 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ userProfile }) => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 shadow-sm">
-        <h4 className="text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-6 lg:mb-10">Produtos Mais Vendidos</h4>
+      <div className="bg-white dark:bg-[#15140b] border border-gray-100 dark:border-[#222115] rounded-3xl md:rounded-[2.5rem] p-6 md:p-10 shadow-sm">
+        <h4 className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.3em] text-gray-400 mb-6 md:mb-10">Produtos Mais Vendidos</h4>
         <div className="space-y-6">
           {topProducts.map((p, i) => (
             <div key={p.name} className="flex items-center justify-between group">

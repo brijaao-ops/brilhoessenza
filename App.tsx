@@ -571,9 +571,19 @@ const AppContent: React.FC = () => {
                       <span className="material-symbols-outlined text-sm hidden md:block">{expandedMenu === tab.name.toLowerCase() ? 'expand_less' : 'expand_more'}</span>
                     </button>
                     {expandedMenu === tab.name.toLowerCase() && (
-                      <div className="hidden md:flex flex-col ml-8 border-l border-gray-100 dark:border-[#222115]">
+                      <div className="flex flex-col md:ml-8 md:border-l border-gray-100 dark:border-[#222115] bg-gray-50/50 dark:bg-white/5 md:bg-transparent rounded-xl md:rounded-none mt-1 md:mt-0 p-1 md:p-0">
                         {tab.subItems.map(sub => (
-                          <Link key={sub.path} to={sub.path} className={`px-4 py-2 text-sm font-bold transition-colors ${location.pathname === sub.path ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}>{sub.name}</Link>
+                          <Link
+                            key={sub.path}
+                            to={sub.path}
+                            onClick={(e) => {
+                              // On mobile, clicking a sub-item should probably collapse the menu or at least navigate
+                              // The Link already handles navigation. 
+                            }}
+                            className={`px-4 py-2 text-[10px] md:text-sm font-bold transition-colors whitespace-nowrap md:whitespace-normal ${location.pathname === sub.path ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}
+                          >
+                            {sub.name}
+                          </Link>
                         ))}
                       </div>
                     )}
