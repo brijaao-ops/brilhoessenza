@@ -173,7 +173,7 @@ export const updateUserPassword = async (password: string) => {
 export const fetchProducts = async (): Promise<Product[]> => {
     const { data, error } = await supabase
         .from('products')
-        .select('id, name, description, price, sale_price, image, category, sub_category, gender, stock, active, best_seller, reviews_count, created_at, cost_price, delivery_commission, last_edited_by')
+        .select('id, name, description, price, sale_price, image, category, sub_category, gender, stock, best_seller, notes, reviews_count, created_at, created_by_name, cost_price, delivery_commission, last_edited_by')
         .order('created_at', { ascending: false });
 
     if (error) {
