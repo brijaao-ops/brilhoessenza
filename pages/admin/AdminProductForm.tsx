@@ -14,12 +14,19 @@ interface AdminProductFormProps {
   userProfile: UserProfile | null;
 }
 
+const RequiredBadge = () => (
+  <span className="inline-flex items-center gap-0.5 bg-red-500/10 text-red-500 text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full shrink-0">
+    <span className="material-symbols-outlined !text-[9px]">asterisk</span>Obrigatório
+  </span>
+);
+
 const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = [], userProfile }) => {
   const { showToast } = useToast();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditing = !!id;
   const [nameError, setNameError] = useState<string | null>(null);
+  const [saving, setSaving] = useState(false);
 
   const [imageMode, setImageMode] = useState<'url' | 'upload'>('url');
   const [categories, setCategories] = useState<Category[]>([]);
@@ -36,11 +43,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
     image: '',
     description: '',
     bestSeller: false,
-    notes: {
-      top: '',
-      heart: '',
-      base: ''
-    },
+    notes: { top: '', heart: '', base: '' },
     delivery_commission: 0
   });
 
@@ -49,7 +52,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
       try {
         const cats = await fetchCategories();
         setCategories(cats);
-
         if (isEditing) {
           const product = products.find(p => p.id === id);
           if (product) {
@@ -73,50 +75,39 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
           }
         }
       } catch (error) {
-        console.error("Erro ao carregar dados:", error);
+        console.error('Erro ao carregar dados:', error);
       }
     };
     loadData();
   }, [id, isEditing, products]);
 
+  const handleSubmit = async (e?: React.FormEvent) => {
+    e?.preventDefault();
 
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    // --- Required fields check ---
+    // --- Required fields ---
     const errors: string[] = [];
-    const normalized = formData.name.trim().toLowerCase();
     if (!formData.name.trim()) errors.push('Nome do produto');
     if (!formData.price || formData.price <= 0) errors.push('Preço de venda');
     if (!formData.costPrice || formData.costPrice <= 0) errors.push('Custo do produto');
-    if (!formData.delivery_commission || formData.delivery_commission <= 0) errors.push('Percentagem do entregador');
+    if (!formData.delivery_commission || formData.delivery_commission <= 0) errors.push('% Entregador');
     if (!formData.stock || formData.stock <= 0) errors.push('Quantidade em estoque');
-
     if (errors.length > 0) {
-      showToast(`Campos obrigatórios em falta: ${errors.join(', ')}.`, 'error');
+      showToast(`Obrigatórios em falta: ${errors.join(', ')}.`, 'error');
       return;
     }
 
-    // --- Duplicate name check (case-insensitive, trim) ---
-    if (!normalized) {
-      showToast('O nome do produto é obrigatório.', 'error');
-      return;
-    }
-    const duplicate = products.find(p => {
-      const sameName = p.name.trim().toLowerCase() === normalized;
-      const isSelf = isEditing && p.id === id;
-      return sameName && !isSelf;
-    });
+    // --- Duplicate name check ---
+    const normalized = formData.name.trim().toLowerCase();
+    const duplicate = products.find(p => p.name.trim().toLowerCase() === normalized && !(isEditing && p.id === id));
     if (duplicate) {
-      const msg = `Já existe um produto chamado "${duplicate.name}". Escolhe um nome diferente.`;
+      const msg = `"${duplicate.name}" já existe no catálogo.`;
       setNameError(msg);
       showToast(msg, 'error');
       return;
     }
     setNameError(null);
-    // --- End validation ---
 
+    setSaving(true);
     const finalProduct: Product = {
       ...formData,
       id: isEditing ? id! : '',
@@ -130,158 +121,201 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
 
     try {
       await onSave(finalProduct);
-      showToast(isEditing ? 'Produto atualizado com sucesso!' : 'Produto criado com sucesso!', 'success');
+      showToast(isEditing ? 'Produto atualizado!' : 'Produto publicado!', 'success');
       navigate('/admin/produtos');
     } catch (error: any) {
       if (error?.code === '23505' || error?.message?.includes('unique') || error?.message?.includes('duplicate')) {
-        const msg = 'Já existe um produto com este nome. Escolhe um nome diferente.';
+        const msg = 'Já existe um produto com este nome.';
         setNameError(msg);
         showToast(msg, 'error');
       } else {
-        showToast('Erro ao salvar produto. Tente novamente.', 'error');
+        showToast('Erro ao salvar produto.', 'error');
       }
       console.error(error);
+    } finally {
+      setSaving(false);
     }
   };
 
   return (
-    <div className="p-4 md:p-8 lg:p-12 animate-fade-in">
-      {/* Absolute/Sticky Header for Save Button */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 lg:mb-16">
-        <div className="flex items-center gap-4 lg:gap-6">
-          <Link to="/admin/produtos" className="size-12 lg:size-14 bg-white dark:bg-[#15140b] rounded-2xl flex items-center justify-center hover:bg-primary border shrink-0 transition-all active:scale-95 shadow-sm">
-            <span className="material-symbols-outlined">arrow_back</span>
+    /* Extra bottom padding on mobile so content isn't hidden behind the fixed save bar */
+    <div className="pb-28 md:pb-8 animate-fade-in">
+
+      {/* ── TOP HEADER ── */}
+      <div className="sticky top-0 z-30 bg-gray-50 dark:bg-[#100f08] border-b border-gray-200 dark:border-white/5 px-4 py-3 md:px-8 md:py-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <Link
+            to="/admin/produtos"
+            className="size-10 bg-white dark:bg-[#15140b] rounded-xl flex items-center justify-center hover:bg-primary border shrink-0 transition-all active:scale-95 shadow-sm"
+          >
+            <span className="material-symbols-outlined !text-base">arrow_back</span>
           </Link>
-          <div>
-            <h2 className="text-2xl lg:text-4xl font-black uppercase tracking-tighter leading-none">
-              {isEditing ? 'Refinar' : 'Novo'} <span className="text-primary italic">Tesouro</span>
+          <div className="min-w-0">
+            <h2 className="text-lg md:text-2xl lg:text-3xl font-black uppercase tracking-tighter leading-none truncate">
+              {isEditing ? 'Editar' : 'Novo'} <span className="text-primary italic">Produto</span>
             </h2>
-            {isEditing && (
-              <div className="flex flex-col gap-0.5 mt-1 lg:mt-2">
-                {formData.created_by_name && (
-                  <p className="text-[9px] lg:text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                    <span className="material-symbols-outlined !text-xs lg:!text-sm">person</span>
-                    <span className="hidden xs:inline">Curadoria original:</span> <span className="text-primary">{formData.created_by_name}</span>
-                  </p>
-                )}
-                {formData.last_edited_by && (
-                  <p className="text-[9px] lg:text-[10px] font-black text-gray-400 uppercase tracking-widest flex items-center gap-2">
-                    <span className="material-symbols-outlined !text-xs lg:!text-sm">person_edit</span>
-                    <span className="hidden xs:inline">Última edição:</span> <span className="text-primary">{formData.last_edited_by}</span>
-                  </p>
-                )}
-              </div>
+            {isEditing && formData.created_by_name && (
+              <p className="text-[9px] font-bold text-gray-400 truncate mt-0.5">
+                por <span className="text-primary">{formData.created_by_name}</span>
+              </p>
             )}
           </div>
         </div>
 
+        {/* Save button — desktop only (mobile has fixed footer) */}
         <button
-          onClick={handleSubmit}
-          className="bg-primary text-black font-black px-8 lg:px-10 py-4 lg:py-5 rounded-xl lg:rounded-2xl uppercase tracking-widest text-[10px] lg:text-[11px] shadow-2xl shadow-primary/20 hover:scale-[1.05] active:scale-95 transition-all flex items-center justify-center gap-3 whitespace-nowrap md:ml-auto"
+          type="button"
+          onClick={() => handleSubmit()}
+          disabled={saving}
+          className="hidden md:flex items-center gap-2 bg-primary text-black font-black px-6 py-3 rounded-xl uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 hover:scale-[1.03] active:scale-95 transition-all disabled:opacity-60"
         >
-          <span className="material-symbols-outlined !text-lg lg:!text-xl">save</span>
-          {isEditing ? 'Salvar Refinamento' : 'Publicar Tesouro'}
+          <span className="material-symbols-outlined !text-lg">
+            {saving ? 'hourglass_empty' : 'save'}
+          </span>
+          {isEditing ? 'Salvar alterações' : 'Publicar produto'}
         </button>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-        <div className="lg:col-span-4 flex flex-col gap-8">
+      {/* ── FORM BODY ── */}
+      <form onSubmit={handleSubmit} className="p-4 md:p-8 flex flex-col gap-6 max-w-5xl mx-auto lg:grid lg:grid-cols-12 lg:gap-10">
+
+        {/* LEFT COLUMN — image on mobile compact, full on desktop */}
+        <div className="lg:col-span-4 flex flex-col gap-5">
           <ImageUpload
             image={formData.image}
             onImageChange={(url) => setFormData(prev => ({ ...prev, image: url }))}
             imageMode={imageMode}
             setImageMode={setImageMode}
           />
-
-          <PricingFields
-            price={formData.price}
-            salePrice={formData.salePrice || 0}
-            costPrice={formData.costPrice || 0}
-            stock={formData.stock}
-            bestSeller={formData.bestSeller || false}
-            deliveryCommission={formData.delivery_commission || 0}
-            onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
-          />
+          {/* Pricing hidden below image only on desktop; on mobile it comes after catalog card */}
+          <div className="hidden lg:block">
+            <PricingFields
+              price={formData.price}
+              salePrice={formData.salePrice || 0}
+              costPrice={formData.costPrice || 0}
+              stock={formData.stock}
+              bestSeller={formData.bestSeller || false}
+              deliveryCommission={formData.delivery_commission || 0}
+              onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
+            />
+          </div>
         </div>
 
-        <div className="lg:col-span-8 flex flex-col gap-8">
-          <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border shadow-sm text-black dark:text-white">
-            <div className="flex items-center gap-2 mb-6 lg:mb-8">
+        {/* RIGHT COLUMN — catalog data */}
+        <div className="lg:col-span-8 flex flex-col gap-5">
+
+          {/* ── CATALOG CARD ── */}
+          <div className="bg-white dark:bg-[#15140b] p-5 md:p-8 rounded-2xl border shadow-sm text-black dark:text-white flex flex-col gap-5">
+            <div className="flex items-center gap-2">
               <span className="material-symbols-outlined !text-base text-primary">inventory_2</span>
-              <h4 className="font-black uppercase tracking-widest text-[10px] text-primary">Dados do Catálogo</h4>
+              <h4 className="font-black uppercase tracking-widest text-[10px] text-primary">Dados do Produto</h4>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Nome — OBRIGATÓRIO */}
-              <div className="flex flex-col gap-2 md:col-span-2 p-4 rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10 hover:border-primary/30 transition-colors">
-                <div className="flex items-center justify-between gap-2">
-                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Nome do Produto</label>
-                  <span className="inline-flex items-center gap-0.5 bg-red-500/10 text-red-500 text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full">
-                    <span className="material-symbols-outlined !text-[9px]">asterisk</span>Obrigatório
-                  </span>
-                </div>
-                <input
-                  type="text"
-                  value={formData.name}
-                  onChange={e => {
-                    const val = e.target.value;
-                    setFormData({ ...formData, name: val });
-                    // Real-time duplicate check
-                    const norm = val.trim().toLowerCase();
-                    const dup = norm ? products.find(p => p.name.trim().toLowerCase() === norm && !(isEditing && p.id === id)) : null;
-                    setNameError(dup ? `"${dup.name}" já existe no catálogo.` : null);
-                  }}
-                  className={`bg-gray-50 dark:bg-[#0f0e08] p-5 rounded-2xl font-bold outline-none border-2 transition-all ${nameError ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-transparent'}`}
-                  required
-                />
-                {nameError && (
-                  <p className="text-red-500 text-[11px] font-bold flex items-center gap-1.5 mt-1">
-                    <span className="material-symbols-outlined !text-sm">error</span>
-                    {nameError}
-                  </p>
-                )}
-              </div>
 
-              <div className="md:col-span-2">
-                <CategorySelect
-                  category={formData.category}
-                  subCategory={formData.subCategory || ''}
-                  gender={formData.gender}
-                  categories={categories}
-                  onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
-                />
+            {/* Nome — OBRIGATÓRIO */}
+            <div className="flex flex-col gap-2 p-4 rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10">
+              <div className="flex items-center justify-between gap-2 flex-wrap">
+                <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Nome do Produto</label>
+                <RequiredBadge />
               </div>
+              <input
+                type="text"
+                value={formData.name}
+                onChange={e => {
+                  const val = e.target.value;
+                  setFormData({ ...formData, name: val });
+                  const norm = val.trim().toLowerCase();
+                  const dup = norm ? products.find(p => p.name.trim().toLowerCase() === norm && !(isEditing && p.id === id)) : null;
+                  setNameError(dup ? `"${dup.name}" já existe no catálogo.` : null);
+                }}
+                className={`bg-gray-50 dark:bg-[#0f0e08] px-4 py-3.5 rounded-xl font-bold text-base outline-none border-2 transition-all w-full ${nameError ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-transparent focus:border-primary/30'}`}
+                placeholder="Ex: Rose Velour Parfum"
+                required
+              />
+              {nameError && (
+                <p className="text-red-500 text-xs font-bold flex items-center gap-1.5">
+                  <span className="material-symbols-outlined !text-sm">error</span>{nameError}
+                </p>
+              )}
+            </div>
 
-              <div className="flex flex-col gap-2 md:col-span-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase">Descrição Detalhada</label>
-                <textarea rows={4} value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} className="bg-gray-50 dark:bg-[#0f0e08] p-5 rounded-2xl font-bold outline-none resize-none" />
+            {/* Category */}
+            <CategorySelect
+              category={formData.category}
+              subCategory={formData.subCategory || ''}
+              gender={formData.gender}
+              categories={categories}
+              onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
+            />
+
+            {/* Description */}
+            <div className="flex flex-col gap-2">
+              <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Descrição Detalhada</label>
+              <textarea
+                rows={4}
+                value={formData.description}
+                onChange={e => setFormData({ ...formData, description: e.target.value })}
+                className="bg-gray-50 dark:bg-[#0f0e08] px-4 py-3.5 rounded-xl font-bold outline-none resize-none w-full border-2 border-transparent focus:border-primary/30 transition-all text-sm"
+                placeholder="Descreve o produto em detalhe..."
+              />
+            </div>
+
+            {/* Olfactive notes */}
+            <div className="flex flex-col gap-3">
+              <div className="flex items-center gap-2">
+                <span className="material-symbols-outlined !text-base text-primary">auto_awesome</span>
+                <h4 className="font-black uppercase text-[10px] text-primary">Perfil Olfativo</h4>
+                <span className="text-[9px] text-gray-400 font-medium">(opcional)</span>
               </div>
-
-              <div className="md:col-span-2 flex flex-col gap-8">
-                <h4 className="font-black uppercase text-[10px] text-primary flex items-center gap-2">
-                  <span className="material-symbols-outlined">auto_awesome</span> Perfil Olfativo
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {[
-                    { key: 'top', label: 'Notas de Topo' },
-                    { key: 'heart', label: 'Notas de Coração' },
-                    { key: 'base', label: 'Notas de Base' }
-                  ].map((n) => (
-                    <div key={n.key} className="flex flex-col gap-2">
-                      <label className="text-[9px] font-black text-gray-400 uppercase">{n.label}</label>
-                      <input
-                        type="text"
-                        value={(formData.notes as any)?.[n.key] || ''}
-                        onChange={e => setFormData({ ...formData, notes: { ...formData.notes, [n.key]: e.target.value } as any })}
-                        className="bg-gray-50 dark:bg-[#0f0e08] p-4 rounded-xl text-xs font-bold outline-none border border-transparent focus:border-primary/20 transition-all"
-                      />
-                    </div>
-                  ))}
-                </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                {[
+                  { key: 'top', label: 'Notas de Topo', placeholder: 'Ex: Bergamota, Limão' },
+                  { key: 'heart', label: 'Notas de Coração', placeholder: 'Ex: Rosa, Jasmim' },
+                  { key: 'base', label: 'Notas de Base', placeholder: 'Ex: Âmbar, Baunilha' }
+                ].map((n) => (
+                  <div key={n.key} className="flex flex-col gap-1.5">
+                    <label className="text-[9px] font-black text-gray-400 uppercase">{n.label}</label>
+                    <input
+                      type="text"
+                      value={(formData.notes as any)?.[n.key] || ''}
+                      onChange={e => setFormData({ ...formData, notes: { ...formData.notes, [n.key]: e.target.value } as any })}
+                      className="bg-gray-50 dark:bg-[#0f0e08] px-3 py-3 rounded-xl text-xs font-bold outline-none border border-transparent focus:border-primary/20 transition-all"
+                      placeholder={n.placeholder}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
+
+          {/* Pricing — ONLY visible on mobile (desktop shows it in left column) */}
+          <div className="lg:hidden">
+            <PricingFields
+              price={formData.price}
+              salePrice={formData.salePrice || 0}
+              costPrice={formData.costPrice || 0}
+              stock={formData.stock}
+              bestSeller={formData.bestSeller || false}
+              deliveryCommission={formData.delivery_commission || 0}
+              onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
+            />
+          </div>
         </div>
       </form>
+
+      {/* ── FIXED SAVE BAR — mobile only ── */}
+      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white/90 dark:bg-[#100f08]/95 backdrop-blur-md border-t border-gray-200 dark:border-white/10 px-4 py-3 safe-area-bottom">
+        <button
+          type="button"
+          onClick={() => handleSubmit()}
+          disabled={saving}
+          className="w-full flex items-center justify-center gap-2 bg-primary text-black font-black py-4 rounded-2xl uppercase tracking-widest text-sm shadow-xl shadow-primary/30 active:scale-95 transition-all disabled:opacity-60"
+        >
+          <span className="material-symbols-outlined !text-xl">
+            {saving ? 'hourglass_empty' : 'save'}
+          </span>
+          {saving ? 'A guardar...' : isEditing ? 'Salvar Alterações' : 'Publicar Produto'}
+        </button>
+      </div>
     </div>
   );
 };
