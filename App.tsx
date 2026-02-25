@@ -57,29 +57,41 @@ const AppContent: React.FC = () => {
         if (cachedSlides) setSlides(JSON.parse(cachedSlides));
       } catch (e) {
         console.warn("Failed to parse cache", e);
+        // Clear corrupted cache
+        localStorage.removeItem('brilho_cached_products');
+        localStorage.removeItem('brilho_cached_categories');
+        localStorage.removeItem('brilho_cached_slides');
       }
 
       setLoading(true);
 
       // 2. INDEPENDENT FETCHING: Don't let one slow request block everything
       const productsPromise = fetchProducts().then(async (loadedProducts) => {
-        if (loadedProducts.length === 0 && !localStorage.getItem('brilho_cached_products')) {
-          console.log("Seeding initial products in parallel...");
-          // Better: Filter only valid products and insert in parallel
-          const validMocks = MOCK_PRODUCTS.filter(p => p.name && p.price);
-          await Promise.all(validMocks.map(p => addProduct(p)));
-
-          const fresh = await fetchProducts();
-          setProducts(fresh);
-          localStorage.setItem('brilho_cached_products', JSON.stringify(fresh));
-        } else if (loadedProducts.length > 0) {
+        if (loadedProducts.length === 0) {
+          // Only seed if absolutely no cache exists
+          const cache = localStorage.getItem('brilho_cached_products');
+          const cached = cache ? JSON.parse(cache) : [];
+          if (cached.length === 0) {
+            console.log("Seeding initial products in parallel...");
+            const validMocks = MOCK_PRODUCTS.filter(p => p.name && p.price);
+            await Promise.all(validMocks.map(p => addProduct(p)));
+            const fresh = await fetchProducts();
+            if (fresh.length > 0) {
+              setProducts(fresh);
+              localStorage.setItem('brilho_cached_products', JSON.stringify(fresh));
+            }
+          }
+          // If loadedProducts is empty but cache has items, keep cache visible
+        } else {
+          // Always update with fresh data from DB
           setProducts(loadedProducts);
           localStorage.setItem('brilho_cached_products', JSON.stringify(loadedProducts));
         }
         setLoading(false);
       }).catch(e => {
         console.error("Products fetch fail", e);
-        if (products.length === 0) setHasLoadError(true);
+        const cache = localStorage.getItem('brilho_cached_products');
+        if (!cache || JSON.parse(cache).length === 0) setHasLoadError(true);
         setLoading(false);
       });
 
@@ -305,12 +317,17 @@ const AppContent: React.FC = () => {
   };
 
   const handleLogout = async () => {
-    await signOut();
+    try {
+      await signOut();
+    } catch (e) {
+      console.warn('Sign out error:', e);
+    }
     setIsAuthenticated(false);
     setUserProfile(null);
-    // Force a full reload to clear all states and redirect to home
-    window.location.replace('/');
-    window.location.reload();
+    // Clear cached products to force fresh fetch as anonymous user
+    localStorage.removeItem('brilho_cached_products');
+    // Use HashRouter-compatible navigation
+    navigate('/');
   };
 
   const saveProduct = async (product: Product) => {
@@ -563,7 +580,7 @@ const AppContent: React.FC = () => {
           </Link>
 
           {/* Mobile Tab Scroller */}
-          <nav className="flex md:flex-col gap-2 md:gap-1 overflow-x-auto md:overflow-y-auto pb-2 md:pb-0 scrollbar-hide">
+          <nav className="flex md:flex-col gap-2 md:gap-1 overflow-x-auto md:overflow-y-auto pb-2 md:pb-0 scrollbar-hide flex-1 min-w-0">
             {visibleTabs.map((tab) => {
               const isActive = location.pathname === tab.path || (tab.subItems && location.pathname.startsWith(tab.path));
 
@@ -601,14 +618,38 @@ const AppContent: React.FC = () => {
                 </Link>
               );
             })}
+
+            {/* Mobile-only: Configurações e Sair no scroll horizontal */}
+            <div className="md:hidden flex items-center gap-2 ml-2 pl-2 border-l border-gray-200 dark:border-white/10 shrink-0">
+              <Link
+                to="/admin/configuracoes"
+                onClick={() => setExpandedMenu(null)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold transition-all whitespace-nowrap text-xs ${location.pathname === '/admin/configuracoes' ? 'bg-primary text-black' : 'text-gray-500 hover:bg-gray-50'}`}
+              >
+                <span className="material-symbols-outlined !text-xl">settings</span>
+                <span>Configurações</span>
+              </Link>
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold transition-all whitespace-nowrap text-xs text-red-500 hover:bg-red-50 dark:hover:bg-red-500/5"
+              >
+                <span className="material-symbols-outlined !text-xl">logout</span>
+                <span>Sair</span>
+              </button>
+            </div>
           </nav>
 
+          {/* Desktop-only: Configurações e Sair no fundo da sidebar */}
           <div className="mt-auto hidden md:flex flex-col gap-1">
-            <Link to="/admin/configuracoes" className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${location.pathname === '/admin/configuracoes' ? 'bg-primary text-black' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
-              <span className="material-symbols-outlined">settings</span> Configurações
-              {userProfile?.is_first_login && <span className="absolute right-2 top-3 size-2 bg-red-500 rounded-full animate-pulse"></span>}
+            <Link to="/admin/configuracoes" onClick={() => setExpandedMenu(null)} className={`flex items-center gap-3 px-4 py-3 rounded-xl font-bold transition-all ${location.pathname === '/admin/configuracoes' ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
+              <span className="material-symbols-outlined">settings</span>
+              <span className="text-sm">Configurações</span>
+              {userProfile?.is_first_login && <span className="size-2 bg-red-500 rounded-full animate-pulse ml-auto"></span>}
             </Link>
-            <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 text-red-500 font-bold hover:bg-red-50 dark:hover:bg-red-500/5 rounded-xl transition-all"><span className="material-symbols-outlined">logout</span> Sair</button>
+            <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 text-red-500 font-bold hover:bg-red-50 dark:hover:bg-red-500/5 rounded-xl transition-all">
+              <span className="material-symbols-outlined">logout</span>
+              <span className="text-sm">Sair</span>
+            </button>
           </div>
         </aside>
         <main className="flex-1 min-h-0 overflow-y-auto">
