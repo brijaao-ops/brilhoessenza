@@ -64,6 +64,17 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
     }
   };
 
+  const handleManualStatusUpdate = async (orderId: string, newStatus: Order['status']) => {
+    try {
+      await updateOrder(orderId, { status: newStatus });
+      setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status: newStatus } : o));
+      showToast(`Pedido atualizado para ${newStatus}!`, "success");
+    } catch (error) {
+      showToast("Erro ao atualizar status.", "error");
+      console.error(error);
+    }
+  };
+
   const getProductDetails = (order: Order) => {
     // Prioritize 'items' structure if available
     if (order.items && order.items.length > 0) {
@@ -336,9 +347,30 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
                           )}
                         </td>
                         <td className="px-8 py-5 text-right">
-                          <button className="text-gray-400 hover:text-red-500 transition-colors">
-                            <span className="material-symbols-outlined !text-lg">delete</span>
-                          </button>
+                          <div className="flex items-center justify-end gap-2">
+                            {o.status === 'PENDENTE' && (
+                              <button
+                                onClick={() => handleManualStatusUpdate(o.id, 'ENVIADO')}
+                                className="bg-blue-500 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider hover:bg-blue-600 transition-all"
+                              >
+                                Marcar Enviado
+                              </button>
+                            )}
+                            {o.status === 'ENVIADO' && (
+                              <button
+                                onClick={() => handleManualStatusUpdate(o.id, 'PAGO')}
+                                className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider hover:bg-green-700 transition-all"
+                              >
+                                Marcar Pago
+                              </button>
+                            )}
+                            <button
+                              onClick={() => { if (confirm('Remover este pedido?')) setOrders(prev => prev.filter(x => x.id !== o.id)); }}
+                              className="text-gray-400 hover:text-red-500 transition-colors"
+                            >
+                              <span className="material-symbols-outlined !text-lg">delete</span>
+                            </button>
+                          </div>
                         </td>
                       </tr>
                     );
@@ -397,6 +429,31 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
                         </select>
                       </div>
                     )}
+
+                    <div className="flex gap-2">
+                      {o.status === 'PENDENTE' && (
+                        <button
+                          onClick={() => handleManualStatusUpdate(o.id, 'ENVIADO')}
+                          className="flex-1 bg-blue-500 text-white font-black py-3 rounded-xl text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20"
+                        >
+                          Marcar como Enviado
+                        </button>
+                      )}
+                      {o.status === 'ENVIADO' && (
+                        <button
+                          onClick={() => handleManualStatusUpdate(o.id, 'PAGO')}
+                          className="flex-1 bg-green-600 text-white font-black py-3 rounded-xl text-[10px] uppercase tracking-widest shadow-lg shadow-green-600/20"
+                        >
+                          Confirmar Pagamento
+                        </button>
+                      )}
+                      <button
+                        onClick={() => { if (confirm('Remover este pedido?')) setOrders(prev => prev.filter(x => x.id !== o.id)); }}
+                        className="size-11 flex items-center justify-center bg-red-500/10 text-red-500 rounded-xl border border-red-500/20"
+                      >
+                        <span className="material-symbols-outlined !text-base">delete</span>
+                      </button>
+                    </div>
                   </div>
                 );
               })}

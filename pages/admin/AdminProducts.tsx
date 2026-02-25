@@ -74,9 +74,9 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
   const canDelete = userProfile?.role === 'admin' || userProfile?.permissions?.products?.delete;
 
   return (
-    <div className="p-6 lg:p-10 flex flex-col h-full">
+    <div className="p-6 lg:p-10 flex flex-col">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 flex-shrink-0">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h2 className="text-3xl font-black uppercase tracking-tighter">Lista de <span className="text-primary italic">Produtos</span></h2>
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] mt-1">Catálogo completo do inventário</p>
@@ -90,7 +90,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5 flex-shrink-0">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
         <div className="bg-white dark:bg-[#15140b] p-4 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm">
           <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total Itens</p>
           <p className="text-2xl font-black mt-0.5">{filtered.length}</p>
@@ -111,7 +111,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
 
       {/* Filters */}
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-2 mb-4 flex-shrink-0">
+      <div className="flex flex-wrap items-center gap-2 mb-4">
         <div className="relative flex-1 md:flex-none min-w-[150px]">
           <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm">search</span>
           <input type="text" placeholder="Pesquisar..." value={search} onChange={e => setSearch(e.target.value)}
