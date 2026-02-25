@@ -43,90 +43,93 @@ const AppContent: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [hasLoadError, setHasLoadError] = useState(false);
 
-  // Initial Load with Seed Fallback & Parallel Optimization
-  useEffect(() => {
-    const loadData = async () => {
-      // 1. STALE-WHILE-REVALIDATE: Check local storage for quick first render
+  // Cache versioning — bump to force-clear all browser caches globally
+  const CACHE_VERSION = 'v3_forced';
+
+  const clearAllCache = () => {
+    localStorage.removeItem('brilho_cached_products');
+    localStorage.removeItem('brilho_cached_categories');
+    localStorage.removeItem('brilho_cached_slides');
+  };
+
+  // Re-usable product loader — called on mount and after logout
+  const loadAllData = async (skipCache = false) => {
+    // Check cache version — if mismatch, clear everything to force fresh fetch
+    const storedVersion = localStorage.getItem('brilho_cache_version');
+    if (storedVersion !== CACHE_VERSION) {
+      console.log('Cache version mismatch — clearing stale cache.');
+      clearAllCache();
+      localStorage.setItem('brilho_cache_version', CACHE_VERSION);
+    }
+
+    if (!skipCache) {
       try {
         const cachedProducts = localStorage.getItem('brilho_cached_products');
+        if (cachedProducts) {
+          const parsed = JSON.parse(cachedProducts);
+          if (Array.isArray(parsed) && parsed.length > 0) setProducts(parsed);
+        }
         const cachedCategories = localStorage.getItem('brilho_cached_categories');
-        const cachedSlides = localStorage.getItem('brilho_cached_slides');
-
-        if (cachedProducts) setProducts(JSON.parse(cachedProducts));
         if (cachedCategories) setCategories(JSON.parse(cachedCategories));
+        const cachedSlides = localStorage.getItem('brilho_cached_slides');
         if (cachedSlides) setSlides(JSON.parse(cachedSlides));
       } catch (e) {
-        console.warn("Failed to parse cache", e);
-        // Clear corrupted cache
-        localStorage.removeItem('brilho_cached_products');
-        localStorage.removeItem('brilho_cached_categories');
-        localStorage.removeItem('brilho_cached_slides');
+        console.warn('Cache parse error — clearing.', e);
+        clearAllCache();
+      }
+    }
+
+    setLoading(true);
+    setHasLoadError(false);
+
+    try {
+      const [loadedProducts, loadedCategories, loadedSlides] = await Promise.all([
+        fetchProducts(),
+        fetchCategories(),
+        fetchSlides()
+      ]);
+
+      if (loadedProducts.length > 0) {
+        setProducts(loadedProducts);
+        localStorage.setItem('brilho_cached_products', JSON.stringify(loadedProducts));
+      } else {
+        // Fallback: seed mocks only if DB + cache are both truly empty
+        const cache = localStorage.getItem('brilho_cached_products');
+        const cached = cache ? JSON.parse(cache) : [];
+        if (cached.length === 0) {
+          console.log('No products found — seeding mocks...');
+          const validMocks = MOCK_PRODUCTS.filter(p => p.name && p.price);
+          await Promise.allSettled(validMocks.map(p => addProduct(p)));
+          const fresh = await fetchProducts();
+          if (fresh.length > 0) {
+            setProducts(fresh);
+            localStorage.setItem('brilho_cached_products', JSON.stringify(fresh));
+          }
+        }
       }
 
-      setLoading(true);
+      if (loadedCategories.length > 0) {
+        setCategories(loadedCategories);
+        localStorage.setItem('brilho_cached_categories', JSON.stringify(loadedCategories));
+      }
 
-      // 2. INDEPENDENT FETCHING: Don't let one slow request block everything
-      const productsPromise = fetchProducts().then(async (loadedProducts) => {
-        if (loadedProducts.length === 0) {
-          // Only seed if absolutely no cache exists
-          const cache = localStorage.getItem('brilho_cached_products');
-          const cached = cache ? JSON.parse(cache) : [];
-          if (cached.length === 0) {
-            console.log("Seeding initial products in parallel...");
-            const validMocks = MOCK_PRODUCTS.filter(p => p.name && p.price);
-            await Promise.all(validMocks.map(p => addProduct(p)));
-            const fresh = await fetchProducts();
-            if (fresh.length > 0) {
-              setProducts(fresh);
-              localStorage.setItem('brilho_cached_products', JSON.stringify(fresh));
-            }
-          }
-          // If loadedProducts is empty but cache has items, keep cache visible
-        } else {
-          // Always update with fresh data from DB
-          setProducts(loadedProducts);
-          localStorage.setItem('brilho_cached_products', JSON.stringify(loadedProducts));
-        }
-        setLoading(false);
-      }).catch(e => {
-        console.error("Products fetch fail", e);
-        const cache = localStorage.getItem('brilho_cached_products');
-        if (!cache || JSON.parse(cache).length === 0) setHasLoadError(true);
-        setLoading(false);
-      });
+      if (loadedSlides.length > 0) {
+        setSlides(loadedSlides);
+        localStorage.setItem('brilho_cached_slides', JSON.stringify(loadedSlides));
+      }
+    } catch (e) {
+      console.error('Critical fetch failure:', e);
+      const cache = localStorage.getItem('brilho_cached_products');
+      if (!cache || JSON.parse(cache).length === 0) setHasLoadError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      const categoriesPromise = fetchCategories().then(loadedCategories => {
-        if (loadedCategories.length === 0 && !localStorage.getItem('brilho_cached_categories')) {
-          // Silent category seeding in background if needed
-          const defaultCats = [
-            { name: 'Fragrâncias', slug: 'fragrancias', icon: 'temp_preferences_custom', color: 'primary', active: true },
-            { name: 'Cuidados com a Pele', slug: 'skincare', icon: 'spa', color: 'green-500', active: true },
-            { name: 'Maquiagem', slug: 'maquiagem', icon: 'brush', color: 'pink-500', active: true },
-            { name: 'Acessórios', slug: 'acessorios', icon: 'shopping_bag', color: 'blue-500', active: true }
-          ];
-          Promise.all(defaultCats.map(c => createCategory(c))).then(() => fetchCategories().then(fresh => {
-            setCategories(fresh);
-            localStorage.setItem('brilho_cached_categories', JSON.stringify(fresh));
-          }));
-        } else if (loadedCategories.length > 0) {
-          setCategories(loadedCategories);
-          localStorage.setItem('brilho_cached_categories', JSON.stringify(loadedCategories));
-        }
-      }).catch(e => console.error("Categories fetch fail", e));
-
-      const slidesPromise = fetchSlides().then(loadedSlides => {
-        if (loadedSlides.length > 0) {
-          setSlides(loadedSlides);
-          localStorage.setItem('brilho_cached_slides', JSON.stringify(loadedSlides));
-        }
-      }).catch(e => console.error("Slides fetch fail", e));
-
-      const ordersPromise = fetchOrders().then(o => setOrders(o)).catch(e => console.error("Orders fail", e));
-
-      // Initial Load Error only triggers if products fail and no cache exists
-      await Promise.allSettled([productsPromise, categoriesPromise, slidesPromise, ordersPromise]);
-    };
-    loadData();
+  // Initial Load
+  useEffect(() => {
+    loadAllData();
+    fetchOrders().then(o => setOrders(o)).catch(e => console.error('Orders fail', e));
   }, []);
 
   // Optimized Settings Fetching (Batched)
@@ -324,10 +327,15 @@ const AppContent: React.FC = () => {
     }
     setIsAuthenticated(false);
     setUserProfile(null);
-    // Clear cached products to force fresh fetch as anonymous user
+    // Clear ALL caches to force fresh fetch as anonymous user
     localStorage.removeItem('brilho_cached_products');
-    // Use HashRouter-compatible navigation
+    localStorage.removeItem('brilho_cached_categories');
+    localStorage.removeItem('brilho_cached_slides');
+    localStorage.removeItem('brilho_cache_version'); // Force version recheck on next load
+    // Navigate home then reload data
     navigate('/');
+    // Re-fetch public data as anon user (skipCache=true to bypass stale cache)
+    setTimeout(() => loadAllData(true), 100);
   };
 
   const saveProduct = async (product: Product) => {
