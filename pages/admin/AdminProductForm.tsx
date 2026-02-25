@@ -84,15 +84,28 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // --- Duplicate name check (case-insensitive, trim) ---
+    // --- Required fields check ---
+    const errors: string[] = [];
     const normalized = formData.name.trim().toLowerCase();
+    if (!formData.name.trim()) errors.push('Nome do produto');
+    if (!formData.price || formData.price <= 0) errors.push('Preço de venda');
+    if (!formData.costPrice || formData.costPrice <= 0) errors.push('Custo do produto');
+    if (!formData.delivery_commission || formData.delivery_commission <= 0) errors.push('Percentagem do entregador');
+    if (!formData.stock || formData.stock <= 0) errors.push('Quantidade em estoque');
+
+    if (errors.length > 0) {
+      showToast(`Campos obrigatórios em falta: ${errors.join(', ')}.`, 'error');
+      return;
+    }
+
+    // --- Duplicate name check (case-insensitive, trim) ---
     if (!normalized) {
       showToast('O nome do produto é obrigatório.', 'error');
       return;
     }
     const duplicate = products.find(p => {
       const sameName = p.name.trim().toLowerCase() === normalized;
-      const isSelf = isEditing && p.id === id; // allow editing own record
+      const isSelf = isEditing && p.id === id;
       return sameName && !isSelf;
     });
     if (duplicate) {
@@ -102,7 +115,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
       return;
     }
     setNameError(null);
-    // --- End duplicate check ---
+    // --- End validation ---
 
     const finalProduct: Product = {
       ...formData,
@@ -120,7 +133,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
       showToast(isEditing ? 'Produto atualizado com sucesso!' : 'Produto criado com sucesso!', 'success');
       navigate('/admin/produtos');
     } catch (error: any) {
-      // Catch Supabase unique violation (second defense layer)
       if (error?.code === '23505' || error?.message?.includes('unique') || error?.message?.includes('duplicate')) {
         const msg = 'Já existe um produto com este nome. Escolhe um nome diferente.';
         setNameError(msg);
@@ -184,6 +196,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
           <PricingFields
             price={formData.price}
             salePrice={formData.salePrice || 0}
+            costPrice={formData.costPrice || 0}
             stock={formData.stock}
             bestSeller={formData.bestSeller || false}
             deliveryCommission={formData.delivery_commission || 0}
@@ -191,12 +204,21 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
           />
         </div>
 
-        <div className="lg:col-span-8 flex flex-col gap-10">
+        <div className="lg:col-span-8 flex flex-col gap-8">
           <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border shadow-sm text-black dark:text-white">
-            <h4 className="font-black uppercase tracking-widest text-[10px] mb-6 lg:mb-8 text-primary">Dados do Catálogo</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="flex flex-col gap-2 md:col-span-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase">Nome do Produto</label>
+            <div className="flex items-center gap-2 mb-6 lg:mb-8">
+              <span className="material-symbols-outlined !text-base text-primary">inventory_2</span>
+              <h4 className="font-black uppercase tracking-widest text-[10px] text-primary">Dados do Catálogo</h4>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Nome — OBRIGATÓRIO */}
+              <div className="flex flex-col gap-2 md:col-span-2 p-4 rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10 hover:border-primary/30 transition-colors">
+                <div className="flex items-center justify-between gap-2">
+                  <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Nome do Produto</label>
+                  <span className="inline-flex items-center gap-0.5 bg-red-500/10 text-red-500 text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded-full">
+                    <span className="material-symbols-outlined !text-[9px]">asterisk</span>Obrigatório
+                  </span>
+                </div>
                 <input
                   type="text"
                   value={formData.name}
