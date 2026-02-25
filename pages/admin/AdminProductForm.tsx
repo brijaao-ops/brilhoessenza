@@ -19,6 +19,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const isEditing = !!id;
+  const [nameError, setNameError] = useState<string | null>(null);
 
   const [imageMode, setImageMode] = useState<'url' | 'upload'>('url');
   const [categories, setCategories] = useState<Category[]>([]);
@@ -82,6 +83,27 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // --- Duplicate name check (case-insensitive, trim) ---
+    const normalized = formData.name.trim().toLowerCase();
+    if (!normalized) {
+      showToast('O nome do produto é obrigatório.', 'error');
+      return;
+    }
+    const duplicate = products.find(p => {
+      const sameName = p.name.trim().toLowerCase() === normalized;
+      const isSelf = isEditing && p.id === id; // allow editing own record
+      return sameName && !isSelf;
+    });
+    if (duplicate) {
+      const msg = `Já existe um produto chamado "${duplicate.name}". Escolhe um nome diferente.`;
+      setNameError(msg);
+      showToast(msg, 'error');
+      return;
+    }
+    setNameError(null);
+    // --- End duplicate check ---
+
     const finalProduct: Product = {
       ...formData,
       id: isEditing ? id! : '',
@@ -97,8 +119,15 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
       await onSave(finalProduct);
       showToast(isEditing ? 'Produto atualizado com sucesso!' : 'Produto criado com sucesso!', 'success');
       navigate('/admin/produtos');
-    } catch (error) {
-      showToast("Erro ao salvar produto. Tente novamente.", 'error');
+    } catch (error: any) {
+      // Catch Supabase unique violation (second defense layer)
+      if (error?.code === '23505' || error?.message?.includes('unique') || error?.message?.includes('duplicate')) {
+        const msg = 'Já existe um produto com este nome. Escolhe um nome diferente.';
+        setNameError(msg);
+        showToast(msg, 'error');
+      } else {
+        showToast('Erro ao salvar produto. Tente novamente.', 'error');
+      }
       console.error(error);
     }
   };
@@ -168,7 +197,26 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="flex flex-col gap-2 md:col-span-2">
                 <label className="text-[10px] font-black text-gray-400 uppercase">Nome do Produto</label>
-                <input type="text" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} className="bg-gray-50 dark:bg-[#0f0e08] p-5 rounded-2xl font-bold outline-none" required />
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={e => {
+                    const val = e.target.value;
+                    setFormData({ ...formData, name: val });
+                    // Real-time duplicate check
+                    const norm = val.trim().toLowerCase();
+                    const dup = norm ? products.find(p => p.name.trim().toLowerCase() === norm && !(isEditing && p.id === id)) : null;
+                    setNameError(dup ? `"${dup.name}" já existe no catálogo.` : null);
+                  }}
+                  className={`bg-gray-50 dark:bg-[#0f0e08] p-5 rounded-2xl font-bold outline-none border-2 transition-all ${nameError ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-transparent'}`}
+                  required
+                />
+                {nameError && (
+                  <p className="text-red-500 text-[11px] font-bold flex items-center gap-1.5 mt-1">
+                    <span className="material-symbols-outlined !text-sm">error</span>
+                    {nameError}
+                  </p>
+                )}
               </div>
 
               <div className="md:col-span-2">
