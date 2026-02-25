@@ -73,8 +73,8 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
     <div className="pb-24">
       {/* Seção Hero de Luxo */}
       {!searchTerm && !selectedCategory && (
-        <section className="py-8 relative group">
-          <div className="relative overflow-hidden rounded-[3.5rem] bg-[#1c1a0d] min-h-[500px] lg:min-h-[700px] flex items-center shadow-2xl border border-white/5">
+        <section className="pt-4 pb-12 relative group px-4">
+          <div className="relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] bg-[#1c1a0d] min-h-[450px] sm:min-h-[500px] lg:min-h-[700px] flex items-center shadow-2xl border border-white/5">
             {slides.length > 0 ? (
               slides.map((slide, index) => (
                 <div
@@ -88,19 +88,19 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
                   />
                   <div className="absolute inset-0 bg-gradient-to-r from-[#1c1a0d] via-[#1c1a0d]/40 to-transparent"></div>
 
-                  <div className="absolute inset-0 flex items-center px-8 lg:px-20">
+                  <div className="absolute inset-0 flex items-center px-6 sm:px-12 lg:px-20">
                     <div className={`max-w-3xl transition-all duration-1000 delay-500 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-                      <div className="flex items-center gap-3 mb-6">
-                        <span className="h-[1px] w-12 bg-primary"></span>
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary">{slide.subtitle}</span>
+                      <div className="flex items-center gap-3 mb-4 sm:mb-6">
+                        <span className="h-[1px] w-8 sm:w-12 bg-primary"></span>
+                        <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.4em] text-primary">{slide.subtitle}</span>
                       </div>
                       <h2
-                        className="text-5xl lg:text-8xl font-black leading-[0.9] mb-8 tracking-tighter text-white"
+                        className="text-4xl sm:text-6xl lg:text-8xl font-black leading-[0.9] mb-6 sm:mb-8 tracking-tighter text-white uppercase"
                         dangerouslySetInnerHTML={{ __html: (slide.title || "").replace(/\n/g, '<br />') }}
                       />
                       <button
                         onClick={() => setIsQuizOpen(true)}
-                        className="bg-white/10 backdrop-blur-md text-white border border-white/20 font-black px-12 py-5 rounded-2xl hover:bg-white hover:text-black transition-all transform hover:scale-105 uppercase tracking-widest text-[10px] flex items-center gap-3"
+                        className="bg-white/10 backdrop-blur-md text-white border border-white/20 font-black px-8 sm:px-12 py-4 sm:py-5 rounded-xl sm:rounded-2xl hover:bg-white hover:text-black transition-all transform hover:scale-105 uppercase tracking-widest text-[9px] sm:text-[10px] flex items-center gap-3 w-fit"
                       >
                         <span className="material-symbols-outlined !text-sm">auto_awesome</span>
                         Descobrir meu Perfil
@@ -111,11 +111,10 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
               ))
             ) : isLoading ? (
               /* Skeleton for Hero */
-              <div className="absolute inset-0 bg-black/40 animate-pulse flex items-center px-8 lg:px-20">
+              <div className="absolute inset-0 bg-black/40 animate-pulse flex items-center px-6 sm:px-12 lg:px-20">
                 <div className="space-y-6 w-full max-w-2xl">
                   <div className="h-4 w-32 bg-white/10 rounded"></div>
                   <div className="h-20 w-full bg-white/10 rounded-3xl"></div>
-                  <div className="h-20 w-2/3 bg-white/10 rounded-3xl"></div>
                 </div>
               </div>
             ) : (
@@ -130,12 +129,12 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
 
             {/* Pagination Dots */}
             {slides.length > 1 && (
-              <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-3">
+              <div className="absolute bottom-6 sm:bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-2 sm:gap-3">
                 {slides.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setCurrentSlide(i)}
-                    className={`h-1.5 transition-all duration-500 rounded-full ${i === currentSlide ? 'w-12 bg-primary' : 'w-4 bg-white/20 hover:bg-white/40'}`}
+                    className={`h-1 sm:h-1.5 transition-all duration-500 rounded-full ${i === currentSlide ? 'w-8 sm:w-12 bg-primary' : 'w-2 sm:w-4 bg-white/20 hover:bg-white/40'}`}
                   />
                 ))}
               </div>
@@ -145,10 +144,10 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
       )}
 
       {/* Listagem de Produtos Estilo Boutique */}
-      <section className="py-20" id="produtos">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-20 px-4 gap-6">
-          <div className="flex flex-col gap-4">
-            <h3 className="text-5xl font-black uppercase tracking-tighter text-[#1c1a0d] dark:text-white leading-none">
+      <section className="py-12 sm:py-20" id="produtos">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-20 px-4 gap-8">
+          <div className="flex flex-col gap-3 sm:gap-4">
+            <h3 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-[#1c1a0d] dark:text-white leading-[0.85]">
               {searchTerm
                 ? `Resultados: "${searchTerm}"`
                 : selectedCategory
@@ -156,14 +155,14 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
                   : 'Coleção Brilho Essenza'}
             </h3>
             <div className="flex items-center gap-4">
-              <div className="h-[2px] w-16 bg-primary"></div>
-              <p className="text-[11px] font-black text-gray-400 uppercase tracking-[0.5em]">Curadoria Exclusiva</p>
+              <div className="h-[2px] w-12 sm:w-16 bg-primary"></div>
+              <p className="text-[9px] sm:text-[11px] font-black text-gray-400 uppercase tracking-[0.4em] sm:tracking-[0.5em]">Curadoria Exclusiva</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-gray-50 dark:bg-white/5 p-2 rounded-2xl border border-gray-100 dark:border-white/5 overflow-x-auto max-w-full">
-            <button onClick={() => onCategorySelect(null)} className={`whitespace-nowrap px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${!selectedCategory ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Todos</button>
-            <button onClick={() => onCategorySelect('Novidades')} className={`whitespace-nowrap px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Novidades' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Novidades</button>
-            <button onClick={() => onCategorySelect('Ofertas')} className={`whitespace-nowrap px-5 py-2 text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Ofertas' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Ofertas</button>
+          <div className="flex items-center gap-2 bg-gray-50 dark:bg-white/5 p-1.5 sm:p-2 rounded-2xl border border-gray-100 dark:border-white/5 overflow-x-auto max-w-full no-scrollbar">
+            <button onClick={() => onCategorySelect(null)} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${!selectedCategory ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Todos</button>
+            <button onClick={() => onCategorySelect('Novidades')} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Novidades' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Novidades</button>
+            <button onClick={() => onCategorySelect('Ofertas')} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Ofertas' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Ofertas</button>
           </div>
         </div>
 

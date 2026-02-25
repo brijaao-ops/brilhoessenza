@@ -1,6 +1,6 @@
 
 import React, { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Product, UserProfile } from '../../types';
 
 interface AdminProductsProps {
@@ -13,6 +13,7 @@ type SortKey = 'name' | 'category' | 'price' | 'salePrice' | 'costPrice' | 'stoc
 type SortDir = 'asc' | 'desc';
 
 const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userProfile }) => {
+  const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterGender, setFilterGender] = useState('all');
@@ -359,6 +360,72 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
             </div>
           </>
         )}
+        {/* Mobile Card View */}
+        <div className="md:hidden divide-y divide-gray-50 dark:divide-white/5">
+          {filtered.length > 0 ? filtered.map((product) => (
+            <div key={product.id} className="p-4 flex flex-col gap-4">
+              <div className="flex gap-4">
+                <div className="size-16 rounded-xl bg-gray-50 dark:bg-white/5 overflow-hidden shrink-0 border border-gray-100 dark:border-white/10">
+                  <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-start mb-1">
+                    <h4 className="text-xs font-black uppercase truncate">{product.name}</h4>
+                    <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${product.stock > 10 ? 'bg-green-100 text-green-600' : product.stock > 0 ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'}`}>
+                      {product.stock > 0 ? `${product.stock} un` : 'Esgotado'}
+                    </span>
+                  </div>
+                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">{product.category}</p>
+                  <p className="text-sm font-black text-primary">
+                    {product.salePrice ? (
+                      <span className="flex items-center gap-2">
+                        <span>{product.salePrice.toLocaleString()} Kz</span>
+                        <span className="text-[10px] text-gray-400 line-through opacity-50">{product.price.toLocaleString()} Kz</span>
+                      </span>
+                    ) : (
+                      <span>{product.price.toLocaleString()} Kz</span>
+                    )}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2">
+                <div className="bg-gray-50/50 dark:bg-white/[0.02] p-2 rounded-lg border border-gray-100 dark:border-white/5">
+                  <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Comissão</p>
+                  <p className="text-[10px] font-bold">{product.deliveryCommission || 0} Kz</p>
+                </div>
+                <div className="bg-gray-50/50 dark:bg-white/[0.02] p-2 rounded-lg border border-gray-100 dark:border-white/5">
+                  <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Curadoria</p>
+                  <p className="text-[10px] font-bold truncate">{product.createdByName || '---'}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-2">
+                {(userProfile?.role === 'admin' || userProfile?.permissions?.products?.edit) && (
+                  <button
+                    onClick={() => navigate(`/admin/produtos/editar/${product.id}`)}
+                    className="flex-1 bg-black dark:bg-white text-white dark:text-black py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest"
+                  >
+                    Editar
+                  </button>
+                )}
+                {(userProfile?.role === 'admin' || userProfile?.permissions?.products?.delete) && (
+                  <button
+                    onClick={() => onDelete(product.id)}
+                    className="size-10 flex items-center justify-center bg-red-500/10 text-red-500 rounded-lg"
+                  >
+                    <span className="material-symbols-outlined !text-base">delete</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          )) : (
+            <div className="p-12 text-center">
+              <span className="material-symbols-outlined !text-4xl text-gray-200 mb-2">inventory_2</span>
+              <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Nenhum produto encontrado</p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

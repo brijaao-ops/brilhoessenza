@@ -162,7 +162,7 @@ export const PricingFields: React.FC<PricingFieldsProps> = ({
                     max="100"
                     step="0.5"
                     value={deliveryCommission || ''}
-                    onChange={e => onChange('delivery_commission', Number(e.target.value))}
+                    onChange={e => onChange('deliveryCommission', Number(e.target.value))}
                     className="bg-white dark:bg-green-950/30 px-4 py-3 rounded-xl font-black text-2xl outline-none w-full text-green-600 focus:ring-2 focus:ring-green-400/30 transition-all"
                     placeholder="0"
                     required

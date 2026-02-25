@@ -175,19 +175,19 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
                             const firstKey = subPerms[area][0].key;
                             togglePermission(area, firstKey, isEdit);
                         }}
-                        className={`text-[9px] font-black uppercase px-3 py-1 rounded-full transition-all ${active ? 'bg-primary text-black' : 'bg-gray-100 dark:bg-white/5 text-gray-400'}`}
+                        className={`text-[9px] font-black uppercase px-3 py-1.5 rounded-full transition-all ${active ? 'bg-primary text-black' : 'bg-gray-100 dark:bg-white/5 text-gray-400'}`}
                     >
                         {active ? 'Ativado' : 'Desativado'}
                     </button>
                 </div>
                 {active && (
-                    <div className="flex flex-wrap gap-2 animate-fade-in">
+                    <div className="flex flex-wrap gap-2 animate-fade-in pt-1">
                         {subPerms[area].map(sub => (
                             <button
                                 key={sub.key}
                                 type="button"
                                 onClick={() => togglePermission(area, sub.key, isEdit)}
-                                className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${perms[area]?.[sub.key] ? 'bg-primary/10 border-primary text-primary' : 'bg-white dark:bg-[#15140b] border-gray-100 dark:border-white/5 text-gray-400'}`}
+                                className={`px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${perms[area]?.[sub.key] ? 'bg-primary/10 border-primary text-primary' : 'bg-white dark:bg-[#15140b] border-gray-100 dark:border-white/5 text-gray-400'}`}
                             >
                                 {sub.label}
                             </button>
@@ -199,16 +199,16 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
     };
 
     return (
-        <div className="p-4 md:p-8 lg:p-12 animate-slide-in">
+        <div className="p-4 md:p-8 lg:p-12 animate-slide-in pb-20 md:pb-12">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 lg:mb-12 gap-6">
                 <div>
-                    <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tighter">Gestão de <span className="text-primary italic">Equipe</span></h2>
-                    <p className="text-[11px] lg:text-sm text-gray-500 font-medium">Controle de acesso e colaboradores.</p>
+                    <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tighter text-[#1c1a0d] dark:text-white">Gestão de <span className="text-primary italic">Equipe</span></h2>
+                    <p className="text-[10px] lg:text-sm text-gray-400 font-bold uppercase tracking-widest mt-1">Controle de acesso e colaboradores.</p>
                 </div>
                 {(userProfile?.role === 'admin' || userProfile?.permissions?.team?.edit || userProfile?.permissions?.team?.manage) && (
                     <button
                         onClick={() => setShowModal(true)}
-                        className="bg-primary text-black font-black px-8 py-4 rounded-xl uppercase tracking-widest text-[10px] hover:brightness-110 shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center gap-2"
+                        className="bg-primary text-black font-black px-6 md:px-8 py-3.5 md:py-4 rounded-xl md:rounded-2xl uppercase tracking-widest text-[10px] hover:brightness-110 shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center justify-center gap-2 w-full md:w-auto"
                     >
                         <span className="material-symbols-outlined !text-base">person_add</span>
                         Novo Funcionário

@@ -105,15 +105,15 @@ const Header: React.FC<HeaderProps> = ({
 
       <div className="max-w-[1400px] mx-auto px-8 lg:px-12 py-6 flex items-center justify-between gap-12">
         {/* Boutique Branding */}
-        <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-3 group shrink-0">
-          <div className="bg-primary text-black size-12 rounded-2xl flex items-center justify-center font-black group-hover:rotate-[15deg] transition-all shadow-xl shadow-primary/20">
+        <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-2 sm:gap-3 group shrink-0">
+          <div className="bg-primary text-black size-10 sm:size-12 rounded-xl sm:rounded-2xl flex items-center justify-center font-black group-hover:rotate-[15deg] transition-all shadow-xl shadow-primary/20">
             BE
           </div>
-          <div className="hidden sm:block">
-            <h1 className="text-xl font-black uppercase tracking-tighter leading-none mb-0.5">
+          <div>
+            <h1 className="text-lg sm:text-xl font-black uppercase tracking-tighter leading-none mb-0.5">
               Brilho <span className="text-primary italic">Essenza</span>
             </h1>
-            <p className="text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 opacity-80">Maison de Fragrance</p>
+            <p className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 opacity-80">Maison de Fragrance</p>
           </div>
         </Link>
 
@@ -149,7 +149,7 @@ const Header: React.FC<HeaderProps> = ({
         </nav>
 
         {/* Actions & Concierge Search */}
-        <div className="flex items-center gap-6 flex-1 max-w-md justify-end">
+        <div className="flex items-center gap-2 sm:gap-6 flex-1 max-w-md justify-end">
           <div className="relative w-full hidden sm:block max-w-[280px] group">
             <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors">search</span>
             <input
@@ -160,7 +160,7 @@ const Header: React.FC<HeaderProps> = ({
               type="text"
             />
           </div>
-          <div className="flex items-center gap-4 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             {/* Session Indicator */}
             {isAuthenticated && userProfile && (
               <div className="hidden sm:flex items-center gap-3 bg-primary/10 pl-2 pr-1 py-1 rounded-2xl border border-primary/20">
@@ -192,7 +192,7 @@ const Header: React.FC<HeaderProps> = ({
             </button>
             <button
               onClick={onOpenCart}
-              className="size-12 bg-[#1c1a0d] dark:bg-primary text-white dark:text-black rounded-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 relative shadow-xl shadow-black/10 dark:shadow-primary/10"
+              className="size-10 sm:size-12 bg-[#1c1a0d] dark:bg-primary text-white dark:text-black rounded-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 relative shadow-xl shadow-black/10 dark:shadow-primary/10"
               title="Sua Reserva"
             >
               <span className="material-symbols-outlined !text-xl">shopping_cart</span>

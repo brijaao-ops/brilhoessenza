@@ -44,7 +44,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
     description: '',
     bestSeller: false,
     notes: { top: '', heart: '', base: '' },
-    delivery_commission: 0
+    deliveryCommission: 0
   });
 
   useEffect(() => {
@@ -67,10 +67,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
               image: product.image,
               description: product.description,
               bestSeller: product.bestSeller || false,
-              created_by_name: product.created_by_name,
-              last_edited_by: product.last_edited_by,
+              createdByName: product.createdByName,
+              lastEditedBy: product.lastEditedBy,
               notes: product.notes || { top: '', heart: '', base: '' },
-              delivery_commission: product.delivery_commission || 0
+              deliveryCommission: product.deliveryCommission || 0
             });
           }
         }
@@ -89,7 +89,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
     if (!formData.name.trim()) errors.push('Nome do produto');
     if (!formData.price || formData.price <= 0) errors.push('Preço de venda');
     if (!formData.costPrice || formData.costPrice <= 0) errors.push('Custo do produto');
-    if (!formData.delivery_commission || formData.delivery_commission <= 0) errors.push('% Entregador');
+    if (!formData.deliveryCommission || formData.deliveryCommission <= 0) errors.push('% Entregador');
     if (!formData.stock || formData.stock <= 0) errors.push('Quantidade em estoque');
     if (errors.length > 0) {
       showToast(`Obrigatórios em falta: ${errors.join(', ')}.`, 'error');
@@ -113,10 +113,10 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
       id: isEditing ? id! : '',
       rating: isEditing ? (products.find(p => p.id === id)?.rating || 5) : 5,
       reviewsCount: isEditing ? (products.find(p => p.id === id)?.reviewsCount || 0) : 0,
-      created_by_name: isEditing
-        ? (products.find(p => p.id === id)?.created_by_name || userProfile?.full_name || 'Desconhecido')
+      createdByName: isEditing
+        ? (products.find(p => p.id === id)?.createdByName || userProfile?.full_name || 'Desconhecido')
         : (userProfile?.full_name || 'Desconhecido'),
-      last_edited_by: userProfile?.full_name || 'Desconhecido'
+      lastEditedBy: userProfile?.full_name || 'Desconhecido'
     };
 
     try {
@@ -151,11 +151,11 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
             <span className="material-symbols-outlined !text-base">arrow_back</span>
           </Link>
           <div className="min-w-0">
-            <h2 className="text-lg md:text-2xl lg:text-3xl font-black uppercase tracking-tighter leading-none truncate">
+            <h2 className="text-base sm:text-xl lg:text-3xl font-black uppercase tracking-tighter leading-none truncate">
               {isEditing ? 'Editar' : 'Novo'} <span className="text-primary italic">Produto</span>
             </h2>
             {isEditing && formData.created_by_name && (
-              <p className="text-[9px] font-bold text-gray-400 truncate mt-0.5">
+              <p className="text-[8px] sm:text-[9px] font-bold text-gray-400 truncate mt-0.5">
                 por <span className="text-primary">{formData.created_by_name}</span>
               </p>
             )}
@@ -302,8 +302,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
         </div>
       </form>
 
-      {/* ── FIXED SAVE BAR — mobile only ── */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white/90 dark:bg-[#100f08]/95 backdrop-blur-md border-t border-gray-200 dark:border-white/10 px-4 py-3 safe-area-bottom">
+      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden bg-white/90 dark:bg-[#100f08]/95 backdrop-blur-md border-t border-gray-200 dark:border-white/10 px-4 py-3 pb-safe">
         <button
           type="button"
           onClick={() => handleSubmit()}

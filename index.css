@@ -110,6 +110,24 @@
     box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.5);
 }
 
+/* Mobile Utilities */
+.pb-safe {
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+@media (max-width: 768px) {
+    .mobile-title {
+        font-size: clamp(2rem, 8vw, 3.5rem);
+        line-height: 0.95;
+    }
+
+    .mobile-boutique-title {
+        font-size: clamp(2.5rem, 12vw, 4rem);
+        line-height: 0.85;
+        letter-spacing: -0.05em;
+    }
+}
+
 /* Product Card Image Container */
 .product-image-container {
     aspect-ratio: 4/5;

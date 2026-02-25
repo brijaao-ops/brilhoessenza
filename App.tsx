@@ -30,6 +30,7 @@ import DriverDashboard from './pages/driver/DriverDashboard';
 import OrderConfirmation from './pages/OrderConfirmation';
 import CheckoutModal from './components/CheckoutModal';
 import OrderSuccessModal from './components/OrderSuccessModal';
+import MobileNav from './components/MobileNav';
 import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile, fetchAllAppSettings, fetchTeam, fetchDrivers } from './services/supabase';
 import { Product, Order, Category, Slide, UserProfile, DeliveryDriver } from './types';
 import { MOCK_PRODUCTS, MOCK_ORDERS } from './constants';
