@@ -68,56 +68,76 @@ const AppContent: React.FC = () => {
       const cp = localStorage.getItem('brilho_products_v4');
       const cc = localStorage.getItem('brilho_categories_v4');
       const cs = localStorage.getItem('brilho_slides_v4');
-      if (cp) { const p = JSON.parse(cp); if (p.length > 0) setProducts(p); }
-      if (cc) { const c = JSON.parse(cc); if (c.length > 0) setCategories(c); }
-      if (cs) { const s = JSON.parse(cs); if (s.length > 0) setSlides(s); }
-    } catch {
-      localStorage.removeItem('brilho_products_v4');
-      localStorage.removeItem('brilho_categories_v4');
-      localStorage.removeItem('brilho_slides_v4');
+      if (cp) { try { const p = JSON.parse(cp); if (p.length > 0) setProducts(p); } catch (e) { } }
+      if (cc) { try { const c = JSON.parse(cc); if (c.length > 0) setCategories(c); } catch (e) { } }
+      if (cs) { try { const s = JSON.parse(cs); if (s.length > 0) setSlides(s); } catch (e) { } }
+    } catch (e) {
+      console.warn("Cache load failed", e);
     }
 
-    // PHASE 1: Public Data (Critical for Home Page)
-    try {
-      const [dbProducts, dbCategories, dbSlides] = await Promise.all([
-        fetchProducts(),
-        fetchCategories(),
-        fetchSlides()
-      ]);
+    // PHASE 1: Public Data (Decoupled)
+    const productPromise = fetchProducts()
+      .then(dbProducts => {
+        if (dbProducts.length > 0) {
+          setProducts(dbProducts);
+          localStorage.setItem('brilho_products_v4', JSON.stringify(dbProducts));
+        }
+        return true;
+      })
+      .catch(e => {
+        console.error('Product Fetch Error:', e);
+        return false;
+      });
 
-      if (dbProducts.length > 0) {
-        setProducts(dbProducts);
-        localStorage.setItem('brilho_products_v4', JSON.stringify(dbProducts));
-      }
-      if (dbCategories.length > 0) {
-        setCategories(dbCategories);
-        localStorage.setItem('brilho_categories_v4', JSON.stringify(dbCategories));
-      }
-      if (dbSlides.length > 0) {
-        setSlides(dbSlides);
-        localStorage.setItem('brilho_slides_v4', JSON.stringify(dbSlides));
-      }
-    } catch (e) {
-      console.error('Critical Public Fetch Error:', e);
-      // Only set load error if no data at all (including cache)
-      if (products.length === 0) setHasLoadError(true);
+    const categoryPromise = fetchCategories()
+      .then(dbCategories => {
+        if (dbCategories.length > 0) {
+          setCategories(dbCategories);
+          localStorage.setItem('brilho_categories_v4', JSON.stringify(dbCategories));
+        }
+        return true;
+      })
+      .catch(e => {
+        console.error('Category Fetch Error:', e);
+        return true; // Categories failing isn't "fatal"
+      });
+
+    const slidePromise = fetchSlides()
+      .then(dbSlides => {
+        if (dbSlides.length > 0) {
+          setSlides(dbSlides);
+          localStorage.setItem('brilho_slides_v4', JSON.stringify(dbSlides));
+        }
+        return true;
+      })
+      .catch(e => {
+        console.error('Slide Fetch Error:', e);
+        return true; // Slides failing isn't "fatal"
+      });
+
+    const [productSuccess] = await Promise.all([productPromise, categoryPromise, slidePromise]);
+
+    // Only set error if products failed AND no cached products exist
+    if (!productSuccess && products.length === 0) {
+      setHasLoadError(true);
     }
 
     // PHASE 2: Admin Data (Contextual)
     if (isAuthenticated && userProfile) {
       try {
         const [dbTeam, dbDrivers, dbOrders] = await Promise.all([
-          fetchTeam(),
-          fetchDrivers(),
-          fetchOrders()
+          fetchTeam().catch(e => { console.error("Team err:", e); return []; }),
+          fetchDrivers().catch(e => { console.error("Drivers err:", e); return []; }),
+          fetchOrders().catch(e => { console.error("Orders err:", e); return []; })
         ]);
-        setTeam(dbTeam || []);
-        setDrivers(dbDrivers || []);
-        setOrders(dbOrders || []);
+
+        if (dbTeam.length > 0) setTeam(dbTeam);
+        if (dbDrivers.length > 0) setDrivers(dbDrivers);
+        if (dbOrders.length > 0) setOrders(dbOrders);
       } catch (e) {
-        console.error('Non-critical Admin Fetch Error:', e);
-        // If we are on an admin page, we SHOULD show an error/retry
-        const isAdminRoute = window.location.pathname.startsWith('/admin');
+        console.error('Admin Fetch Error:', e);
+        // Correct route detection for HashRouter
+        const isAdminRoute = location.pathname.startsWith('/admin');
         if (isAdminRoute) {
           setHasLoadError(true);
         }
@@ -548,7 +568,7 @@ const AppContent: React.FC = () => {
       {isAdminPath ? (
         isAuthenticated ? (
           <div className="flex flex-col md:flex-row h-screen overflow-hidden">
-            <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-gray-100 dark:border-[#222115] bg-white dark:bg-[#15140b] p-4 md:p-6 flex flex-col gap-4 md:gap-8 shrink-0 overflow-y-auto">
+            <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-gray-100 dark:border-[#222115] bg-white dark:bg-[#15140b] p-4 md:p-6 flex flex-col gap-4 md:gap-8 shrink-0 max-h-[40vh] md:max-h-screen overflow-y-auto">
               <Link to="/" onClick={resetFilters} className="flex items-center gap-2 mb-2 md:mb-4">
                 <div className="size-10 bg-primary rounded-xl flex items-center justify-center text-black font-black">BE</div>
                 <div>
@@ -625,7 +645,7 @@ const AppContent: React.FC = () => {
                 })}
               </nav>
 
-              <div className="mt-auto pt-4 border-t border-gray-100 dark:border-[#222115] flex flex-col gap-2">
+              <div className="mt-auto hidden md:flex flex-col gap-2 pt-4 border-t border-gray-100 dark:border-[#222115]">
                 <Link to="/admin/configuracoes" className={`flex items-center gap-3 px-4 py-3 font-bold rounded-xl transition-all ${location.pathname === '/admin/configuracoes' ? 'bg-primary text-black' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
                   <span className="material-symbols-outlined">settings</span>
                   <span className="text-sm">Configurações</span>
@@ -637,7 +657,7 @@ const AppContent: React.FC = () => {
                 </button>
               </div>
             </aside>
-            <main className="flex-1 overflow-y-auto">
+            <main className="flex-1 overflow-y-auto min-h-0">
               <Routes>
                 <Route path="/admin" element={<AdminDashboard orders={orders} products={products} userProfile={userProfile} />} />
                 <Route path="/admin/produtos" element={<AdminProducts products={products} onDelete={deleteProduct} userProfile={userProfile} />} />
@@ -690,95 +710,62 @@ const AppContent: React.FC = () => {
             userProfile={userProfile}
             onLogout={handleLogout}
           />
-          <main className="flex-1 max-w-[1280px] mx-auto px-4 lg:px-10 w-full">
+          <main className="flex-1">
             <Routes>
-              <Route path="/" element={<Home onAddToCart={handleAddToCart} products={products} slides={slides} searchTerm={searchTerm} selectedCategory={selectedCategory} onCategorySelect={setSelectedCategory} isLoading={loading} hasError={hasLoadError} />} />
-              <Route path="/product/:id" element={<ProductDetail onAddToCart={handleAddToCart} products={products} />} />
-              <Route path="/atelier/:section" element={<AtelierInfo />} />
-              <Route path="/entregador/cadastro" element={<DriverRegistration />} />
-              <Route path="/entregador/:id" element={<DriverProfile />} />
+              <Route path="/" element={
+                <Home
+                  products={products}
+                  onAddToCart={handleAddToCart}
+                  searchTerm={searchTerm}
+                  selectedCategory={selectedCategory}
+                  onCategorySelect={setSelectedCategory}
+                  slides={slides}
+                  onRetry={() => loadAllData(true)}
+                />
+              } />
+              <Route path="/produto/:id" element={<ProductDetail products={products} onAddToCart={handleAddToCart} />} />
+              <Route path="/atelier" element={<AtelierInfo />} />
+              <Route path="/admin/login" element={<AdminLogin onLogin={handleLogin} />} />
+              <Route path="/checkout/confirmacao" element={<OrderConfirmation />} />
+              <Route path="/driver/registrar" element={<DriverRegistration />} />
               <Route path="/driver/login" element={<DriverLogin />} />
               <Route path="/driver/dashboard" element={<DriverDashboard />} />
-              <Route path="/confirmar/:token" element={<OrderConfirmation />} />
-              <Route path="*" element={<div className="py-24 text-center font-black uppercase tracking-widest text-gray-400">Página não encontrada</div>} />
+              <Route path="/driver/perfil" element={<DriverProfile />} />
             </Routes>
           </main>
-          <Footer onCategorySelect={setSelectedCategory} />
+          <Footer />
+
+          {/* Overlay Components */}
+          <CheckoutModal
+            isOpen={isCheckoutOpen}
+            onClose={() => setIsCheckoutOpen(false)}
+            onConfirm={handleCheckoutConfirm}
+            total={totalCart}
+          />
+
+          <OrderSuccessModal
+            isOpen={isSuccessModalOpen}
+            onClose={() => setIsSuccessModalOpen(false)}
+            paymentMethod={lastPaymentMethod}
+          />
+
+          <MobileNav
+            cartCount={cartItems.reduce((a, b) => a + b.quantity, 0)}
+            onOpenCart={() => setIsCartOpen(true)}
+            isAuthenticated={isAuthenticated}
+          />
         </>
-      )}
-
-      <CheckoutModal
-        isOpen={isCheckoutOpen}
-        onClose={() => setIsCheckoutOpen(false)}
-        onConfirm={handleCheckoutConfirm}
-        total={totalCart}
-      />
-
-      <OrderSuccessModal
-        isOpen={isSuccessModalOpen}
-        onClose={() => setIsSuccessModalOpen(false)}
-        paymentMethod={lastPaymentMethod}
-      />
-
-      {isCartOpen && (
-        <div className="fixed inset-0 z-[60]">
-          <div className="absolute inset-0 bg-black/60 backdrop-blur-md" onClick={() => setIsCartOpen(false)}></div>
-          <div className="absolute inset-y-0 right-0 max-w-full flex">
-            <div className="w-screen max-w-md animate-slide-in h-full bg-white dark:bg-[#15140b] shadow-2xl flex flex-col">
-              <div className="flex items-center justify-between px-8 py-8 border-b">
-                <h2 className="text-2xl font-black uppercase tracking-tighter">Carrinho <span className="text-primary italic">Essenza</span></h2>
-                <button onClick={() => setIsCartOpen(false)} className="size-10 flex items-center justify-center hover:bg-gray-100 rounded-full">
-                  <span className="material-symbols-outlined">close</span>
-                </button>
-              </div>
-              <div className="flex-1 overflow-y-auto p-8 border-none">
-                {cartItems.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-gray-400">
-                    <span className="material-symbols-outlined !text-7xl mb-6 opacity-20">shopping_bag</span>
-                    <p className="font-bold uppercase tracking-widest text-xs">Vazio.</p>
-                  </div>
-                ) : (
-                  <ul className="flex flex-col gap-8">
-                    {cartItems.map((item) => (
-                      <li key={item.product.id} className="flex gap-5">
-                        <div className="size-20 bg-gray-50 dark:bg-white/5 rounded-2xl p-2 border shrink-0">
-                          <img src={item.product.image} className="w-full h-full object-contain" />
-                        </div>
-                        <div className="flex-1">
-                          <h4 className="font-black text-sm uppercase">{item.product.name}</h4>
-                          <div className="flex items-center justify-between mt-3">
-                            <div className="flex items-center gap-3 bg-gray-100 dark:bg-white/5 rounded-lg px-2">
-                              <button onClick={() => updateCartQuantity(item.product.id, -1)} className="font-bold">-</button>
-                              <span className="text-xs font-black">{item.quantity}</span>
-                              <button onClick={() => updateCartQuantity(item.product.id, 1)} className="font-bold">+</button>
-                            </div>
-                            <p className="text-xs font-black">{(item.product.price * item.quantity).toLocaleString()} Kz</p>
-                          </div>
-                          <button onClick={() => removeFromCart(item.product.id)} className="text-[9px] font-black uppercase text-red-500 mt-2">Remover</button>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-              {cartItems.length > 0 && (
-                <div className="p-8 border-t bg-gray-50/50 dark:bg-black/20">
-                  <div className="flex items-center justify-between mb-8">
-                    <p className="font-black text-gray-400 uppercase tracking-widest text-[10px]">Total</p>
-                    <p className="text-3xl font-black">{totalCart.toLocaleString()} Kz</p>
-                  </div>
-                  <button onClick={finalizeBooking} className="w-full bg-primary text-black font-black py-5 rounded-2xl hover:brightness-110 uppercase tracking-widest text-xs shadow-xl">
-                    Reservar via WhatsApp
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );
 };
 
-const App: React.FC = () => <Router><AppContent /></Router>;
+const App: React.FC = () => {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+};
+
 export default App;

@@ -147,15 +147,16 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
       </div>
 
       {/* Table */}
-      <div className="flex-1 overflow-auto bg-white dark:bg-[#15140b] rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm">
+      {/* Multi-Format List (Desktop Table / Mobile Cards) */}
+      <div className="flex-1 overflow-auto md:overflow-visible bg-white dark:bg-[#15140b] rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm">
         {filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center h-64">
+          <div className="flex flex-col items-center justify-center p-12 min-h-[300px]">
             <span className="material-symbols-outlined !text-5xl text-gray-200 dark:text-gray-700">inventory_2</span>
             <p className="text-xs font-black text-gray-400 uppercase tracking-widest mt-4">Nenhum produto encontrado</p>
           </div>
         ) : (
           <>
-            {/* Desktop View */}
+            {/* Desktop View: Table */}
             <div className="hidden md:block">
               <table className="w-full text-left min-w-[1100px]">
                 <thead className="sticky top-0 z-10 bg-gray-50 dark:bg-[#1a190f]">
@@ -296,136 +297,82 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
                     <td className="px-4 py-3" />
                     <td className="px-4 py-3" />
                     <td className="px-4 py-3" />
+                    <td className="px-4 py-3" />
                   </tr>
                 </tfoot>
               </table>
             </div>
 
-            {/* Mobile View */}
+            {/* Mobile View: Cards */}
             <div className="md:hidden divide-y divide-gray-50 dark:divide-white/5">
-              {filtered.map(p => (
-                <div key={p.id} className="p-4 flex flex-col gap-3">
-                  <div className="flex items-center gap-3">
-                    <div className="size-12 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-100 dark:border-white/10 overflow-hidden flex-shrink-0 p-1">
-                      <img src={p.image} alt={p.name} className="w-full h-full object-contain" />
+              {filtered.map((product) => (
+                <div key={product.id} className="p-5 flex flex-col gap-4">
+                  <div className="flex gap-4">
+                    <div className="size-20 rounded-xl bg-gray-50 dark:bg-white/5 overflow-hidden shrink-0 border border-gray-100 dark:border-white/10 p-1">
+                      <img src={product.image} alt={product.name} className="w-full h-full object-contain" />
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex justify-between items-start gap-2">
-                        <p className="font-black text-xs uppercase leading-tight">{p.name}</p>
-                        <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full shrink-0 ${p.gender === 'masculino' ? 'bg-blue-500/10 text-blue-500' : p.gender === 'feminino' ? 'bg-pink-500/10 text-pink-500' : 'bg-purple-500/10 text-purple-500'}`}>
-                          {p.gender === 'masculino' ? 'Masc' : p.gender === 'feminino' ? 'Fem' : 'Uni'}
+                    <div className="flex-1 min-w-0">
+                      <div className="flex justify-between items-start mb-1 gap-2">
+                        <h4 className="text-[11px] font-black uppercase truncate leading-tight">{product.name}</h4>
+                        <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest shrink-0 ${product.stock > 10 ? 'bg-green-100 text-green-600' : product.stock > 0 ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'}`}>
+                          {product.stock > 0 ? `${product.stock} un` : 'Esgotado'}
                         </span>
                       </div>
-                      <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mt-1">{p.category}</p>
-                    </div>
-                  </div>
+                      <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-2">{product.category}</p>
 
-                  <div className="grid grid-cols-3 gap-2 py-2 border-y border-gray-50 dark:border-white/5">
-                    <div>
-                      <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Preço</p>
-                      <p className="text-[10px] font-black">{p.price.toLocaleString('pt-AO')} Kz</p>
-                    </div>
-                    <div>
-                      <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Stock</p>
-                      <p className={`text-[10px] font-black ${p.stock === 0 ? 'text-red-500' : p.stock < 5 ? 'text-orange-500' : ''}`}>{p.stock} Unid.</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Promo</p>
-                      <p className="text-[10px] font-black text-green-600">{p.salePrice ? `${p.salePrice.toLocaleString('pt-AO')} Kz` : '—'}</p>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                      <span className="text-[9px] font-bold text-gray-400">Rating: {p.rating}</span>
-                      <div className="flex text-yellow-500">
-                        <span className="material-symbols-outlined !text-[10px]">star</span>
+                      <div className="flex items-center gap-3">
+                        <p className="text-xs font-black text-primary">
+                          {product.salePrice ? (
+                            <span className="flex items-center gap-2">
+                              <span>{product.salePrice.toLocaleString()} Kz</span>
+                              <span className="text-[9px] text-gray-400 line-through opacity-50">{product.price.toLocaleString()} Kz</span>
+                            </span>
+                          ) : (
+                            <span>{product.price.toLocaleString()} Kz</span>
+                          )}
+                        </p>
+                        <div className="flex items-center gap-0.5 text-yellow-500">
+                          <span className="material-symbols-outlined !text-[10px]">star</span>
+                          <span className="text-[9px] font-black text-gray-500">{product.rating}</span>
+                        </div>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      {canEdit && (
-                        <Link to={`/admin/produtos/editar/${p.id}`} className="size-8 rounded-lg bg-primary text-black flex items-center justify-center transition-all shadow-sm">
-                          <span className="material-symbols-outlined text-sm">edit</span>
-                        </Link>
-                      )}
-                      {canDelete && (
-                        <button onClick={() => { if (confirm('Eliminar este produto?')) onDelete(p.id); }} className="size-8 rounded-lg bg-red-500/10 text-red-500 flex items-center justify-center border border-red-500/20 shadow-sm">
-                          <span className="material-symbols-outlined text-sm">delete</span>
-                        </button>
-                      )}
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="bg-gray-50/50 dark:bg-white/[0.02] p-2.5 rounded-xl border border-gray-100 dark:border-white/5">
+                      <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Comissão Venda</p>
+                      <p className="text-[10px] font-bold">{product.deliveryCommission || 0}% ({((product.salePrice || product.price) * (product.deliveryCommission || 0) / 100).toLocaleString()} Kz)</p>
                     </div>
+                    <div className="bg-gray-50/50 dark:bg-white/[0.02] p-2.5 rounded-xl border border-gray-100 dark:border-white/5">
+                      <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Curadoria</p>
+                      <p className="text-[10px] font-bold truncate">{product.createdByName || '---'}</p>
+                    </div>
+                  </div>
+
+                  <div className="flex gap-2">
+                    {canEdit && (
+                      <Link
+                        to={`/admin/produtos/editar/${product.id}`}
+                        className="flex-1 bg-primary text-black py-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-center shadow-lg shadow-primary/10"
+                      >
+                        Editar Produto
+                      </Link>
+                    )}
+                    {canDelete && (
+                      <button
+                        onClick={() => { if (confirm('Eliminar este produto?')) onDelete(product.id); }}
+                        className="size-11 flex items-center justify-center bg-red-500/10 text-red-500 rounded-xl border border-red-500/20"
+                      >
+                        <span className="material-symbols-outlined !text-base">delete</span>
+                      </button>
+                    )}
                   </div>
                 </div>
               ))}
             </div>
           </>
         )}
-        {/* Mobile Card View */}
-        <div className="md:hidden divide-y divide-gray-50 dark:divide-white/5">
-          {filtered.length > 0 ? filtered.map((product) => (
-            <div key={product.id} className="p-4 flex flex-col gap-4">
-              <div className="flex gap-4">
-                <div className="size-16 rounded-xl bg-gray-50 dark:bg-white/5 overflow-hidden shrink-0 border border-gray-100 dark:border-white/10">
-                  <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start mb-1">
-                    <h4 className="text-xs font-black uppercase truncate">{product.name}</h4>
-                    <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${product.stock > 10 ? 'bg-green-100 text-green-600' : product.stock > 0 ? 'bg-orange-100 text-orange-600' : 'bg-red-100 text-red-600'}`}>
-                      {product.stock > 0 ? `${product.stock} un` : 'Esgotado'}
-                    </span>
-                  </div>
-                  <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">{product.category}</p>
-                  <p className="text-sm font-black text-primary">
-                    {product.salePrice ? (
-                      <span className="flex items-center gap-2">
-                        <span>{product.salePrice.toLocaleString()} Kz</span>
-                        <span className="text-[10px] text-gray-400 line-through opacity-50">{product.price.toLocaleString()} Kz</span>
-                      </span>
-                    ) : (
-                      <span>{product.price.toLocaleString()} Kz</span>
-                    )}
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2">
-                <div className="bg-gray-50/50 dark:bg-white/[0.02] p-2 rounded-lg border border-gray-100 dark:border-white/5">
-                  <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Comissão</p>
-                  <p className="text-[10px] font-bold">{product.deliveryCommission || 0} Kz</p>
-                </div>
-                <div className="bg-gray-50/50 dark:bg-white/[0.02] p-2 rounded-lg border border-gray-100 dark:border-white/5">
-                  <p className="text-[7px] font-black text-gray-400 uppercase tracking-widest mb-0.5">Curadoria</p>
-                  <p className="text-[10px] font-bold truncate">{product.createdByName || '---'}</p>
-                </div>
-              </div>
-
-              <div className="flex gap-2">
-                {(userProfile?.role === 'admin' || userProfile?.permissions?.products?.edit) && (
-                  <button
-                    onClick={() => navigate(`/admin/produtos/editar/${product.id}`)}
-                    className="flex-1 bg-black dark:bg-white text-white dark:text-black py-2.5 rounded-lg text-[10px] font-black uppercase tracking-widest"
-                  >
-                    Editar
-                  </button>
-                )}
-                {(userProfile?.role === 'admin' || userProfile?.permissions?.products?.delete) && (
-                  <button
-                    onClick={() => onDelete(product.id)}
-                    className="size-10 flex items-center justify-center bg-red-500/10 text-red-500 rounded-lg"
-                  >
-                    <span className="material-symbols-outlined !text-base">delete</span>
-                  </button>
-                )}
-              </div>
-            </div>
-          )) : (
-            <div className="p-12 text-center">
-              <span className="material-symbols-outlined !text-4xl text-gray-200 mb-2">inventory_2</span>
-              <p className="text-xs font-black text-gray-400 uppercase tracking-widest">Nenhum produto encontrado</p>
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

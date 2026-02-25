@@ -1,5 +1,4 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
 import { Product, Slide } from '../types';
 import ProductCard from '../components/ProductCard';
 import ScentQuiz from '../components/ScentQuiz';
@@ -14,9 +13,20 @@ interface HomeProps {
   slides: Slide[];
   isLoading?: boolean;
   hasError?: boolean;
+  onRetry?: () => void;
 }
 
-const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, onCategorySelect, products, slides, isLoading = false, hasError = false }) => {
+const Home: React.FC<HomeProps> = ({
+  onAddToCart,
+  searchTerm,
+  selectedCategory,
+  onCategorySelect,
+  products,
+  slides,
+  isLoading = false,
+  hasError = false,
+  onRetry
+}) => {
   const [currentSlide, setCurrentSlide] = React.useState(0);
   const [email, setEmail] = React.useState('');
   const [subscribed, setSubscribed] = React.useState(false);
@@ -39,6 +49,7 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
       return () => clearInterval(timer);
     }
   }, [slides.length]);
+
   const filteredProducts = products.filter(p => {
     // 1. Search Filter (Defensive handling of missing fields)
     const name = (p.name || "").toLowerCase();
@@ -173,11 +184,20 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
             ))}
           </div>
         ) : hasError && products.length === 0 ? (
-          <div className="py-48 text-center border-2 border-dashed border-red-200 dark:border-red-500/10 rounded-[5rem] animate-fade-up">
-            <span className="material-symbols-outlined !text-8xl text-red-300 mb-8">wifi_off</span>
-            <h4 className="text-2xl font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white mb-4">Falha na ligação</h4>
-            <p className="text-gray-400 font-medium mb-10 max-w-sm mx-auto">Não foi possível carregar os produtos. Verifique a sua ligação à internet e tente novamente.</p>
-            <button onClick={() => window.location.reload()} className="px-10 py-4 bg-[#1c1a0d] dark:bg-white text-white dark:text-black text-[10px] font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all">Tentar Novamente</button>
+          <div className="py-24 sm:py-48 text-center px-4 animate-fade-up">
+            <div className="max-w-md mx-auto bg-red-50/50 dark:bg-red-500/5 p-12 sm:p-20 rounded-[3rem] sm:rounded-[5rem] border border-red-100 dark:border-red-500/10">
+              <div className="size-20 sm:size-24 bg-red-100 dark:bg-red-500/20 rounded-3xl flex items-center justify-center mx-auto mb-8">
+                <span className="material-symbols-outlined !text-4xl sm:text-5xl text-red-500">wifi_off</span>
+              </div>
+              <h4 className="text-xl sm:text-2xl font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white mb-4">Falha na ligação</h4>
+              <p className="text-gray-400 text-xs sm:text-sm font-medium mb-10 leading-relaxed">Não foi possível carregar os produtos no momento. Verifique sua conexão e tente novamente.</p>
+              <button
+                onClick={() => onRetry ? onRetry() : window.location.reload()}
+                className="w-full sm:w-auto px-10 py-5 bg-[#1c1a0d] dark:bg-white text-white dark:text-black text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-red-500/10"
+              >
+                Tentar Novamente
+              </button>
+            </div>
           </div>
         ) : filteredProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
@@ -189,7 +209,7 @@ const Home: React.FC<HomeProps> = ({ onAddToCart, searchTerm, selectedCategory, 
           <div className="py-48 text-center border-2 border-dashed border-gray-200 dark:border-white/5 rounded-[5rem] animate-fade-up">
             <span className="material-symbols-outlined !text-8xl text-primary/20 mb-8">inventory_2</span>
             <h4 className="text-2xl font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white mb-4">Catálogo vazio</h4>
-            <p className="text-gray-400 font-medium mb-10 max-w-sm mx-auto">Nenhum produto foi encontrado no catálogo. Adicione produtos no painel administrativo.</p>
+            <p className="text-gray-400 font-medium mb-10 max-w-sm mx-auto">Nenhum produto foi encontrado no catálogo. Adicione produtos no painel administrativo.</ p>
           </div>
         ) : (
           <div className="py-48 text-center border-2 border-dashed border-gray-200 dark:border-white/5 rounded-[5rem] animate-fade-up">
