@@ -29,6 +29,7 @@ import DriverLogin from './pages/driver/DriverLogin';
 import DriverDashboard from './pages/driver/DriverDashboard';
 import OrderConfirmation from './pages/OrderConfirmation';
 import CheckoutModal from './components/CheckoutModal';
+import CartDrawer from './components/CartDrawer';
 import OrderSuccessModal from './components/OrderSuccessModal';
 import MobileNav from './components/MobileNav';
 import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile, fetchAllAppSettings, fetchTeam, fetchDrivers } from './services/supabase';
@@ -737,7 +738,15 @@ const AppContent: React.FC = () => {
           </main>
           <Footer />
 
-          {/* Overlay Components */}
+          <CartDrawer
+            isOpen={isCartOpen}
+            onClose={() => setIsCartOpen(false)}
+            items={cartItems}
+            onUpdateQuantity={updateCartQuantity}
+            onRemove={removeFromCart}
+            onCheckout={finalizeBooking}
+          />
+
           <CheckoutModal
             isOpen={isCheckoutOpen}
             onClose={() => setIsCheckoutOpen(false)}
