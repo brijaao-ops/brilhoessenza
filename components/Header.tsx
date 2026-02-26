@@ -190,7 +190,7 @@ const Header: React.FC<HeaderProps> = ({
             <button
               onClick={onOpenCart}
               className="size-10 sm:size-12 bg-[#1c1a0d] dark:bg-primary text-white dark:text-black rounded-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 relative shadow-xl shadow-black/10 dark:shadow-primary/10"
-              title="Sua Reserva"
+              title="Seu Pedido"
             >
               <span className="material-symbols-outlined !text-xl">shopping_cart</span>
               {cartCount > 0 && (

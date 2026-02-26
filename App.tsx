@@ -477,7 +477,7 @@ const AppContent: React.FC = () => {
       // WhatsApp Message
       const paymentText = data.paymentMethod === 'multicaixa' ? 'Multicaixa Express' : data.paymentMethod === 'cash' ? 'Numerário' : data.paymentMethod === 'transfer' ? 'Transferência Bancária' : 'Express';
 
-      let message = `*SOLICITAÇÃO DE RESERVA - ${settings.companyName || 'BRILHO ESSENZA'}*\n\n`;
+      let message = `*SOLICITAÇÃO DE PEDIDO - ${settings.companyName || 'BRILHO ESSENZA'}*\n\n`;
       message += `*Cliente:* ${data.name}\n`;
       message += `*Contacto:* +244 ${data.phone}\n`;
       message += `*Localização:* ${data.neighborhood}, ${data.municipality}, ${data.province}\n`;
@@ -503,8 +503,7 @@ const AppContent: React.FC = () => {
       setIsSuccessModalOpen(true);
 
     } catch (error) {
-      console.error("Erro ao processar pedido", error);
-      alert("Ocorreu um erro ao processar sua reserva. Por favor, tente novamente.");
+      alert("Ocorreu um erro ao processar seu pedido. Por favor, tente novamente.");
     }
   };
 

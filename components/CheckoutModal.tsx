@@ -65,7 +65,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                 <div className="p-8 lg:p-12">
                     <div className="flex items-center justify-between mb-10">
                         <div>
-                            <h2 className="text-3xl font-black uppercase tracking-tighter">Finalizar <span className="text-primary italic">Reserva</span></h2>
+                            <h2 className="text-3xl font-black uppercase tracking-tighter">Finalizar <span className="text-primary italic">Pedido</span></h2>
                             <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Detalhes de Entrega em Angola</p>
                         </div>
                         <button onClick={onClose} className="size-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-white/5 rounded-full">
@@ -196,14 +196,14 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
 
                         <div className="bg-primary/5 p-6 rounded-[2rem] border border-primary/10 flex items-center justify-between">
                             <div>
-                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total da Reserva</p>
+                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total do Pedido</p>
                                 <p className="text-3xl font-black">{total.toLocaleString()} Kz</p>
                             </div>
                             <button
                                 type="submit"
                                 className="bg-primary text-black font-black px-10 py-5 rounded-2xl hover:brightness-110 transition-all transform hover:scale-105 shadow-xl shadow-primary/20 uppercase tracking-widest text-xs"
                             >
-                                Reservar Agora
+                                Confirmar Pedido
                             </button>
                         </div>
                     </form>

@@ -67,7 +67,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
             <div className="space-y-8 max-w-sm">
               <h3 className="text-5xl font-black text-white leading-tight">Acesso <span className="text-primary italic">Exclusivo</span> ao Atelier</h3>
               <p className="text-gray-400 font-medium text-lg leading-relaxed border-l-2 border-primary/20 pl-6">
-                Gerencie coleções, monitore reservas e mantenha o padrão de excelência da nossa Maison.
+                Gerencie coleções, monitore pedidos e mantenha o padrão de excelência da nossa Maison.
               </p>
             </div>
           </div>
