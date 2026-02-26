@@ -7,19 +7,7 @@ interface ProductCardProps {
     onAddToCart: (product: Product) => void;
 }
 
-const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
-    const [isAdded, setIsAdded] = useState(false);
-
-    const handleAddToCart = (e: React.MouseEvent) => {
-        // Only trigger if we're not clicking the details link button
-        if ((e.target as HTMLElement).closest('.details-link')) return;
-
-        e.preventDefault();
-        e.stopPropagation();
-        onAddToCart(product);
-        setIsAdded(true);
-        setTimeout(() => setIsAdded(false), 1500);
-    };
+const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     return (
         <div className="relative flex flex-col justify-between h-[420px] sm:h-[450px] w-full bg-white rounded-[2.5rem] sm:rounded-[30px] overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-xl hover:-translate-y-1">
             <Link
@@ -94,22 +82,19 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                         </div>
                     )}
                 </div>
-            </Link>
 
-            {/* Quick Add Button - Absolute Sibling (Outside Link) */}
-            {product.stock > 0 && (
-                <button
-                    onClick={handleAddToCart}
-                    className={`absolute bottom-2 sm:bottom-4 right-2 sm:right-4 size-10 sm:size-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-xl z-[60] ${isAdded
-                        ? 'bg-green-500 text-white scale-110'
-                        : 'bg-[#1c1a0d] text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 translate-y-0 lg:translate-y-4 lg:group-hover:translate-y-0 hover:scale-110 active:scale-95'
-                        }`}
-                >
-                    <span className={`material-symbols-outlined !text-sm sm:!text-base ${isAdded ? 'animate-bounce' : ''}`}>
-                        {isAdded ? 'check' : 'add_shopping_cart'}
-                    </span>
-                </button>
-            )}
+                {/* Floating Cart & Ver Detalhes UI - Visual only, triggers the Link */}
+                {product.stock > 0 && (
+                    <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 size-10 sm:size-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-xl z-20 bg-[#1c1a0d] text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 translate-y-0 lg:translate-y-4 lg:group-hover:translate-y-0">
+                        <span className="material-symbols-outlined !text-sm sm:!text-base">
+                            add_shopping_cart
+                        </span>
+                    </div>
+                )}
+                <div className="absolute top-4 right-4 size-10 bg-white/10 backdrop-blur-md text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-40 border border-white/20">
+                    <span className="material-symbols-outlined !text-lg">visibility</span>
+                </div>
+            </Link>
         </div>
     );
 };
