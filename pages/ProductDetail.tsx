@@ -41,9 +41,17 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
   }, [id]);
 
   if (!product) return (
-    <div className="py-48 text-center animate-fade-up">
-      <h2 className="text-3xl font-black uppercase tracking-tighter">Tesouro não encontrado.</h2>
-      <Link to="/" className="text-primary font-black mt-8 inline-block uppercase tracking-widest text-[10px] underline decoration-2 underline-offset-8">Voltar ao Atelier</Link>
+    <div className="py-48 text-center animate-fade-up px-4 flex flex-col items-center justify-center">
+      <span className="material-symbols-outlined !text-6xl text-red-500/20 mb-6">error</span>
+      <h2 className="text-3xl font-black uppercase tracking-tighter text-[#1c1a0d] dark:text-white">Tesouro não encontrado.</h2>
+      <p className="text-gray-400 mt-4 text-xs font-medium max-w-sm">
+        O sistema não conseguiu localizar a essência procurada.
+        <br /><br />
+        <span className="opacity-50">Info Técnica para o Suporte: ID Procurado: "{id}" | Produtos Carregados: {products.length}</span>
+      </p>
+      <Link to="/" className="bg-[#1c1a0d] dark:bg-white text-white dark:text-black font-black mt-8 px-8 py-4 rounded-xl uppercase tracking-widest text-[10px] shadow-xl hover:scale-105 transition-all">
+        Voltar ao Atelier
+      </Link>
     </div>
   );
 
