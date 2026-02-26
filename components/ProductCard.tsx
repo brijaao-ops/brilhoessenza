@@ -50,7 +50,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
 
             {/* Image Container - Reduced size slightly with padding, but still large */}
             <div className="flex-1 relative flex items-center justify-center p-4 sm:p-6 transition-transform duration-700">
-                <Link to={`/product/${product.id}`} className="block w-full h-full flex items-center justify-center overflow-hidden">
+                <Link to={`/produto/${product.id}`} className="block w-full h-full flex items-center justify-center overflow-hidden">
                     <img
                         src={product.image}
                         alt={product.name}
