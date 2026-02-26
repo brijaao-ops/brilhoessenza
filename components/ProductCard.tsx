@@ -18,7 +18,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         setTimeout(() => setIsAdded(false), 1500);
     };
     return (
-        <div className="relative flex flex-col justify-between h-[420px] sm:h-[450px] w-full bg-white rounded-[2.5rem] sm:rounded-[30px] overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl">
+        <div
+            onClick={handleAddToCart}
+            className="relative flex flex-col justify-between h-[420px] sm:h-[450px] w-full bg-white rounded-[2.5rem] sm:rounded-[30px] overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl cursor-pointer hover:scale-[1.01]"
+        >
 
             {/* Header: Category/Signature & Stock */}
             <div className="absolute top-0 left-0 w-full flex justify-between items-center p-4 sm:p-6 z-20 pointer-events-none">
@@ -50,7 +53,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
 
             {/* Image Container - Reduced size slightly with padding, but still large */}
             <div className="flex-1 relative flex items-center justify-center p-4 sm:p-6 transition-transform duration-700">
-                <Link to={`/produto/${product.id}`} className="block w-full h-full flex items-center justify-center overflow-hidden">
+                <Link
+                    to={`/produto/${product.id}`}
+                    onClick={(e) => e.stopPropagation()}
+                    className="block w-full h-full flex items-center justify-center overflow-hidden"
+                >
                     <img
                         src={product?.image || ''}
                         alt={product?.name || 'Produto'}
@@ -84,14 +91,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
             </div>
 
             {/* Product Name - Smaller text, better wrapping */}
-            <div className="z-20 text-center px-4 sm:px-6 mb-20 sm:mb-24 pointer-events-none">
+            <div className="z-20 text-center px-4 sm:px-6 mb-20 sm:mb-24">
                 <h3 className="text-base sm:text-lg font-black uppercase tracking-tight text-black leading-tight line-clamp-2">
                     {product.name || 'Produto Sem Nome'}
                 </h3>
             </div>
 
             {/* Price Bar - Currency next to price, no circle */}
-            <div className="absolute bottom-0 left-0 w-full h-16 sm:h-20 bg-primary/95 backdrop-blur-md flex flex-col items-center justify-center z-20 border-t border-black/5">
+            <div className="absolute bottom-0 left-0 w-full h-16 sm:h-20 bg-primary/95 backdrop-blur-md flex flex-col items-center justify-center z-20 border-t border-black/5 pointer-events-none">
                 {(product.salePrice || 0) > 0 && (product.salePrice || 0) < (product.price || 0) ? (
                     <>
                         <span className="text-[10px] sm:text-xs line-through text-black/40 font-bold mb-0.5 sm:mb-1">

@@ -36,7 +36,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                 <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
                     <div>
                         <h2 className="text-2xl font-black uppercase tracking-tighter text-[#1c1a0d] dark:text-white">
-                            Minha <span className="text-primary italic">Sacola</span>
+                            Minha <span className="text-primary italic">Reserva</span>
                         </h2>
                         <p className="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mt-1">
                             {items.length} {items.length === 1 ? 'Item Selecionado' : 'Items Selecionados'}
@@ -55,12 +55,12 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                     {items.length === 0 ? (
                         <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-40">
                             <span className="material-symbols-outlined !text-6xl">shopping_bag</span>
-                            <p className="font-black uppercase tracking-widest text-[10px]">Sua sacola está vazia</p>
+                            <p className="font-black uppercase tracking-widest text-[10px]">Sua reserva está vazia</p>
                             <button
                                 onClick={onClose}
                                 className="text-primary text-[10px] font-black uppercase tracking-widest underline decoration-2 underline-offset-4"
                             >
-                                Começar a Comprar
+                                Explorar Atelier
                             </button>
                         </div>
                     ) : (
@@ -136,13 +136,13 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                             className="w-full bg-[#1c1a0d] dark:bg-primary text-white dark:text-black py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] sm:text-[11px] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3"
                         >
                             <span className="material-symbols-outlined !text-lg">shopping_cart_checkout</span>
-                            Finalizar Pedido
+                            Reservar Agora
                         </button>
                         <button
                             onClick={onClose}
                             className="w-full py-4 text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-primary transition-colors"
                         >
-                            Continuar Comprando
+                            Continuar Explorando
                         </button>
                     </div>
                 </div>

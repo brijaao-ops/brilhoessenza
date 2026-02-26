@@ -125,7 +125,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
               <span className={`material-symbols-outlined !text-xl ${isAdded ? 'animate-bounce' : ''}`}>
                 {isAdded ? 'check_circle' : product.stock === 0 ? 'block' : 'shopping_cart_checkout'}
               </span>
-              {isAdded ? 'Adicionado!' : product.stock === 0 ? 'Esgotado' : 'Fazer Pedido'}
+              {isAdded ? 'Adicionado!' : product.stock === 0 ? 'Esgotado' : 'Reservar Agora'}
             </button>
           </div>
         </div>
@@ -146,7 +146,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
           <span className={`material-symbols-outlined !text-lg ${isAdded ? 'animate-bounce' : ''}`}>
             {isAdded ? 'check_circle' : product.stock === 0 ? 'block' : 'shopping_cart_checkout'}
           </span>
-          {isAdded ? 'Adicionado!' : product.stock === 0 ? 'Esgotado' : 'Reservar agora'}
+          {isAdded ? 'Adicionado!' : product.stock === 0 ? 'Esgotado' : 'Reservar Agora'}
         </button>
       </div>
 

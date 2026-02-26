@@ -14,7 +14,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ onOpenCart, cartCount, isAuthenti
     const navItems = [
         { label: 'Início', icon: 'home', path: '/' },
         { label: 'Categorias', icon: 'category', path: '/categories' }, // Future category page or triggers a menu
-        { label: 'Sacola', icon: 'shopping_bag', action: onOpenCart, isCart: true },
+        { label: 'Reserva', icon: 'shopping_bag', action: onOpenCart, isCart: true },
         { label: 'Perfil', icon: 'person', path: isAuthenticated ? '/admin' : '/driver/login' }
     ];
 
