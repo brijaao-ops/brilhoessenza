@@ -21,10 +21,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         setTimeout(() => setIsAdded(false), 1500);
     };
     return (
-        <div
-            onClick={handleAddToCart}
-            className="relative flex flex-col justify-between h-[420px] sm:h-[450px] w-full bg-white rounded-[2.5rem] sm:rounded-[30px] overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl cursor-pointer hover:scale-[1.01]"
-        >
+        <div className="relative flex flex-col justify-between h-[420px] sm:h-[450px] w-full bg-white rounded-[2.5rem] sm:rounded-[30px] overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl hover:scale-[1.01]">
+            <Link
+                to={`/produto/${product.id}`}
+                className="absolute inset-0 z-10"
+                aria-label={product.name}
+            />
 
             {/* Header: Category/Signature & Stock */}
             <div className="absolute top-0 left-0 w-full flex justify-between items-center p-4 sm:p-6 z-30 pointer-events-none">
@@ -41,20 +43,9 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                         </span>
                     )}
                 </div>
-                <div className="flex gap-2 pointer-events-auto">
-                    {product.stock === 0 ? (
-                        <span className="px-2 py-1 bg-black text-white text-[8px] sm:text-[9px] font-black uppercase tracking-widest rounded-md">
-                            Esgotado
-                        </span>
-                    ) : product.salePrice && product.salePrice > 0 && product.salePrice < product.price ? (
-                        <span className="px-2 py-1 bg-red-600 text-white text-[8px] sm:text-[9px] font-black uppercase tracking-widest rounded-md">
-                            Oferta
-                        </span>
-                    ) : null}
-                </div>
             </div>
 
-            {/* Image Container - Reduced size slightly with padding, but still large */}
+            {/* Image Container */}
             <div className="flex-1 relative flex items-center justify-center p-4 sm:p-6 transition-transform duration-700">
                 <div className="block w-full h-full flex items-center justify-center overflow-hidden">
                     <img
@@ -63,16 +54,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                         loading="lazy"
                         className={`w-full h-full object-contain object-center transition-transform duration-700 ${product?.stock === 0 ? 'grayscale opacity-60' : 'group-hover:scale-110'}`}
                     />
-
-                    {/* View Details Overlay Link - Small and top right so it doesn't block cart click */}
-                    <Link
-                        to={`/produto/${product.id}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className="details-link absolute top-4 right-4 size-10 bg-white/10 backdrop-blur-md text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-primary hover:text-black z-40 border border-white/20"
-                        title="Ver Detalhes"
-                    >
-                        <span className="material-symbols-outlined !text-lg">visibility</span>
-                    </Link>
 
                     {product.stock === 0 && (
                         <div className="absolute inset-0 flex items-center justify-center z-10">
@@ -83,29 +64,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                     )}
                 </div>
 
-                {/* Floating Cart Button - Visual indicator only, click handled by card parent */}
+                {/* Quick Add Button */}
                 {product.stock > 0 && (
-                    <div
-                        className={`absolute bottom-2 sm:bottom-4 right-2 sm:right-4 size-10 sm:size-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-xl z-30 pointer-events-none ${isAdded
+                    <button
+                        onClick={handleAddToCart}
+                        className={`absolute bottom-2 sm:bottom-4 right-2 sm:right-4 size-10 sm:size-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-xl z-40 ${isAdded
                             ? 'bg-green-500 text-white scale-110'
-                            : 'bg-[#1c1a0d] text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 translate-y-0 lg:translate-y-4 lg:group-hover:translate-y-0'
+                            : 'bg-[#1c1a0d] text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 translate-y-0 lg:translate-y-4 lg:group-hover:translate-y-0 hover:scale-110 active:scale-95'
                             }`}
                     >
                         <span className={`material-symbols-outlined !text-sm sm:!text-base ${isAdded ? 'animate-bounce' : ''}`}>
                             {isAdded ? 'check' : 'add_shopping_cart'}
                         </span>
-                    </div>
+                    </button>
                 )}
             </div>
 
-            {/* Product Name - Smaller text, better wrapping */}
+            {/* Product Name */}
             <div className="z-20 text-center px-4 sm:px-6 mb-20 sm:mb-24 pointer-events-none">
                 <h3 className="text-base sm:text-lg font-black uppercase tracking-tight text-black leading-tight line-clamp-2">
                     {product.name || 'Produto Sem Nome'}
                 </h3>
             </div>
 
-            {/* Price Bar - Currency next to price, no circle */}
+            {/* Price Bar */}
             <div className="absolute bottom-0 left-0 w-full h-16 sm:h-20 bg-primary/95 backdrop-blur-md flex flex-col items-center justify-center z-20 border-t border-black/5 pointer-events-none">
                 {(product.salePrice || 0) > 0 && (product.salePrice || 0) < (product.price || 0) ? (
                     <>
@@ -128,7 +110,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                     </div>
                 )}
             </div>
-
         </div>
     );
 };

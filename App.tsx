@@ -385,7 +385,7 @@ const AppContent: React.FC = () => {
     }
   };
 
-  const handleAddToCart = (product: Product) => {
+  const handleAddToCart = (product: Product, quantity: number = 1) => {
     const currentProd = products.find(p => String(p.id) === String(product.id));
     if (!currentProd || currentProd.stock <= 0) {
       alert("Desculpe, este tesouro está temporariamente esgotado.");
@@ -395,13 +395,13 @@ const AppContent: React.FC = () => {
     setCartItems(prev => {
       const existing = prev.find(item => String(item.product.id) === String(product.id));
       if (existing) {
-        if (existing.quantity >= currentProd.stock) {
-          alert("Limite de estoque atingido para este item.");
+        if (existing.quantity + quantity > currentProd.stock) {
+          alert(`Limite de estoque atingido. Disponível: ${currentProd.stock}`);
           return prev;
         }
-        return prev.map(item => String(item.product.id) === String(product.id) ? { ...item, quantity: item.quantity + 1 } : item);
+        return prev.map(item => String(item.product.id) === String(product.id) ? { ...item, quantity: item.quantity + quantity } : item);
       }
-      return [...prev, { product, quantity: 1 }];
+      return [...prev, { product, quantity }];
     });
     setIsCartOpen(true);
   };

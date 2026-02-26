@@ -6,19 +6,32 @@ import { ProductDetailsSkeleton } from '../components/Skeletons';
 import { Product } from '../types';
 
 interface ProductDetailProps {
-  onAddToCart: (product: Product) => void;
+  onAddToCart: (product: Product, quantity?: number) => void;
   products: Product[];
 }
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) => {
   const { id } = useParams<{ id: string }>();
   const [isAdded, setIsAdded] = useState(false);
+  const [quantity, setQuantity] = useState(1);
 
   const handleAddToCart = () => {
     if (product && product.stock > 0) {
-      onAddToCart(product);
+      onAddToCart(product, quantity);
       setIsAdded(true);
       setTimeout(() => setIsAdded(false), 1500);
+    }
+  };
+
+  const incrementQty = () => {
+    if (product && quantity < product.stock) {
+      setQuantity(prev => prev + 1);
+    }
+  };
+
+  const decrementQty = () => {
+    if (quantity > 1) {
+      setQuantity(prev => prev - 1);
     }
   };
   const product = products.find(p => p.id === id);
@@ -108,25 +121,46 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
               <h4 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-[#1c1a0d] dark:text-white">A Essência</h4>
               <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-base sm:text-lg font-medium opacity-80">{product?.description || 'Este item exclusivo aguarda por você.'}</p>
             </div>
-            <div className="h-[1px] w-full bg-gray-100 dark:bg-white/5"></div>
-          </div>
+            <div className="flex flex-col gap-8">
+              <div className="flex flex-col gap-3">
+                <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Quantidade</span>
+                <div className="flex items-center gap-4 bg-gray-50 dark:bg-white/5 w-fit rounded-2xl p-2 border border-gray-100 dark:border-white/5">
+                  <button
+                    onClick={decrementQty}
+                    disabled={quantity <= 1}
+                    className="size-10 rounded-xl flex items-center justify-center hover:bg-white dark:hover:bg-white/10 transition-all disabled:opacity-30"
+                  >
+                    <span className="material-symbols-outlined !text-sm">remove</span>
+                  </button>
+                  <span className="text-sm font-black w-8 text-center">{quantity}</span>
+                  <button
+                    onClick={incrementQty}
+                    disabled={product && quantity >= product.stock}
+                    className="size-10 rounded-xl flex items-center justify-center hover:bg-white dark:hover:bg-white/10 transition-all disabled:opacity-30"
+                  >
+                    <span className="material-symbols-outlined !text-sm">add</span>
+                  </button>
+                </div>
+              </div>
 
-          <div className="hidden sm:flex flex-col gap-6">
-            <button
-              onClick={handleAddToCart}
-              disabled={isAdded || product.stock === 0}
-              className={`w-full font-black py-7 rounded-[2rem] transition-all shadow-xl uppercase tracking-[0.3em] text-[11px] flex items-center justify-center gap-3 ${isAdded
-                ? 'bg-green-500 text-white scale-95 shadow-green-500/20'
-                : product.stock === 0
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
-                  : 'bg-primary text-black hover:brightness-110 shadow-primary/30 hover:scale-[1.02] active:scale-95'
-                }`}
-            >
-              <span className={`material-symbols-outlined !text-xl ${isAdded ? 'animate-bounce' : ''}`}>
-                {isAdded ? 'check_circle' : product.stock === 0 ? 'block' : 'shopping_cart_checkout'}
-              </span>
-              {isAdded ? 'Adicionado!' : product.stock === 0 ? 'Esgotado' : 'Fazer Pedido'}
-            </button>
+              <div className="hidden sm:flex flex-col gap-6">
+                <button
+                  onClick={handleAddToCart}
+                  disabled={isAdded || product.stock === 0}
+                  className={`w-full font-black py-7 rounded-[2rem] transition-all shadow-xl uppercase tracking-[0.3em] text-[11px] flex items-center justify-center gap-3 ${isAdded
+                    ? 'bg-green-500 text-white scale-95 shadow-green-500/20'
+                    : product.stock === 0
+                      ? 'bg-gray-300 text-gray-500 cursor-not-allowed shadow-none'
+                      : 'bg-primary text-black hover:brightness-110 shadow-primary/30 hover:scale-[1.02] active:scale-95'
+                    }`}
+                >
+                  <span className={`material-symbols-outlined !text-xl ${isAdded ? 'animate-bounce' : ''}`}>
+                    {isAdded ? 'check_circle' : product.stock === 0 ? 'block' : 'shopping_cart_checkout'}
+                  </span>
+                  {isAdded ? 'Adicionado!' : product.stock === 0 ? 'Esgotado' : 'Fazer Pedido'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
