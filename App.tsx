@@ -730,6 +730,7 @@ const AppContent: React.FC = () => {
               <Route path="/admin/login" element={<AdminLogin onLogin={handleLogin} />} />
               <Route path="/checkout/confirmacao" element={<OrderConfirmation />} />
               <Route path="/driver/registrar" element={<DriverRegistration />} />
+              <Route path="/entregador/cadastro" element={<DriverRegistration />} />
               <Route path="/driver/login" element={<DriverLogin />} />
               <Route path="/driver/dashboard" element={<DriverDashboard />} />
               <Route path="/driver/perfil" element={<DriverProfile />} />
