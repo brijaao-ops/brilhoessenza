@@ -264,7 +264,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
                           </div>
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <div className="flex justify-end gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                          <div className="flex justify-end gap-1 opacity-100 transition-opacity">
                             {canEdit && (
                               <Link to={`/admin/produtos/editar/${p.id}`}
                                 className="size-7 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary flex items-center justify-center transition-colors"
