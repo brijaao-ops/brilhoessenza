@@ -34,7 +34,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
       setQuantity(prev => prev - 1);
     }
   };
-  const product = products.find(p => p.id === id);
+  const product = products.find(p => String(p.id) === String(id));
 
   useEffect(() => {
     window.scrollTo(0, 0);
