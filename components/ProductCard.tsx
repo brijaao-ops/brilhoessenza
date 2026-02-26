@@ -29,6 +29,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                     <span className="material-symbols-outlined !text-[12px] sm:!text-[14px] text-primary bg-primary/10 size-5 sm:size-6 flex items-center justify-center rounded-lg shadow-sm border border-primary/20">
                         {product.gender === 'masculino' ? 'male' : product.gender === 'feminino' ? 'female' : 'wc'}
                     </span>
+                    {product.stock > 0 && (
+                        <span className="ml-2 text-[9px] font-black text-green-600 bg-green-500/10 px-2 py-0.5 rounded-full pointer-events-auto">
+                            {product.stock} em stock
+                        </span>
+                    )}
                 </div>
                 <div className="flex gap-2 pointer-events-auto">
                     {product.stock === 0 ? (
@@ -86,7 +91,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
             </div>
 
             {/* Price Bar - Currency next to price, no circle */}
-            <div className="absolute bottom-0 left-0 w-full h-16 sm:h-20 bg-white/95 backdrop-blur-md flex flex-col items-center justify-center z-20 border-t border-gray-50">
+            <div className="absolute bottom-0 left-0 w-full h-16 sm:h-20 bg-primary/95 backdrop-blur-md flex flex-col items-center justify-center z-20 border-t border-black/5">
                 {(product.salePrice || 0) > 0 && (product.salePrice || 0) < (product.price || 0) ? (
                     <>
                         <span className="text-[10px] sm:text-xs line-through text-black/40 font-bold mb-0.5 sm:mb-1">

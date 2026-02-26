@@ -42,7 +42,7 @@ const AdminStock: React.FC<AdminStockProps> = ({ products }) => {
                     <span className="font-black text-xs lg:text-sm">{p.name}</span>
                   </td>
                   <td className="px-4 lg:px-8 py-3 lg:py-5 text-center">
-                    <span className={`px-3 lg:px-4 py-1.5 lg:py-2 rounded-lg lg:rounded-xl text-[10px] lg:text-xs font-black ${p.stock <= 5 ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-500'}`}>
+                    <span className={`px-3 lg:px-4 py-1.5 lg:py-2 rounded-lg lg:rounded-xl text-[10px] lg:text-xs font-black ${p.stock <= 5 ? 'bg-red-500/10 text-red-500' : 'bg-green-500/20 text-green-600'}`}>
                       {p.stock} Unidades
                     </span>
                   </td>

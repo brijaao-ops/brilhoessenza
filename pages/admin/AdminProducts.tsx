@@ -231,7 +231,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
                           )}
                         </td>
                         <td className="px-4 py-3 text-right">
-                          <span className={`font-black ${p.stock === 0 ? 'text-red-500' : p.stock < 5 ? 'text-orange-500' : ''}`}>
+                          <span className={`font-black ${p.stock === 0 ? 'text-red-500' : p.stock < 5 ? 'text-orange-500' : 'text-green-500'}`}>
                             {p.stock}
                           </span>
                         </td>
