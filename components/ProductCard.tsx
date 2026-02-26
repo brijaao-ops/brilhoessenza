@@ -13,9 +13,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {/* INVISIBLE OVERLAY LINK - COVERS EVERYTHING */}
             <Link
                 to={`/produto/${product.id}`}
-                className="absolute inset-0 z-50"
+                className="absolute inset-0 z-50 block w-full h-full bg-transparent"
                 aria-label={`Ver detalhes de ${product.name}`}
-            />
+            >
+                <span className="sr-only">Ver produto {product.name}</span>
+            </Link>
 
             {/* Header: Category/Signature & Stock */}
             <div className="absolute top-0 left-0 w-full flex justify-between items-center p-4 sm:p-6 z-30 pointer-events-none">
