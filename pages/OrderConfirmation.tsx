@@ -18,14 +18,20 @@ const OrderConfirmation: React.FC = () => {
                 return;
             }
             try {
-                // Call the secure RPC function we created
-                const { data, error } = await supabase.rpc('get_order_by_token', { token: token });
+                // Call the secure RPC function we created - MUST use p_token as defined in SQL
+                const { data, error } = await supabase.rpc('get_order_by_token', { p_token: token });
 
                 if (error) throw error;
-                if (!data) throw new Error("Pedido não encontrado ou token expirado.");
+                if (!data || data.length === 0) throw new Error("Pedido não encontrado ou token expirado.");
 
-                setOrder(data);
-                if (data.status === 'DELIVERED') {
+                const orderData = data[0];
+                setOrder({
+                    ...orderData,
+                    customer: orderData.customer_name || orderData.customer,
+                    amount: Number(orderData.total || orderData.amount || 0)
+                });
+
+                if (orderData.status === 'DELIVERED') {
                     setSuccess(true); // Already delivered
                 }
             } catch (err: any) {
@@ -57,7 +63,7 @@ const OrderConfirmation: React.FC = () => {
                 const now = new Date();
                 const dateStr = now.toLocaleDateString('pt-AO');
                 const timeStr = now.toLocaleTimeString('pt-AO', { hour: '2-digit', minute: '2-digit' });
-                const totalFormatted = new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order.amount || 0);
+                const totalFormatted = new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order?.total || order?.amount || 0);
 
                 let msg = `✅ *ENTREGA CONFIRMADA*\n\n`;
                 msg += `📦 *Pedido:* #${(order.id || '').slice(0, 8)}\n`;
@@ -160,7 +166,7 @@ const OrderConfirmation: React.FC = () => {
 
                     <div className="bg-gray-50 dark:bg-[#1c1a0d] rounded-xl p-4 flex justify-between items-center mb-8">
                         <span className="text-xs font-black uppercase tracking-wide">Total</span>
-                        <span className="text-lg font-black text-primary">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order.amount || 0)}</span>
+                        <span className="text-lg font-black text-primary">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order?.total || order?.amount || 0)}</span>
                     </div>
 
                     <button

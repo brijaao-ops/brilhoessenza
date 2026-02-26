@@ -14,10 +14,15 @@ export interface Product {
   bestSeller?: boolean;
   gender: 'masculino' | 'feminino' | 'unissexo';
   createdAt?: string;
+  created_at?: string; // DB Alias
   salePrice?: number;
+  sale_price?: number; // DB Alias
   deliveryCommission?: number; // % do preço que o entregador ganha
+  delivery_commission?: number; // DB Alias
   createdByName?: string;
+  created_by_name?: string; // DB Alias
   lastEditedBy?: string;
+  last_edited_by?: string; // DB Alias
   notes?: {
     top: string;
     heart: string;
@@ -38,8 +43,10 @@ export interface Category {
 export interface Order {
   id: string;
   customer: string;
+  customer_name?: string; // DB Alias
   phone?: string; // Contact for WhatsApp
   amount: number;
+  total?: number; // DB Alias
   status: 'PAGO' | 'ENVIADO' | 'PENDENTE' | 'PEDIDO' | 'DELIVERED' | 'CANCELLED';
   date: string;
   time?: string;
@@ -51,6 +58,7 @@ export interface Order {
   validator_name?: string;
   deliverer_name?: string;
   productId?: string;
+  product_id?: string; // DB Alias
   driver_id?: string;
   driver?: DeliveryDriver;
   delivery_token?: string;

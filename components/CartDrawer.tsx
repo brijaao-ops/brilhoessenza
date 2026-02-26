@@ -18,7 +18,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
     onRemove,
     onCheckout
 }) => {
-    const total = items.reduce((acc, curr) => acc + (curr.product.price * curr.quantity), 0);
+    const total = items.reduce((acc, curr) => acc + ((curr.product?.price || 0) * (curr.quantity || 0)), 0);
 
     if (!isOpen) return null;
 
@@ -68,8 +68,8 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                             <div key={item.product.id} className="flex gap-4 group">
                                 <div className="size-20 sm:size-24 bg-gray-50 dark:bg-white/5 rounded-2xl overflow-hidden p-2 flex items-center justify-center border border-gray-100 dark:border-white/5 shrink-0">
                                     <img
-                                        src={item.product.image}
-                                        alt={item.product.name}
+                                        src={item.product?.image || ''}
+                                        alt={item.product?.name || 'Produto'}
                                         className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                                     />
                                 </div>
@@ -77,7 +77,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                                     <div>
                                         <div className="flex justify-between items-start gap-2">
                                             <h3 className="text-[11px] sm:text-xs font-black uppercase tracking-tight text-[#1c1a0d] dark:text-white line-clamp-1">
-                                                {item.product.name}
+                                                {item.product?.name || 'Produto'}
                                             </h3>
                                             <button
                                                 onClick={() => onRemove(item.product.id)}
@@ -87,7 +87,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                                             </button>
                                         </div>
                                         <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
-                                            {item.product.category}
+                                            {item.product?.category || 'Geral'}
                                         </p>
                                     </div>
 
@@ -108,7 +108,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                                             </button>
                                         </div>
                                         <p className="font-black text-[12px] sm:text-[13px] text-primary">
-                                            {(item.product.price * item.quantity).toLocaleString()} Kz
+                                            {((item.product?.price || 0) * (item.quantity || 0)).toLocaleString()} Kz
                                         </p>
                                     </div>
                                 </div>

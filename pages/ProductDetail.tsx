@@ -40,9 +40,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
       <nav className="flex py-6 sm:py-10 text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] sm:tracking-[0.4em] text-gray-400 gap-2 sm:gap-3 items-center overflow-x-auto no-scrollbar whitespace-nowrap">
         <Link to="/" className="hover:text-primary transition-colors">Atelier</Link>
         <span className="text-gray-200">/</span>
-        <span className="hover:text-primary transition-colors cursor-default">{product.category}</span>
+        <span className="hover:text-primary transition-colors cursor-default">{product?.category || 'Coleção'}</span>
         <span className="text-gray-200">/</span>
-        <span className="text-primary font-black">{product.name}</span>
+        <span className="text-primary font-black">{product?.name || 'Tesouro'}</span>
       </nav>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-20 lg:gap-32 items-start">
@@ -83,19 +83,19 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
           <div className="flex flex-col gap-2">
             <span className="text-[9px] sm:text-[10px] font-black text-gray-400 uppercase tracking-widest">Investimento Luxo</span>
             <div className="flex items-baseline gap-3 sm:gap-4">
-              {product.salePrice && product.salePrice > 0 && product.salePrice < product.price ? (
+              {product?.salePrice && product.salePrice > 0 && product.salePrice < product.price ? (
                 <div className="flex flex-col">
                   <span className="text-lg sm:text-xl line-through text-gray-400 font-bold decoration-red-500 decoration-2">
-                    {product.price.toLocaleString()} Kz
+                    {(product.price || 0).toLocaleString()} Kz
                   </span>
                   <div className="flex items-baseline gap-3 sm:gap-4">
-                    <p className="text-4xl sm:text-5xl font-black tracking-tighter text-red-600">{product.salePrice.toLocaleString()}</p>
+                    <p className="text-4xl sm:text-5xl font-black tracking-tighter text-red-600">{(product.salePrice || 0).toLocaleString()}</p>
                     <span className="text-xs sm:text-sm font-black text-primary uppercase tracking-widest mb-1 sm:mb-2">Kz</span>
                   </div>
                 </div>
               ) : (
                 <>
-                  <p className="text-4xl sm:text-5xl font-black tracking-tighter text-[#1c1a0d] dark:text-white">{product.price.toLocaleString()}</p>
+                  <p className="text-4xl sm:text-5xl font-black tracking-tighter text-[#1c1a0d] dark:text-white">{(product?.price || 0).toLocaleString()}</p>
                   <span className="text-xs sm:text-sm font-black text-primary uppercase tracking-widest mb-1 sm:mb-2">Kz</span>
                 </>
               )}
@@ -106,7 +106,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
             <div className="h-[1px] w-full bg-gray-100 dark:bg-white/5"></div>
             <div className="flex flex-col gap-3 sm:gap-4">
               <h4 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-[#1c1a0d] dark:text-white">A Essência</h4>
-              <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-base sm:text-lg font-medium opacity-80">{product.description}</p>
+              <p className="text-gray-500 dark:text-gray-400 leading-relaxed text-base sm:text-lg font-medium opacity-80">{product?.description || 'Este item exclusivo aguarda por você.'}</p>
             </div>
             <div className="h-[1px] w-full bg-gray-100 dark:bg-white/5"></div>
           </div>

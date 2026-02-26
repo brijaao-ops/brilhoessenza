@@ -435,7 +435,7 @@ const AppContent: React.FC = () => {
     const settings = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
     const whatsapp = settings.companyPhone || "244900000000";
 
-    const total = cartItems.reduce((acc: number, curr: any) => acc + (curr.product.price * curr.quantity), 0);
+    const total = cartItems.reduce((acc: number, curr: any) => acc + ((curr.product?.price || 0) * (curr.quantity || 0)), 0);
     const orderData: Order = {
       id: `#BE-${Math.floor(Math.random() * 90000 + 10000)}`,
       customer: data.name,
@@ -486,10 +486,10 @@ const AppContent: React.FC = () => {
       message += `--------------------------\n`;
       cartItems.forEach((item: any, index: number) => {
         message += `${index + 1}. *${item.product.name}*\n`;
-        message += `   Qtd: ${item.quantity} | Subtotal: ${(item.product.price * item.quantity).toLocaleString()} Kz\n\n`;
+        message += `   Qtd: ${item.quantity || 0} | Subtotal: ${((item.product?.price || 0) * (item.quantity || 0)).toLocaleString()} Kz\n\n`;
       });
       message += `--------------------------\n`;
-      message += `*TOTAL ESTIMADO:* ${total.toLocaleString()} Kz\n\n`;
+      message += `*TOTAL ESTIMADO:* ${(total || 0).toLocaleString()} Kz\n\n`;
       message += `_Aguardando confirmação de entrega via WhatsApp._`;
 
       const encodedMsg = encodeURIComponent(message);
@@ -508,7 +508,7 @@ const AppContent: React.FC = () => {
     }
   };
 
-  const totalCart = cartItems.reduce((acc: number, curr: any) => acc + (curr.product.price * curr.quantity), 0);
+  const totalCart = cartItems.reduce((acc: number, curr: any) => acc + ((curr.product?.price || 0) * (curr.quantity || 0)), 0);
 
   const resetFilters = () => {
     setSearchTerm("");

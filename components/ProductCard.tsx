@@ -24,10 +24,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
             <div className="absolute top-0 left-0 w-full flex justify-between items-center p-4 sm:p-6 z-20 pointer-events-none">
                 <div className="flex items-center gap-1.5 sm:gap-2">
                     <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
-                        {product.subCategory || product.category}
+                        {product?.subCategory || product?.category || 'Geral'}
                     </span>
                     <span className="material-symbols-outlined !text-[12px] sm:!text-[14px] text-primary bg-primary/10 size-5 sm:size-6 flex items-center justify-center rounded-lg shadow-sm border border-primary/20">
-                        {product.gender === 'masculino' ? 'male' : product.gender === 'feminino' ? 'female' : 'wc'}
+                        {product?.gender === 'masculino' ? 'male' : product?.gender === 'feminino' ? 'female' : 'wc'}
                     </span>
                     {product.stock > 0 && (
                         <span className="ml-2 text-[9px] font-black text-green-600 bg-green-500/10 px-2 py-0.5 rounded-full pointer-events-auto">
@@ -52,10 +52,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
             <div className="flex-1 relative flex items-center justify-center p-4 sm:p-6 transition-transform duration-700">
                 <Link to={`/produto/${product.id}`} className="block w-full h-full flex items-center justify-center overflow-hidden">
                     <img
-                        src={product.image}
-                        alt={product.name}
+                        src={product?.image || ''}
+                        alt={product?.name || 'Produto'}
                         loading="lazy"
-                        className={`w-full h-full object-contain object-center transition-transform duration-700 ${product.stock === 0 ? 'grayscale opacity-60' : 'group-hover:scale-110'}`}
+                        className={`w-full h-full object-contain object-center transition-transform duration-700 ${product?.stock === 0 ? 'grayscale opacity-60' : 'group-hover:scale-110'}`}
                     />
                     {product.stock === 0 && (
                         <div className="absolute inset-0 flex items-center justify-center z-10">

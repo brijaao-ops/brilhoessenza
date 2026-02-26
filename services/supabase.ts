@@ -279,24 +279,64 @@ export const fetchOrders = async (): Promise<Order[]> => {
         console.error('Error fetching orders:', error);
         throw error;
     }
-    return data;
+
+    return (data || []).map((o: any) => ({
+        ...o,
+        customer: o.customer_name || o.customer,
+        amount: Number(o.total || o.amount || 0),
+        productId: o.product_id || o.productId,
+    }));
 };
 
 export const createOrder = async (order: Order) => {
+    // Map camelCase to snake_case for DB insertion
+    const dbOrder = {
+        id: order.id,
+        customer_name: order.customer,
+        phone: order.phone,
+        total: order.amount,
+        status: order.status,
+        date: order.date,
+        time: order.time,
+        address: order.address,
+        neighborhood: order.neighborhood,
+        municipality: order.municipality,
+        province: order.province,
+        product_id: order.productId,
+        items: order.items,
+        delivery_token: order.delivery_token,
+        driver_id: order.driver_id,
+        deliverer_name: order.deliverer_name,
+        seller_name: order.seller_name
+    };
+
     const { data, error } = await supabase
         .from('orders')
-        .insert([order])
+        .insert([dbOrder])
         .select()
         .single();
 
-    if (error) throw error;
+    if (error) {
+        console.error("Supabase Create Order Error:", error);
+        throw error;
+    }
     return data;
 };
 
 export const updateOrder = async (id: string, updates: Partial<Order>) => {
+    const dbUpdates: any = { ...updates };
+    if (updates.customer !== undefined) dbUpdates.customer_name = updates.customer;
+    if (updates.amount !== undefined) dbUpdates.total = updates.amount;
+    if (updates.productId !== undefined) dbUpdates.product_id = updates.productId;
+
+    // Remove the camelCase versions to avoid DB projection errors
+    delete dbUpdates.customer;
+    delete dbUpdates.amount;
+    delete dbUpdates.productId;
+
     const { error } = await supabase
         .from('orders')
-        .update(updates)
+        .update(dbUpdates)
         .eq('id', id);
 
     if (error) throw error;
