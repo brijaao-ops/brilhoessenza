@@ -23,7 +23,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[110] flex justify-end">
+        <div className="fixed inset-0 z-[200] flex justify-end">
             {/* Overlay */}
             <div
                 className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-500"
