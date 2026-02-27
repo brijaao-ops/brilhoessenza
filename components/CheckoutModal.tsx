@@ -62,50 +62,50 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
             <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
 
             <div className="relative w-full max-w-xl bg-white dark:bg-[#15140b] rounded-[3rem] shadow-2xl overflow-hidden animate-fade-up max-h-[80vh] overflow-y-auto">
-                <div className="p-8 lg:p-12">
-                    <div className="flex items-center justify-between mb-10">
+                <div className="p-6 lg:p-8">
+                    <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h2 className="text-3xl font-black uppercase tracking-tighter">Finalizar <span className="text-primary italic">Pedido</span></h2>
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mt-1">Detalhes de Entrega em Angola</p>
+                            <h2 className="text-2xl font-black uppercase tracking-tighter">Finalizar <span className="text-primary italic">Pedido</span></h2>
+                            <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-0.5">Detalhes de Entrega em Angola</p>
                         </div>
                         <button onClick={onClose} className="size-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-white/5 rounded-full">
                             <span className="material-symbols-outlined">close</span>
                         </button>
                     </div>
 
-                    <form onSubmit={handleConfirm} className="space-y-6">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nome do Cliente</label>
+                    <form onSubmit={handleConfirm} className="space-y-4">
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Nome do Cliente</label>
                             <input
                                 type="text"
                                 required
                                 value={formData.name}
                                 onChange={e => setFormData({ ...formData, name: e.target.value })}
-                                className="bg-gray-50 dark:bg-white/5 p-5 rounded-2xl font-bold outline-none border border-transparent focus:border-primary transition-all"
+                                className="bg-gray-50 dark:bg-white/5 p-4 rounded-xl font-bold outline-none border border-transparent focus:border-primary transition-all text-sm"
                                 placeholder="Ex: João Manuel"
                             />
                         </div>
 
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Contacto (9 Dígitos)</label>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Contacto (9 Dígitos)</label>
                             <div className="relative">
-                                <span className="absolute left-5 top-1/2 -translate-y-1/2 font-black text-gray-400">+244</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 font-black text-gray-400">+244</span>
                                 <input
                                     type="tel"
                                     required
                                     maxLength={9}
                                     value={formData.phone}
                                     onChange={handlePhoneChange}
-                                    className="w-full bg-gray-50 dark:bg-white/5 p-5 pl-16 rounded-2xl font-black outline-none border border-transparent focus:border-primary transition-all text-lg tracking-widest"
+                                    className="w-full bg-gray-50 dark:bg-white/5 p-4 pl-14 rounded-xl font-black outline-none border border-transparent focus:border-primary transition-all text-base tracking-widest"
                                     placeholder="9XXXXXXXX"
                                 />
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-2 relative">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Localização (Província/Município/Bairro)</label>
+                        <div className="flex flex-col gap-1.5 relative">
+                            <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Localização (Província/Município/Bairro)</label>
                             <div className="relative group">
-                                <span className="absolute left-5 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-400">map</span>
+                                <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-400 !text-lg">map</span>
                                 <input
                                     type="text"
                                     required
@@ -116,7 +116,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                                         setSelectedLocation(null);
                                         setShowSuggestions(true);
                                     }}
-                                    className="w-full bg-gray-50 dark:bg-white/5 p-5 pl-14 rounded-2xl font-bold outline-none border border-transparent focus:border-primary transition-all text-sm"
+                                    className="w-full bg-gray-50 dark:bg-white/5 p-4 pl-12 rounded-xl font-bold outline-none border border-transparent focus:border-primary transition-all text-xs"
                                     placeholder="Comece a digitar sua zona..."
                                 />
                             </div>
@@ -132,7 +132,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                                                 setFormData({ ...formData, locationSearch: loc.combined });
                                                 setShowSuggestions(false);
                                             }}
-                                            className="w-full p-4 text-left hover:bg-primary/10 border-b border-gray-50 dark:border-white/5 last:border-none flex items-center gap-3 transition-colors"
+                                            className="w-full p-3 text-left hover:bg-primary/10 border-b border-gray-50 dark:border-white/5 last:border-none flex items-center gap-3 transition-colors"
                                         >
                                             <span className="material-symbols-outlined text-gray-400 !text-sm">location_on</span>
                                             <div>
@@ -145,63 +145,63 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                             )}
                         </div>
 
-                        <div className="flex flex-col gap-3">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Forma de Pagamento</label>
-                            <div className="grid grid-cols-2 gap-3">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Forma de Pagamento</label>
+                            <div className="grid grid-cols-4 gap-2">
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, paymentMethod: 'multicaixa' })}
-                                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border transition-all ${formData.paymentMethod === 'multicaixa' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
+                                    className={`flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-xl border transition-all ${formData.paymentMethod === 'multicaixa' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
                                 >
-                                    <span className="material-symbols-outlined">credit_card</span>
-                                    <span className="text-[9px] font-black uppercase">Multicaixa</span>
+                                    <span className="material-symbols-outlined !text-lg">credit_card</span>
+                                    <span className="text-[8px] font-black uppercase">Multicaixa</span>
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, paymentMethod: 'cash' })}
-                                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border transition-all ${formData.paymentMethod === 'cash' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
+                                    className={`flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-xl border transition-all ${formData.paymentMethod === 'cash' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
                                 >
-                                    <span className="material-symbols-outlined">payments</span>
-                                    <span className="text-[9px] font-black uppercase">Numerário</span>
+                                    <span className="material-symbols-outlined !text-lg">payments</span>
+                                    <span className="text-[8px] font-black uppercase">Cash</span>
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, paymentMethod: 'transfer' })}
-                                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border transition-all ${formData.paymentMethod === 'transfer' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
+                                    className={`flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-xl border transition-all ${formData.paymentMethod === 'transfer' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
                                 >
-                                    <span className="material-symbols-outlined">account_balance</span>
-                                    <span className="text-[9px] font-black uppercase">Transferência</span>
+                                    <span className="material-symbols-outlined !text-lg">account_balance</span>
+                                    <span className="text-[8px] font-black uppercase">IBAN</span>
                                 </button>
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, paymentMethod: 'express' })}
-                                    className={`flex flex-col items-center justify-center gap-2 p-4 rounded-2xl border transition-all ${formData.paymentMethod === 'express' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
+                                    className={`flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-xl border transition-all ${formData.paymentMethod === 'express' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
                                 >
-                                    <span className="material-symbols-outlined">bolt</span>
-                                    <span className="text-[9px] font-black uppercase">Express</span>
+                                    <span className="material-symbols-outlined !text-lg">bolt</span>
+                                    <span className="text-[8px] font-black uppercase">Express</span>
                                 </button>
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Endereço Detalhado (Opcional)</label>
+                        <div className="flex flex-col gap-1.5">
+                            <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Endereço (Opcional)</label>
                             <textarea
-                                rows={2}
+                                rows={1}
                                 value={formData.address}
                                 onChange={e => setFormData({ ...formData, address: e.target.value })}
-                                className="bg-gray-50 dark:bg-white/5 p-5 rounded-2xl font-bold outline-none border border-transparent focus:border-primary transition-all text-sm resize-none"
-                                placeholder="Ex: Rua Direita, Prédio X, Apto Y"
+                                className="bg-gray-50 dark:bg-white/5 p-4 rounded-xl font-bold outline-none border border-transparent focus:border-primary transition-all text-xs resize-none"
+                                placeholder="Rua, Prédio, Apto..."
                             />
                         </div>
 
-                        <div className="bg-primary/5 p-6 rounded-[2rem] border border-primary/10 flex items-center justify-between">
+                        <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10 flex items-center justify-between">
                             <div>
-                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total do Pedido</p>
-                                <p className="text-3xl font-black">{total.toLocaleString()} Kz</p>
+                                <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">A pagar</p>
+                                <p className="text-xl font-black">{total.toLocaleString()} Kz</p>
                             </div>
                             <button
                                 type="submit"
-                                className="bg-primary text-black font-black px-10 py-5 rounded-2xl hover:brightness-110 transition-all transform hover:scale-105 shadow-xl shadow-primary/20 uppercase tracking-widest text-xs"
+                                className="bg-primary text-black font-black px-6 py-4 rounded-xl hover:brightness-110 transition-all transform hover:scale-105 shadow-xl shadow-primary/20 uppercase tracking-widest text-[10px]"
                             >
                                 Confirmar Pedido
                             </button>
