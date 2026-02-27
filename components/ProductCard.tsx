@@ -36,8 +36,31 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     return (
         <div
             ref={cardRef}
-            className={`relative flex flex-col justify-between h-[420px] sm:h-[450px] w-full bg-white rounded-[2.5rem] sm:rounded-[30px] overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-xl hover:-translate-y-1 cursor-pointer product-card-reveal ${isVisible ? 'is-visible animate-water-float' : ''}`}
+            className={`relative flex flex-col justify-between h-[420px] sm:h-[450px] w-full bg-white dark:bg-background-dark/80 organic-card-shape overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl cursor-pointer product-card-reveal ${isVisible ? 'is-visible animate-water-float' : ''}`}
         >
+            {/* Price Pill - Floating Glassmorphism */}
+            <div className="absolute top-4 right-4 z-40 px-5 py-2.5 glass-pill-price rounded-2xl flex flex-col items-end gap-0.5 opacity-100 group-hover:scale-110 transition-transform duration-300">
+                {(product.salePrice || 0) > 0 && (product.salePrice || 0) < (product.price || 0) ? (
+                    <>
+                        <span className="text-[9px] line-through opacity-60 font-medium">
+                            {(product.price || 0).toLocaleString()} Kz
+                        </span>
+                        <div className="flex items-baseline gap-0.5">
+                            <span className="text-lg sm:text-xl font-black text-secondary">
+                                {(product.salePrice || 0).toLocaleString()}
+                            </span>
+                            <span className="text-[10px] font-black text-secondary">Kz</span>
+                        </div>
+                    </>
+                ) : (
+                    <div className="flex items-baseline gap-0.5">
+                        <span className="text-xl font-black text-primary drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]">
+                            {(product.price || 0).toLocaleString()}
+                        </span>
+                        <span className="text-[10px] font-black text-primary">Kz</span>
+                    </div>
+                )}
+            </div>
             {/* INVISIBLE OVERLAY LINK - COVERS EVERYTHING */}
             <Link
                 to={`/produto/${product.id}`}
@@ -85,35 +108,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
 
             {/* Product Name */}
-            <div className="text-center px-4 sm:px-6 mb-20 sm:mb-24 flex-shrink-0 z-20 pointer-events-none">
-                <h3 className="text-base sm:text-lg font-black uppercase tracking-tight text-black leading-tight line-clamp-2">
+            <div className="text-center px-4 sm:px-6 mb-12 sm:mb-16 flex-shrink-0 z-20 pointer-events-none">
+                <h3 className="text-base sm:text-lg font-black uppercase tracking-tight text-black dark:text-white leading-tight line-clamp-2">
                     {product.name || 'Produto Sem Nome'}
                 </h3>
             </div>
 
-            {/* Price Bar */}
-            <div className="absolute bottom-0 left-0 w-full h-16 sm:h-20 bg-secondary/90 backdrop-blur-md flex flex-col items-center justify-center border-t border-black/5 z-30 pointer-events-none">
-                {(product.salePrice || 0) > 0 && (product.salePrice || 0) < (product.price || 0) ? (
-                    <>
-                        <span className="text-[10px] sm:text-xs line-through text-black/40 font-bold mb-0.5 sm:mb-1">
-                            {(product.price || 0).toLocaleString()} Kz
-                        </span>
-                        <div className="flex items-baseline gap-1">
-                            <span className="text-xl sm:text-2xl font-black tracking-tighter text-red-600">
-                                {(product.salePrice || 0).toLocaleString()}
-                            </span>
-                            <span className="text-[10px] sm:text-xs font-black text-red-600 uppercase">Kz</span>
-                        </div>
-                    </>
-                ) : (
-                    <div className="flex items-baseline gap-1">
-                        <span className="text-xl sm:text-2xl font-black tracking-tighter text-black">
-                            {(product.price || 0).toLocaleString()}
-                        </span>
-                        <span className="text-[10px] sm:text-xs font-black text-black uppercase">Kz</span>
-                    </div>
-                )}
-            </div>
+            {/* Removed solid bar, replaced with floating pill above */}
 
             {/* Floating Cart & Ver Detalhes UI - Visual only */}
             {product.stock > 0 && (
@@ -123,7 +124,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     </span>
                 </div>
             )}
-            <div className="absolute top-4 right-4 size-10 bg-white/10 backdrop-blur-md text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-40 border border-white/20 pointer-events-none">
+            <div className="absolute top-4 left-4 size-10 bg-white/10 backdrop-blur-md text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-40 border border-white/20 pointer-events-none">
                 <span className="material-symbols-outlined !text-lg">visibility</span>
             </div>
         </div>
