@@ -195,7 +195,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
               costPrice={formData.costPrice || 0}
               stock={formData.stock}
               bestSeller={formData.bestSeller || false}
-              deliveryCommission={formData.delivery_commission || 0}
+              deliveryCommission={formData.deliveryCommission || 0}
               onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
             />
           </div>
@@ -295,7 +295,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
               costPrice={formData.costPrice || 0}
               stock={formData.stock}
               bestSeller={formData.bestSeller || false}
-              deliveryCommission={formData.delivery_commission || 0}
+              deliveryCommission={formData.deliveryCommission || 0}
               onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
             />
           </div>

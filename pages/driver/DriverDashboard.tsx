@@ -100,7 +100,7 @@ const DriverDashboard: React.FC = () => {
         const product = item.product || item;
         const productId = product.id || item.id || item.productId;
         const currentProduct = productId ? productsMap[productId] : null;
-        const commissionPct = currentProduct?.delivery_commission || product.delivery_commission || 0;
+        const commissionPct = currentProduct?.deliveryCommission || product.deliveryCommission || currentProduct?.delivery_commission || product.delivery_commission || 0;
         const price = product.salePrice || product.sale_price || product.price || 0;
         return price * commissionPct / 100;
     };
