@@ -19,7 +19,7 @@ const OrderConfirmation: React.FC = () => {
             }
             try {
                 // Call the secure RPC function we created - MUST use p_token as defined in SQL
-                const { data, error } = await supabase.rpc('get_order_by_token', { p_token: token });
+                const { data, error } = await supabase.rpc('get_order_by_token', { token: token });
 
                 if (error) throw error;
                 if (!data || data.length === 0) throw new Error("Pedido não encontrado ou token expirado.");

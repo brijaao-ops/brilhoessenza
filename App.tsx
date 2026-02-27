@@ -504,8 +504,9 @@ const AppContent: React.FC = () => {
       setLastPaymentMethod(data.paymentMethod);
       setIsSuccessModalOpen(true);
 
-    } catch (error) {
-      alert("Ocorreu um erro ao processar seu pedido. Por favor, tente novamente.");
+    } catch (error: any) {
+      console.error("DEBUG ORDER ERROR:", error);
+      alert(`Ocorreu um erro ao processar seu pedido: ${error.message || error.details || JSON.stringify(error)}`);
     }
   };
 

@@ -290,8 +290,7 @@ export const fetchOrders = async (): Promise<Order[]> => {
 
 export const createOrder = async (order: Order) => {
     // Map camelCase to snake_case for DB insertion
-    const dbOrder = {
-        id: order.id,
+    const dbOrder: any = {
         customer_name: order.customer,
         phone: order.phone,
         total: order.amount,
@@ -302,13 +301,18 @@ export const createOrder = async (order: Order) => {
         neighborhood: order.neighborhood,
         municipality: order.municipality,
         province: order.province,
-        product_id: order.productId,
         items: order.items,
         delivery_token: order.delivery_token,
         driver_id: order.driver_id,
         deliverer_name: order.deliverer_name,
         seller_name: order.seller_name
     };
+
+    // If id exists and is NOT a temp #BE- id, we might want to keep it (for updates, though we have updateOrder)
+    // But for createOrder, we usually want DB to handle it if it's a new record.
+    if (order.id && !order.id.startsWith('#BE-')) {
+        dbOrder.id = order.id;
+    }
 
     const { data, error } = await supabase
         .from('orders')
@@ -317,8 +321,13 @@ export const createOrder = async (order: Order) => {
         .single();
 
     if (error) {
-        console.error("Supabase Create Order Error:", error);
-        throw error;
+        console.error("Supabase Create Order Error details:", error);
+        // Provide more context in the error
+        const enhancedError = new Error(error.message || "Erro desconhecido ao criar pedido");
+        (enhancedError as any).details = error.details;
+        (enhancedError as any).hint = error.hint;
+        (enhancedError as any).code = error.code;
+        throw enhancedError;
     }
     return data;
 };
