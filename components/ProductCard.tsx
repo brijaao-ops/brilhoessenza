@@ -33,36 +33,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         };
     }, []);
 
+    const displayPrice = (product.salePrice || 0) > 0 && (product.salePrice || 0) < (product.price || 0)
+        ? product.salePrice!
+        : product.price || 0;
+    const hasDiscount = (product.salePrice || 0) > 0 && (product.salePrice || 0) < (product.price || 0);
+
     return (
         <div
             ref={cardRef}
-            className={`relative flex flex-col justify-between h-[380px] sm:h-[450px] w-full bg-white dark:bg-background-dark/80 organic-card-shape overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl cursor-pointer product-card-reveal ${isVisible ? 'is-visible animate-water-float' : ''}`}
+            className={`relative flex flex-col w-full bg-white dark:bg-background-dark/80 organic-card-shape overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl cursor-pointer product-card-reveal ${isVisible ? 'is-visible animate-water-float' : ''}`}
         >
-            {/* Price Badge - Floating Solid Boutique */}
-            <div className="absolute top-4 right-4 z-[60] px-4 py-2 boutique-price-badge rounded-xl flex flex-col items-end gap-0.5 opacity-100 group-hover:scale-105 transition-all duration-300 [transform-style:preserve-3d] [backface-visibility:hidden]">
-                {(product.salePrice || 0) > 0 && (product.salePrice || 0) < (product.price || 0) ? (
-                    <>
-                        <span className="text-[8px] line-through opacity-75 font-extrabold uppercase tracking-tighter filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]">
-                            {(product.price || 0).toLocaleString()} Kz
-                        </span>
-                        <div className="flex items-baseline gap-0.5">
-                            <span className="text-base sm:text-lg font-black tracking-tighter filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
-                                {(product.salePrice || 0).toLocaleString()}
-                            </span>
-                            <span className="text-[9px] font-black uppercase">Kz</span>
-                        </div>
-                    </>
-                ) : (
-                    <div className="flex items-baseline gap-0.5">
-                        <span className="text-lg sm:text-xl font-black tracking-tighter filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
-                            {(product.price || 0).toLocaleString()}
-                        </span>
-                        <span className="text-[9px] font-black uppercase">Kz</span>
-                    </div>
-                )}
-            </div>
-
-            {/* INVISIBLE OVERLAY LINK - COVERS EVERYTHING */}
+            {/* INVISIBLE OVERLAY LINK */}
             <Link
                 to={`/produto/${product.id}`}
                 className="absolute inset-0 z-50 block w-full h-full bg-transparent"
@@ -71,36 +52,52 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 <span className="sr-only">Ver produto {product.name}</span>
             </Link>
 
-            {/* Header: Category/Signature & Stock - Moved down to avoid price badge */}
-            <div className="absolute top-[70px] left-0 w-full flex justify-between items-center px-4 sm:px-6 z-30 pointer-events-none">
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                    <span className="text-[7px] sm:text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 bg-white/80 dark:bg-black/40 px-2 py-0.5 rounded-md backdrop-blur-sm shadow-sm border border-gray-100 dark:border-white/5">
+            {/* ── TOP HEADER: always reserved space ── */}
+            <div className="flex-shrink-0 flex items-start justify-between px-3 sm:px-5 pt-3 sm:pt-4 gap-2 z-30 pointer-events-none">
+                {/* Left: category + gender + stock badges */}
+                <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 min-w-0">
+                    <span className="text-[7px] sm:text-[9px] font-black uppercase tracking-[0.15em] text-gray-500 bg-white/80 dark:bg-black/40 px-1.5 py-0.5 rounded-md backdrop-blur-sm shadow-sm border border-gray-100 dark:border-white/5 truncate max-w-[80px] sm:max-w-none">
                         {product?.subCategory || product?.category || 'Geral'}
                     </span>
-                    <span className="material-symbols-outlined !text-[10px] sm:!text-[12px] text-primary bg-primary/20 size-4 sm:size-5 flex items-center justify-center rounded-md shadow-sm border border-primary/30">
+                    <span className="material-symbols-outlined !text-[10px] sm:!text-[12px] text-primary bg-primary/20 size-4 sm:size-5 flex items-center justify-center rounded-md shadow-sm border border-primary/30 flex-shrink-0">
                         {product?.gender === 'masculino' ? 'male' : product?.gender === 'feminino' ? 'female' : 'wc'}
                     </span>
                     {product.stock > 0 && (
-                        <span className="ml-1 text-[8px] font-black text-green-600 bg-white/80 dark:bg-black/40 px-2 py-0.5 rounded-full border border-green-500/20 shadow-sm backdrop-blur-sm">
-                            {product.stock} em stock
+                        <span className="text-[7px] sm:text-[8px] font-black text-green-600 bg-white/80 dark:bg-black/40 px-1.5 py-0.5 rounded-full border border-green-500/20 shadow-sm backdrop-blur-sm flex-shrink-0">
+                            {product.stock} stock
                         </span>
                     )}
                 </div>
+
+                {/* Right: Price badge — always visible in top-right */}
+                <div className="flex-shrink-0 boutique-price-badge px-2.5 sm:px-4 py-1.5 sm:py-2 rounded-xl flex flex-col items-end gap-0.5 group-hover:scale-105 transition-all duration-300">
+                    {hasDiscount && (
+                        <span className="text-[7px] sm:text-[8px] line-through opacity-75 font-extrabold uppercase tracking-tighter">
+                            {(product.price || 0).toLocaleString()} Kz
+                        </span>
+                    )}
+                    <div className="flex items-baseline gap-0.5">
+                        <span className="text-sm sm:text-lg font-black tracking-tighter">
+                            {displayPrice.toLocaleString()}
+                        </span>
+                        <span className="text-[8px] sm:text-[9px] font-black uppercase">Kz</span>
+                    </div>
+                </div>
             </div>
 
-            {/* Image Container */}
-            <div className="flex-1 relative flex items-center justify-center p-4 sm:p-8 transition-transform duration-700 pointer-events-none">
-                <div className="block w-full h-full flex items-center justify-center organic-image-clip bg-gray-50/50 dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-inner">
+            {/* ── IMAGE: constrained to never overflow ── */}
+            <div className="flex-1 relative flex items-center justify-center p-3 sm:p-6 pointer-events-none min-h-0 overflow-hidden">
+                <div className="w-full h-full flex items-center justify-center organic-image-clip bg-gray-50/50 dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-inner overflow-hidden">
                     <img
                         src={product?.image || ''}
                         alt={product?.name || 'Produto'}
                         loading="lazy"
-                        className={`w-full h-full object-contain object-center transition-transform duration-700 ${product?.stock === 0 ? 'grayscale opacity-60' : 'group-hover:scale-110'}`}
+                        className={`max-w-full max-h-full w-auto h-auto object-contain object-center transition-transform duration-700 ${product?.stock === 0 ? 'grayscale opacity-60' : 'group-hover:scale-110'}`}
+                        style={{ maxHeight: '100%', maxWidth: '100%' }}
                     />
-
                     {product.stock === 0 && (
                         <div className="absolute inset-0 flex items-center justify-center z-10">
-                            <span className="bg-black/80 text-white px-4 py-2 text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] rounded-full backdrop-blur-sm transform -rotate-12 border border-white/20">
+                            <span className="bg-black/80 text-white px-3 py-1.5 text-[9px] sm:text-xs font-black uppercase tracking-[0.3em] rounded-full backdrop-blur-sm transform -rotate-12 border border-white/20">
                                 Esgotado
                             </span>
                         </div>
@@ -108,25 +105,24 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </div>
             </div>
 
-            {/* Product Name */}
-            <div className="text-center px-3 sm:px-6 mb-4 sm:mb-16 flex-shrink-0 z-20 pointer-events-none">
-                <h3 className="text-sm sm:text-lg font-black uppercase tracking-tight text-black dark:text-white leading-tight line-clamp-2">
+            {/* ── FOOTER: product name — always reserved, never squeezed ── */}
+            <div className="flex-shrink-0 flex items-center justify-between px-3 sm:px-5 pb-3 sm:pb-5 pt-2 sm:pt-2 z-20 pointer-events-none gap-2">
+                <h3 className="text-xs sm:text-sm font-black uppercase tracking-tight text-black dark:text-white leading-tight line-clamp-2 flex-1 min-w-0">
                     {product.name || 'Produto Sem Nome'}
                 </h3>
+                {/* Cart icon */}
+                {product.stock > 0 && (
+                    <div className="flex-shrink-0 size-8 sm:size-10 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg bg-[#1c1a0d] text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100">
+                        <span className="material-symbols-outlined !text-sm">
+                            add_shopping_cart
+                        </span>
+                    </div>
+                )}
             </div>
 
-            {/* Removed solid bar, replaced with floating pill above */}
-
-            {/* Floating Cart & Ver Detalhes UI - Visual only */}
-            {product.stock > 0 && (
-                <div className="absolute bottom-2 sm:bottom-4 right-2 sm:right-4 size-10 sm:size-12 rounded-2xl flex items-center justify-center transition-all duration-300 shadow-xl z-20 bg-[#1c1a0d] text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100 translate-y-0 lg:translate-y-4 lg:group-hover:translate-y-0 pointer-events-none">
-                    <span className="material-symbols-outlined !text-sm sm:!text-base">
-                        add_shopping_cart
-                    </span>
-                </div>
-            )}
-            <div className="absolute top-4 left-4 size-10 bg-white/10 backdrop-blur-md text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-40 border border-white/20 pointer-events-none">
-                <span className="material-symbols-outlined !text-lg">visibility</span>
+            {/* Hover eye icon */}
+            <div className="absolute top-3 left-3 size-8 bg-white/10 backdrop-blur-md text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all z-40 border border-white/20 pointer-events-none">
+                <span className="material-symbols-outlined !text-base">visibility</span>
             </div>
         </div>
     );
