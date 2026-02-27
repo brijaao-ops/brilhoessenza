@@ -85,7 +85,7 @@ const Home: React.FC<HomeProps> = ({
       {/* Seção Hero de Luxo */}
       {!searchTerm && !selectedCategory && (
         <section className="pt-4 pb-12 relative group px-4">
-          <div className="relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] bg-[#1c1a0d] min-h-[450px] sm:min-h-[500px] lg:min-h-[700px] flex items-center shadow-2xl border border-white/5">
+          <div className="relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] bg-background-dark min-h-[350px] sm:min-h-[400px] lg:min-h-[500px] flex items-center shadow-2xl border border-white/5">
             {slides.length > 0 ? (
               slides.map((slide, index) => (
                 <div
@@ -97,7 +97,7 @@ const Home: React.FC<HomeProps> = ({
                     alt={slide.title}
                     src={slide.image_url}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-[#1c1a0d] via-[#1c1a0d]/40 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-background-dark via-background-dark/40 to-transparent"></div>
 
                   <div className="absolute inset-0 flex items-center px-6 sm:px-12 lg:px-20">
                     <div className={`max-w-3xl transition-all duration-1000 delay-500 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
@@ -167,10 +167,10 @@ const Home: React.FC<HomeProps> = ({
             </h3>
             <div className="flex items-center gap-4">
               <div className="h-[2px] w-12 sm:w-16 bg-primary"></div>
-              <p className="text-[9px] sm:text-[11px] font-black text-gray-400 uppercase tracking-[0.4em] sm:tracking-[0.5em]">Curadoria Exclusiva</p>
+              <p className="text-[9px] sm:text-[11px] font-black text-gray-400 uppercase tracking-[0.4em] sm:tracking-[0.5em]">Beleza & Brilho</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-gray-50 dark:bg-white/5 p-1.5 sm:p-2 rounded-2xl border border-gray-100 dark:border-white/5 overflow-x-auto max-w-full no-scrollbar">
+          <div className="flex items-center gap-2 bg-white/40 backdrop-blur-md dark:bg-white/5 p-1.5 sm:p-2 rounded-2xl border border-white/20 dark:border-white/5 overflow-x-auto max-w-full no-scrollbar">
             <button onClick={() => onCategorySelect(null)} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${!selectedCategory ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Todos</button>
             <button onClick={() => onCategorySelect('Novidades')} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Novidades' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Novidades</button>
             <button onClick={() => onCategorySelect('Ofertas')} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Ofertas' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Ofertas</button>

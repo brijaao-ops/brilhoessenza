@@ -92,7 +92,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
 
             {/* Price Bar */}
-            <div className="absolute bottom-0 left-0 w-full h-16 sm:h-20 bg-primary/95 backdrop-blur-md flex flex-col items-center justify-center border-t border-black/5 z-30 pointer-events-none">
+            <div className="absolute bottom-0 left-0 w-full h-16 sm:h-20 bg-secondary/90 backdrop-blur-md flex flex-col items-center justify-center border-t border-black/5 z-30 pointer-events-none">
                 {(product.salePrice || 0) > 0 && (product.salePrice || 0) < (product.price || 0) ? (
                     <>
                         <span className="text-[10px] sm:text-xs line-through text-black/40 font-bold mb-0.5 sm:mb-1">
