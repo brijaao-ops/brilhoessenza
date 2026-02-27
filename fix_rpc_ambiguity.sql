@@ -13,7 +13,7 @@ declare
 begin
     select json_build_object(
         'id', o.id,
-        'customer_name', o.customer_name,
+        'customer', o.customer,
         'total', o.total,
         'status', o.status,
         'items', o.items,

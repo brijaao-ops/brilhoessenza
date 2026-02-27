@@ -282,7 +282,7 @@ export const fetchOrders = async (): Promise<Order[]> => {
 
     return (data || []).map((o: any) => ({
         ...o,
-        customer: o.customer_name || o.customer,
+        customer: o.customer || o.customer_name,
         amount: Number(o.total || o.amount || 0),
         productId: o.product_id || o.productId,
     }));
@@ -291,7 +291,7 @@ export const fetchOrders = async (): Promise<Order[]> => {
 export const createOrder = async (order: Order) => {
     // Map camelCase to snake_case for DB insertion
     const dbOrder: any = {
-        customer_name: order.customer,
+        customer: order.customer,
         phone: order.phone,
         total: order.amount,
         status: order.status,
@@ -334,7 +334,7 @@ export const createOrder = async (order: Order) => {
 
 export const updateOrder = async (id: string, updates: Partial<Order>) => {
     const dbUpdates: any = { ...updates };
-    if (updates.customer !== undefined) dbUpdates.customer_name = updates.customer;
+    if (updates.customer !== undefined) dbUpdates.customer = updates.customer;
     if (updates.amount !== undefined) dbUpdates.total = updates.amount;
     if (updates.productId !== undefined) dbUpdates.product_id = updates.productId;
 

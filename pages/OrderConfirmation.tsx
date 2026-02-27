@@ -27,7 +27,7 @@ const OrderConfirmation: React.FC = () => {
                 const orderData = data[0];
                 setOrder({
                     ...orderData,
-                    customer: orderData.customer_name || orderData.customer,
+                    customer: orderData.customer || orderData.customer_name,
                     amount: Number(orderData.total || orderData.amount || 0)
                 });
 

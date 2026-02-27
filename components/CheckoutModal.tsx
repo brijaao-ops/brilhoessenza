@@ -122,7 +122,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                             </div>
 
                             {showSuggestions && suggestions.length > 0 && (
-                                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#1c1a0d] border border-gray-100 dark:border-white/5 rounded-2xl shadow-2xl z-20 overflow-hidden">
+                                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#1c1a0d] border border-gray-100 dark:border-white/5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] z-[100] overflow-hidden">
                                     {suggestions.map((loc, i) => (
                                         <button
                                             key={i}
@@ -132,12 +132,12 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                                                 setFormData({ ...formData, locationSearch: loc.combined });
                                                 setShowSuggestions(false);
                                             }}
-                                            className="w-full p-3 text-left hover:bg-primary/10 border-b border-gray-50 dark:border-white/5 last:border-none flex items-center gap-3 transition-colors"
+                                            className="w-full p-4 text-left hover:bg-primary/10 border-b border-gray-50 dark:border-white/5 last:border-none flex items-center gap-3 transition-colors bg-white dark:bg-[#1c1a0d]"
                                         >
                                             <span className="material-symbols-outlined text-gray-400 !text-sm">location_on</span>
                                             <div>
-                                                <p className="text-xs font-black">{loc.neighborhood}, {loc.municipality}</p>
-                                                <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{loc.province}</p>
+                                                <p className="text-sm font-black text-[#1c1a0d] dark:text-white">{loc.neighborhood}, {loc.municipality}</p>
+                                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{loc.province}</p>
                                             </div>
                                         </button>
                                     ))}
