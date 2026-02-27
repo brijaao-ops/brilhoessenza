@@ -289,8 +289,12 @@ export const fetchOrders = async (): Promise<Order[]> => {
 };
 
 export const createOrder = async (order: Order) => {
+    // Generate a proper UUID for the DB - the DB id column has no default
+    const dbId = crypto.randomUUID();
+
     // Map field names to real DB column names
     const dbOrder: any = {
+        id: dbId,
         customer: order.customer,
         phone: order.phone,
         amount: order.amount,
@@ -303,16 +307,10 @@ export const createOrder = async (order: Order) => {
         province: order.province,
         items: order.items,
         delivery_token: order.delivery_token,
-        driver_id: order.driver_id,
-        deliverer_name: order.deliverer_name,
-        seller_name: order.seller_name
+        driver_id: order.driver_id || null,
+        deliverer_name: order.deliverer_name || null,
+        seller_name: order.seller_name || null
     };
-
-    // If id exists and is NOT a temp #BE- id, we might want to keep it (for updates, though we have updateOrder)
-    // But for createOrder, we usually want DB to handle it if it's a new record.
-    if (order.id && !order.id.startsWith('#BE-')) {
-        dbOrder.id = order.id;
-    }
 
     const { data, error } = await supabase
         .from('orders')
@@ -322,7 +320,6 @@ export const createOrder = async (order: Order) => {
 
     if (error) {
         console.error("Supabase Create Order Error details:", error);
-        // Provide more context in the error
         const enhancedError = new Error(error.message || "Erro desconhecido ao criar pedido");
         (enhancedError as any).details = error.details;
         (enhancedError as any).hint = error.hint;
@@ -333,15 +330,18 @@ export const createOrder = async (order: Order) => {
 };
 
 export const updateOrder = async (id: string, updates: Partial<Order>) => {
-    const dbUpdates: any = { ...updates };
+    // Build a clean DB-compatible update object
+    const dbUpdates: any = {};
+
     if (updates.customer !== undefined) dbUpdates.customer = updates.customer;
     if (updates.amount !== undefined) dbUpdates.amount = updates.amount;
     if (updates.productId !== undefined) dbUpdates.product_id = updates.productId;
-
-    // Remove the camelCase versions to avoid DB projection errors
-    delete dbUpdates.customer;
-    delete dbUpdates.amount;
-    delete dbUpdates.productId;
+    if (updates.status !== undefined) dbUpdates.status = updates.status;
+    if (updates.driver_id !== undefined) dbUpdates.driver_id = updates.driver_id;
+    if (updates.deliverer_name !== undefined) dbUpdates.deliverer_name = updates.deliverer_name;
+    if (updates.seller_name !== undefined) dbUpdates.seller_name = updates.seller_name;
+    if (updates.date !== undefined) dbUpdates.date = updates.date;
+    if (updates.delivery_token !== undefined) dbUpdates.delivery_token = updates.delivery_token;
 
     const { error } = await supabase
         .from('orders')
