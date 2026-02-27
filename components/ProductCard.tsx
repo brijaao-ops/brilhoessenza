@@ -36,7 +36,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     return (
         <div
             ref={cardRef}
-            className={`relative flex flex-col justify-between h-[420px] sm:h-[450px] w-full bg-white dark:bg-background-dark/80 organic-card-shape overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl cursor-pointer product-card-reveal ${isVisible ? 'is-visible animate-water-float' : ''}`}
+            className={`relative flex flex-col justify-between h-[380px] sm:h-[450px] w-full bg-white dark:bg-background-dark/80 organic-card-shape overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl cursor-pointer product-card-reveal ${isVisible ? 'is-visible animate-water-float' : ''}`}
         >
             {/* Price Badge - Floating Solid Boutique */}
             <div className="absolute top-4 right-4 z-[60] px-4 py-2 boutique-price-badge rounded-xl flex flex-col items-end gap-0.5 opacity-100 group-hover:scale-105 transition-all duration-300 [transform-style:preserve-3d] [backface-visibility:hidden]">
@@ -89,7 +89,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
 
             {/* Image Container */}
-            <div className="flex-1 relative flex items-center justify-center p-6 sm:p-8 transition-transform duration-700 pointer-events-none">
+            <div className="flex-1 relative flex items-center justify-center p-4 sm:p-8 transition-transform duration-700 pointer-events-none">
                 <div className="block w-full h-full flex items-center justify-center organic-image-clip bg-gray-50/50 dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-inner">
                     <img
                         src={product?.image || ''}
@@ -109,8 +109,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
 
             {/* Product Name */}
-            <div className="text-center px-4 sm:px-6 mb-12 sm:mb-16 flex-shrink-0 z-20 pointer-events-none">
-                <h3 className="text-base sm:text-lg font-black uppercase tracking-tight text-black dark:text-white leading-tight line-clamp-2">
+            <div className="text-center px-3 sm:px-6 mb-4 sm:mb-16 flex-shrink-0 z-20 pointer-events-none">
+                <h3 className="text-sm sm:text-lg font-black uppercase tracking-tight text-black dark:text-white leading-tight line-clamp-2">
                     {product.name || 'Produto Sem Nome'}
                 </h3>
             </div>
