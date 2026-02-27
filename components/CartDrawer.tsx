@@ -31,7 +31,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
             ></div>
 
             {/* Drawer */}
-            <div className="relative w-full max-w-md bg-white dark:bg-[#0f0e08] h-fit max-h-[95vh] my-auto sm:mr-6 rounded-[2rem] sm:rounded-[3rem] shadow-2xl flex flex-col animate-drawer-in overflow-hidden border border-gray-100 dark:border-white/5">
+            <div className="relative w-full max-w-md bg-white dark:bg-[#0f0e08] h-fit max-h-[95vh] mt-4 sm:mt-8 mb-auto sm:mr-6 rounded-[2rem] sm:rounded-[3rem] shadow-2xl flex flex-col animate-drawer-in overflow-hidden border border-gray-100 dark:border-white/5">
                 {/* Header */}
                 <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
                     <div>
