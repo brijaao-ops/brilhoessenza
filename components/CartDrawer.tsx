@@ -8,6 +8,7 @@ interface CartDrawerProps {
     onUpdateQuantity: (id: string, delta: number) => void;
     onRemove: (id: string) => void;
     onCheckout: () => void;
+    position?: 'top' | 'bottom';
 }
 
 const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -16,22 +17,27 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
     items,
     onUpdateQuantity,
     onRemove,
-    onCheckout
+    onCheckout,
+    position = 'top'
 }) => {
     const total = items.reduce((acc, curr) => acc + ((curr.product?.price || 0) * (curr.quantity || 0)), 0);
 
     if (!isOpen) return null;
 
+    const positionClasses = position === 'top'
+        ? "fixed top-4 right-4 sm:top-24 sm:right-8 animate-drawer-in"
+        : "fixed bottom-52 right-4 sm:top-24 sm:right-8 animate-fade-up";
+
     return (
-        <div className="fixed inset-0 z-[200] flex justify-end">
+        <div className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center">
             {/* Overlay */}
             <div
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-500"
+                className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-500 pointer-events-auto"
                 onClick={onClose}
             ></div>
 
             {/* Drawer */}
-            <div className="fixed top-4 right-4 sm:top-24 sm:right-8 w-full max-w-[calc(100%-2rem)] sm:max-w-md bg-white dark:bg-[#0f0e08] h-fit max-h-[85vh] rounded-[2rem] sm:rounded-[3rem] shadow-2xl flex flex-col animate-drawer-in overflow-hidden border border-gray-100 dark:border-white/5 z-[110]">
+            <div className={`w-full max-w-[calc(100%-2rem)] sm:max-w-md bg-white dark:bg-[#0f0e08] h-fit max-h-[80vh] rounded-[2rem] sm:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden border border-gray-100 dark:border-white/5 z-[110] pointer-events-auto ${positionClasses}`}>
                 {/* Header */}
                 <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
                     <div>

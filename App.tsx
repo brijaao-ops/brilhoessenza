@@ -198,6 +198,7 @@ const AppContent: React.FC = () => {
 
   const [cartItems, setCartItems] = useState<{ product: Product, quantity: number }[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartPosition, setCartPosition] = useState<'top' | 'bottom'>('top');
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
@@ -403,6 +404,7 @@ const AppContent: React.FC = () => {
       }
       return [...prev, { product, quantity }];
     });
+    setCartPosition('bottom');
     setIsCartOpen(true);
   };
 
@@ -699,7 +701,7 @@ const AppContent: React.FC = () => {
         <>
           <Header
             cartCount={cartItems.reduce((a, b) => a + b.quantity, 0)}
-            onOpenCart={() => setIsCartOpen(true)}
+            onOpenCart={() => { setCartPosition('top'); setIsCartOpen(true); }}
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
             selectedCategory={selectedCategory}
@@ -745,6 +747,7 @@ const AppContent: React.FC = () => {
             onUpdateQuantity={updateCartQuantity}
             onRemove={removeFromCart}
             onCheckout={finalizeBooking}
+            position={cartPosition}
           />
 
           <CheckoutModal
@@ -762,7 +765,7 @@ const AppContent: React.FC = () => {
 
           <MobileNav
             cartCount={cartItems.reduce((a, b) => a + b.quantity, 0)}
-            onOpenCart={() => setIsCartOpen(true)}
+            onOpenCart={() => { setCartPosition('top'); setIsCartOpen(true); }}
             isAuthenticated={isAuthenticated}
           />
         </>
