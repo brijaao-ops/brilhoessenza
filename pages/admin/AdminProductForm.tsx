@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Product, UserProfile, Category } from '../../types';
-import { fetchCategories } from '../../services/supabase';
+import { fetchCategories, supabase } from '../../services/supabase';
 import { useToast } from '../../contexts/ToastContext';
 import { ImageUpload } from '../../components/admin/ImageUpload';
 import { PricingFields } from '../../components/admin/PricingFields';
@@ -52,8 +52,30 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
       try {
         const cats = await fetchCategories();
         setCategories(cats);
-        if (isEditing) {
-          const product = products.find(p => p.id === id);
+
+        if (isEditing && id) {
+          // First try to find in loaded products prop (fast path)
+          let product = products.find(p => p.id === id);
+
+          // If not found (e.g. navigated directly or products not loaded yet), fetch from DB
+          if (!product) {
+            const { data, error } = await supabase
+              .from('products')
+              .select('*')
+              .eq('id', id)
+              .single();
+            if (!error && data) {
+              product = {
+                ...data,
+                salePrice: data.sale_price ?? data.salePrice,
+                costPrice: data.cost_price ?? data.costPrice,
+                deliveryCommission: data.delivery_commission ?? data.deliveryCommission,
+                createdByName: data.created_by_name ?? data.createdByName,
+                lastEditedBy: data.last_edited_by ?? data.lastEditedBy,
+              } as Product;
+            }
+          }
+
           if (product) {
             setFormData({
               name: product.name,
@@ -79,7 +101,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
       }
     };
     loadData();
-  }, [id, isEditing, products]);
+  }, [id, isEditing]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
