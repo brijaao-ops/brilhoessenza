@@ -119,72 +119,72 @@ const OrderConfirmation: React.FC = () => {
     return (
         <div className="min-h-screen bg-gray-50 dark:bg-[#0f0e08] pb-12">
             {/* Driver Identity (Top) */}
-            <div className="bg-[#1c1a0d] text-white p-8 rounded-b-[3rem] shadow-xl relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none">
-                    <span className="material-symbols-outlined !text-9xl">local_shipping</span>
+            <div className="bg-[#1c1a0d] text-white p-6 sm:p-8 rounded-b-[2.5rem] shadow-xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
+                    <span className="material-symbols-outlined !text-7xl">local_shipping</span>
                 </div>
 
-                <p className="text-center text-[10px] uppercase tracking-[0.3em] font-bold text-primary mb-6">Confirmação de Entrega</p>
+                <p className="text-center text-[8px] uppercase tracking-[0.2em] font-black text-primary mb-4">Confirmação de Entrega</p>
 
                 <div className="flex flex-col items-center relative z-10">
-                    <div className="size-24 rounded-full border-4 border-primary shadow-lg overflow-hidden bg-white mb-4">
+                    <div className="size-16 sm:size-20 rounded-full border-2 border-primary shadow-lg overflow-hidden bg-white mb-3">
                         {order.driver?.photo_url ? (
                             <img src={order.driver.photo_url} className="w-full h-full object-cover" />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                <span className="material-symbols-outlined text-4xl">person</span>
+                                <span className="material-symbols-outlined text-3xl">person</span>
                             </div>
                         )}
                     </div>
-                    <h2 className="text-xl font-black uppercase tracking-tight">{order.driver?.name || "Entregador Brilho Essenza"}</h2>
-                    <div className="flex items-center gap-3 mt-2 text-xs text-gray-400 font-bold bg-white/10 px-4 py-2 rounded-full">
+                    <h2 className="text-lg font-black uppercase tracking-tight">{order.driver?.name || "Entregador Brilho Essenza"}</h2>
+                    <div className="flex items-center gap-2 mt-1.5 text-[10px] text-gray-400 font-bold bg-white/5 px-3 py-1.5 rounded-full">
                         <span>{order.driver?.vehicle_type || "Veículo"}</span>
-                        <span>•</span>
-                        <span className="font-mono text-white">{order.driver?.license_plate || "AAA-000"}</span>
+                        <span className="opacity-30">•</span>
+                        <span className="font-mono text-white tracking-widest">{order.driver?.license_plate || "AAA-000"}</span>
                     </div>
                 </div>
             </div>
 
             {/* Content */}
-            <div className="p-6 -mt-4 relative z-20">
-                <div className="bg-white dark:bg-[#15140b] rounded-[2rem] p-6 shadow-lg border border-gray-100 dark:border-[#222115]">
-                    <h3 className="text-xs font-black uppercase tracking-widest text-gray-400 mb-6 border-b border-gray-100 dark:border-[#222115] pb-4">Itens do Pedido</h3>
+            <div className="p-4 sm:p-6 -mt-3 relative z-20 max-w-lg mx-auto w-full">
+                <div className="bg-white dark:bg-[#15140b] rounded-[2rem] p-5 sm:p-6 shadow-lg border border-gray-100 dark:border-[#222115]">
+                    <h3 className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-4 border-b border-gray-100 dark:border-[#222115] pb-3">Itens do Pedido</h3>
 
-                    <div className="flex flex-col gap-4 mb-6">
+                    <div className="flex flex-col gap-3 mb-5">
                         {order.items?.map((item: any, idx: number) => (
-                            <div key={idx} className="flex gap-4 items-center">
-                                <div className="size-12 bg-gray-100 dark:bg-white/5 rounded-xl flex items-center justify-center overflow-hidden shrink-0">
+                            <div key={idx} className="flex gap-3 items-center">
+                                <div className="size-10 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center overflow-hidden shrink-0 border border-gray-100 dark:border-white/5">
                                     {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <span className="material-symbols-outlined text-gray-300">inventory_2</span>}
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <p className="font-bold text-sm truncate">{item.name}</p>
-                                    <p className="text-xs text-gray-500">{item.quantity}x {item.price ? new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(item.price) : ''}</p>
+                                    <p className="font-black text-xs truncate leading-tight uppercase tracking-tight">{item.name}</p>
+                                    <p className="text-[10px] font-bold text-gray-400">{item.quantity}x {item.price ? new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(item.price) : ''}</p>
                                 </div>
                             </div>
                         ))}
                     </div>
 
-                    <div className="bg-gray-50 dark:bg-[#1c1a0d] rounded-xl p-4 flex justify-between items-center mb-8">
-                        <span className="text-xs font-black uppercase tracking-wide">Total</span>
-                        <span className="text-lg font-black text-primary">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order?.total || order?.amount || 0)}</span>
+                    <div className="bg-gray-50/50 dark:bg-[#1c1a0d] rounded-xl p-3 flex justify-between items-center mb-6">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total</span>
+                        <span className="text-base font-black text-primary">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order?.total || order?.amount || 0)}</span>
                     </div>
 
                     <button
                         onClick={handleConfirm}
                         disabled={confirming}
-                        className="w-full bg-green-500 hover:bg-green-600 text-white font-black py-5 rounded-2xl uppercase tracking-widest text-sm shadow-xl shadow-green-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+                        className="w-full bg-green-500 hover:bg-green-600 text-white font-black py-4 rounded-xl uppercase tracking-widest text-xs shadow-xl shadow-green-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
                     >
                         {confirming ? (
-                            <span className="size-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                            <span className="size-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
                         ) : (
                             <>
-                                <span className="material-symbols-outlined">verified</span>
+                                <span className="material-symbols-outlined !text-base">verified</span>
                                 Confirmar Recebimento
                             </>
                         )}
                     </button>
-                    <p className="text-center text-[10px] text-gray-400 mt-4 leading-tight">
-                        Ao confirmar, você atesta que recebeu os itens acima em perfeito estado.
+                    <p className="text-center text-[9px] text-gray-400 mt-4 leading-relaxed px-4">
+                        Ao confirmar, você atesta que recebeu os itens em perfeito estado.
                     </p>
                 </div>
             </div>

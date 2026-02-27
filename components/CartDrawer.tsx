@@ -31,83 +31,77 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
             ></div>
 
             {/* Drawer */}
-            <div className="relative w-full max-w-md bg-white dark:bg-[#0f0e08] h-full shadow-2xl flex flex-col animate-drawer-in">
+            <div className="relative w-full max-w-md bg-white dark:bg-[#0f0e08] h-fit max-h-[95vh] my-auto sm:mr-6 rounded-[2rem] sm:rounded-[3rem] shadow-2xl flex flex-col animate-drawer-in overflow-hidden border border-gray-100 dark:border-white/5">
                 {/* Header */}
-                <div className="p-6 sm:p-8 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
+                <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
                     <div>
-                        <h2 className="text-2xl font-black uppercase tracking-tighter text-[#1c1a0d] dark:text-white">
+                        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tighter text-[#1c1a0d] dark:text-white leading-tight">
                             Meu <span className="text-primary italic">Pedido</span>
                         </h2>
-                        <p className="text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] mt-1">
-                            {items.length} {items.length === 1 ? 'Item Selecionado' : 'Items Selecionados'}
+                        <p className="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em] mt-0.5">
+                            {items.length} {items.length === 1 ? 'Item' : 'Items'}
                         </p>
                     </div>
                     <button
                         onClick={onClose}
-                        className="size-10 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors"
+                        className="size-9 flex items-center justify-center hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors"
                     >
-                        <span className="material-symbols-outlined">close</span>
+                        <span className="material-symbols-outlined !text-xl">close</span>
                     </button>
                 </div>
 
                 {/* Items List */}
-                <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-6 custom-scrollbar">
+                <div className="overflow-y-auto p-4 sm:p-6 space-y-4 custom-scrollbar max-h-[50vh]">
                     {items.length === 0 ? (
-                        <div className="h-full flex flex-col items-center justify-center text-center space-y-4 opacity-40">
-                            <span className="material-symbols-outlined !text-6xl">shopping_bag</span>
-                            <p className="font-black uppercase tracking-widest text-[10px]">Seu pedido está vazio</p>
-                            <button
-                                onClick={onClose}
-                                className="text-primary text-[10px] font-black uppercase tracking-widest underline decoration-2 underline-offset-4"
-                            >
-                                Começar a Comprar
-                            </button>
+                        <div className="py-12 flex flex-col items-center justify-center text-center space-y-3 opacity-30">
+                            <span className="material-symbols-outlined !text-5xl">shopping_bag</span>
+                            <p className="font-black uppercase tracking-widest text-[9px]">Vazio</p>
                         </div>
                     ) : (
                         items.map((item) => (
-                            <div key={item.product.id} className="flex gap-4 group">
-                                <div className="size-20 sm:size-24 bg-gray-50 dark:bg-white/5 rounded-2xl overflow-hidden p-2 flex items-center justify-center border border-gray-100 dark:border-white/5 shrink-0">
+                            <div key={item.product.id} className="flex gap-3 group">
+                                <div className="size-16 sm:size-20 bg-gray-50 dark:bg-white/5 rounded-xl overflow-hidden p-1.5 flex items-center justify-center border border-gray-100 dark:border-white/5 shrink-0">
                                     <img
                                         src={item.product?.image || ''}
                                         alt={item.product?.name || 'Produto'}
                                         className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500"
                                     />
                                 </div>
-                                <div className="flex-1 flex flex-col justify-between py-1">
+                                <div className="flex-1 flex flex-col justify-between py-0.5">
                                     <div>
                                         <div className="flex justify-between items-start gap-2">
-                                            <h3 className="text-[11px] sm:text-xs font-black uppercase tracking-tight text-[#1c1a0d] dark:text-white line-clamp-1">
+                                            <h3 className="text-[10px] sm:text-[11px] font-black uppercase tracking-tight text-[#1c1a0d] dark:text-white line-clamp-1">
                                                 {item.product?.name || 'Produto'}
                                             </h3>
                                             <button
                                                 onClick={() => onRemove(item.product.id)}
                                                 className="text-gray-300 hover:text-red-500 transition-colors"
                                             >
-                                                <span className="material-symbols-outlined !text-sm">delete</span>
+                                                <span className="material-symbols-outlined !text-xs">delete</span>
                                             </button>
                                         </div>
-                                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">
+                                        <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">
                                             {item.product?.category || 'Geral'}
                                         </p>
                                     </div>
 
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3 bg-gray-50 dark:bg-white/5 rounded-xl px-3 py-1.5 border border-gray-100 dark:border-white/5">
+                                    <div className="flex items-center justify-between mt-1">
+                                        <div className="flex items-center gap-2.5 bg-gray-50 dark:bg-white/5 rounded-lg px-2 py-1 border border-gray-100 dark:border-white/5">
                                             <button
                                                 onClick={() => onUpdateQuantity(item.product.id, -1)}
                                                 className="text-gray-400 hover:text-primary transition-colors flex items-center justify-center"
                                             >
-                                                <span className="material-symbols-outlined !text-xs">remove</span>
+                                                <span className="material-symbols-outlined !text-[10px]">remove</span>
                                             </button>
-                                            <span className="text-[10px] font-black w-4 text-center">{item.quantity}</span>
+                                            <span className="text-[9px] font-black w-3 text-center">{item.quantity}</span>
                                             <button
                                                 onClick={() => onUpdateQuantity(item.product.id, 1)}
                                                 className="text-gray-400 hover:text-primary transition-colors flex items-center justify-center"
                                             >
-                                                <span className="material-symbols-outlined !text-xs">add</span>
+                                                <span className="material-symbols-outlined !text-[10px]">add</span>
                                             </button>
                                         </div>
-                                        <p className="font-black text-[12px] sm:text-[13px] text-primary">
+                                        <p className="font-black text-[11px] text-primary">
                                             {((item.product?.price || 0) * (item.quantity || 0)).toLocaleString()} Kz
                                         </p>
                                     </div>
@@ -118,31 +112,25 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                 </div>
 
                 {/* Footer */}
-                <div className="p-6 sm:p-8 border-t border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 space-y-6">
-                    <div className="flex items-center justify-between">
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Total do Pedido</span>
+                <div className="p-4 sm:p-6 border-t border-gray-100 dark:border-white/5 bg-gray-50/10 dark:bg-white/5 space-y-4">
+                    <div className="flex items-center justify-between px-1">
+                        <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Total</span>
                         <div className="text-right">
-                            <span className="text-2xl sm:text-3xl font-black text-[#1c1a0d] dark:text-white leading-none">
+                            <span className="text-2xl font-black text-[#1c1a0d] dark:text-white leading-none">
                                 {total.toLocaleString()}
                             </span>
-                            <span className="text-[10px] font-black text-primary ml-1 uppercase">Kz</span>
+                            <span className="text-[9px] font-black text-primary ml-1 uppercase">Kz</span>
                         </div>
                     </div>
 
-                    <div className="flex flex-col gap-3">
+                    <div className="flex flex-col gap-2">
                         <button
                             onClick={onCheckout}
                             disabled={items.length === 0}
-                            className="w-full bg-[#1c1a0d] dark:bg-primary text-white dark:text-black py-5 rounded-[1.5rem] font-black uppercase tracking-[0.2em] text-[10px] sm:text-[11px] shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 disabled:hover:scale-100 flex items-center justify-center gap-3"
+                            className="w-full bg-[#1c1a0d] dark:bg-primary text-white dark:text-black py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/10 hover:scale-[1.01] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                         >
-                            <span className="material-symbols-outlined !text-lg">shopping_cart_checkout</span>
+                            <span className="material-symbols-outlined !text-base">shopping_cart_checkout</span>
                             Finalizar Pedido
-                        </button>
-                        <button
-                            onClick={onClose}
-                            className="w-full py-4 text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-primary transition-colors"
-                        >
-                            Continuar Comprando
                         </button>
                     </div>
                 </div>
