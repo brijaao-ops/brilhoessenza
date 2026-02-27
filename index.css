@@ -164,6 +164,93 @@ body {
     transform: translateY(-8px);
 }
 
+/* Underwater Animations */
+@keyframes underwaterRefraction {
+
+    0%,
+    100% {
+        filter: blur(0px) contrast(1) brightness(1);
+        transform: scale(1) skew(0deg);
+    }
+
+    25% {
+        filter: blur(0.5px) contrast(1.1) brightness(1.05);
+        transform: scale(1.02) skew(1deg);
+    }
+
+    50% {
+        filter: blur(1px) contrast(0.9) brightness(0.95);
+        transform: scale(1.05) skew(-1deg);
+    }
+
+    75% {
+        filter: blur(0.5px) contrast(1.05) brightness(1.1);
+        transform: scale(1.02) skew(0.5deg);
+    }
+}
+
+@keyframes waterCaustics {
+    0% {
+        background-position: 0% 0%;
+        opacity: 0.1;
+    }
+
+    50% {
+        background-position: 100% 100%;
+        opacity: 0.3;
+    }
+
+    100% {
+        background-position: 0% 0%;
+        opacity: 0.1;
+    }
+}
+
+@keyframes floatBubble {
+    0% {
+        transform: translateY(100vh) scale(0);
+        opacity: 0;
+    }
+
+    20% {
+        opacity: 0.6;
+    }
+
+    80% {
+        opacity: 0.6;
+    }
+
+    100% {
+        transform: translateY(-20vh) scale(1.5);
+        opacity: 0;
+    }
+}
+
+.animate-underwater {
+    animation: underwaterRefraction 10s ease-in-out infinite;
+}
+
+.caustics-overlay {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.2) 0%, transparent 80%);
+    background-size: 200% 200%;
+    mix-blend-mode: overlay;
+    pointer-events: none;
+    animation: waterCaustics 8s linear infinite;
+    z-index: 5;
+}
+
+.bubble {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 15;
+    animation: floatBubble linear infinite;
+}
+
 /* Water Floating Animation */
 @keyframes waterFloat {
     0% {

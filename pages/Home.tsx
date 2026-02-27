@@ -93,11 +93,29 @@ const Home: React.FC<HomeProps> = ({
                   className={`absolute inset-0 transition-all duration-[1.5s] cubic-bezier(0.4, 0, 0.2, 1) ${index === currentSlide ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-110 z-0'}`}
                 >
                   <img
-                    className="w-full h-full object-cover opacity-60 animate-slow-zoom"
+                    className="w-full h-full object-cover opacity-60 animate-slow-zoom animate-underwater"
                     alt={slide.title}
                     src={slide.image_url}
                   />
-                  <div className="absolute inset-0 bg-gradient-to-r from-background-dark via-background-dark/40 to-transparent"></div>
+                  <div className="caustics-overlay"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-background-dark via-background-dark/40 to-transparent z-10"></div>
+
+                  {/* Bubbles Overlay */}
+                  <div className="absolute inset-0 overflow-hidden pointer-events-none z-20">
+                    {[...Array(15)].map((_, i) => (
+                      <div
+                        key={i}
+                        className="bubble"
+                        style={{
+                          left: `${Math.random() * 100}%`,
+                          width: `${Math.random() * 20 + 5}px`,
+                          height: `${Math.random() * 20 + 5}px`,
+                          animationDuration: `${Math.random() * 4 + 4}s`,
+                          animationDelay: `${Math.random() * 5}s`,
+                        } as React.CSSProperties}
+                      />
+                    ))}
+                  </div>
 
                   <div className="absolute inset-0 flex items-center px-6 sm:px-12 lg:px-20">
                     <div className={`max-w-3xl transition-all duration-1000 delay-500 ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
