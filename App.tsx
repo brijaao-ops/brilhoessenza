@@ -731,7 +731,7 @@ const AppContent: React.FC = () => {
               <Route path="/produto/:id" element={<ProductDetail products={products} onAddToCart={handleAddToCart} />} />
               <Route path="/atelier" element={<AtelierInfo />} />
               <Route path="/admin/login" element={<AdminLogin onLogin={handleLogin} />} />
-              <Route path="/checkout/confirmacao" element={<OrderConfirmation />} />
+              <Route path="/checkout/confirmacao/:token" element={<OrderConfirmation />} />
               <Route path="/driver/registrar" element={<DriverRegistration />} />
               <Route path="/entregador/cadastro" element={<DriverRegistration />} />
               <Route path="/driver/login" element={<DriverLogin />} />

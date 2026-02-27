@@ -13,30 +13,33 @@ const OrderConfirmation: React.FC = () => {
     useEffect(() => {
         const fetchOrder = async () => {
             if (!token) {
-                setError("Token de confirmação ausente.");
+                setError("Token de confirmação ausente. Verifique o link.");
                 setLoading(false);
                 return;
             }
             try {
-                // Call the secure RPC function we created - MUST use p_token as defined in SQL
-                const { data, error } = await supabase.rpc('get_order_by_token', { token: token });
+                // Direct query instead of RPC to avoid function ambiguity issues
+                const { data, error: dbError } = await supabase
+                    .from('orders')
+                    .select('*, driver:delivery_drivers(*)')
+                    .eq('delivery_token', token)
+                    .single();
 
-                if (error) throw error;
-                if (!data || data.length === 0) throw new Error("Pedido não encontrado ou token expirado.");
+                if (dbError) throw dbError;
+                if (!data) throw new Error("Pedido não encontrado ou token expirado.");
 
-                const orderData = data[0];
                 setOrder({
-                    ...orderData,
-                    customer: orderData.customer || orderData.customer_name,
-                    amount: Number(orderData.total || orderData.amount || 0)
+                    ...data,
+                    customer: data.customer || data.customer_name,
+                    amount: Number(data.amount || data.total || 0),
                 });
 
-                if (orderData.status === 'DELIVERED') {
-                    setSuccess(true); // Already delivered
+                if (data.status === 'DELIVERED') {
+                    setSuccess(true);
                 }
             } catch (err: any) {
                 console.error("Fetch error:", err);
-                setError(err.message || "Erro ao carregar pedido.");
+                setError(err.message || "Erro ao carregar pedido. Verifique o link.");
             } finally {
                 setLoading(false);
             }
@@ -48,12 +51,18 @@ const OrderConfirmation: React.FC = () => {
         if (!order) return;
         setConfirming(true);
         try {
-            const { data, error } = await supabase.rpc('confirm_delivery', { token_input: token });
+            // Direct update instead of RPC to avoid function issues
+            const { error: updateError } = await supabase
+                .from('orders')
+                .update({
+                    status: 'DELIVERED',
+                    delivery_confirmation_time: new Date().toISOString()
+                })
+                .eq('delivery_token', token)
+                .neq('status', 'DELIVERED');
 
-            if (error) throw error;
-            if (data === false) throw new Error("Pedido já entregue ou token inválido.");
+            if (updateError) throw updateError;
 
-            // Update local state to reflect success immediately
             setSuccess(true);
 
             // Send WhatsApp notification to the company
@@ -63,12 +72,12 @@ const OrderConfirmation: React.FC = () => {
                 const now = new Date();
                 const dateStr = now.toLocaleDateString('pt-AO');
                 const timeStr = now.toLocaleTimeString('pt-AO', { hour: '2-digit', minute: '2-digit' });
-                const totalFormatted = new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order?.total || order?.amount || 0);
+                const totalFormatted = new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order?.amount || 0);
 
                 let msg = `✅ *ENTREGA CONFIRMADA*\n\n`;
                 msg += `📦 *Pedido:* #${(order.id || '').slice(0, 8)}\n`;
                 msg += `👤 *Cliente:* ${order.customer || 'N/A'}\n`;
-                msg += `🚚 *Entregador:* ${order.driver?.name || 'N/A'}\n`;
+                msg += `🚚 *Entregador:* ${order.driver?.name || order.deliverer_name || 'N/A'}\n`;
                 msg += `💰 *Valor:* ${totalFormatted}\n`;
                 msg += `📅 *Confirmado em:* ${dateStr} às ${timeStr}\n`;
                 msg += `🔑 *Protocolo:* ${token}\n\n`;
@@ -78,21 +87,25 @@ const OrderConfirmation: React.FC = () => {
                 window.open(`https://wa.me/${companyPhone.replace(/\D/g, '')}?text=${encoded}`, '_blank');
             } catch (whatsappErr) {
                 console.error("WhatsApp notification failed:", whatsappErr);
-                // Don't block the confirmation flow if WhatsApp fails
             }
         } catch (err: any) {
-            alert("Erro ao confirmar: " + err.message);
+            alert("Erro ao confirmar: " + (err.message || JSON.stringify(err)));
         } finally {
             setConfirming(false);
         }
     };
 
-    if (loading) return <div className="min-h-screen bg-black flex items-center justify-center"><div className="size-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div></div>;
+    if (loading) return (
+        <div className="min-h-screen bg-black flex flex-col items-center justify-center gap-4">
+            <div className="size-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <p className="text-white text-xs font-black uppercase tracking-widest opacity-60">A carregar pedido...</p>
+        </div>
+    );
 
     if (success) {
         return (
             <div className="min-h-screen bg-green-500 flex flex-col items-center justify-center p-8 text-center text-white">
-                <div className="size-24 bg-white text-green-500 rounded-full flex items-center justify-center mb-6 shadow-2xl animate-scale-up">
+                <div className="size-24 bg-white text-green-500 rounded-full flex items-center justify-center mb-6 shadow-2xl">
                     <span className="material-symbols-outlined !text-6xl">check_circle</span>
                 </div>
                 <h1 className="text-3xl font-black uppercase tracking-tighter mb-2">Confirmado!</h1>
@@ -111,7 +124,10 @@ const OrderConfirmation: React.FC = () => {
             <div className="min-h-screen bg-black flex flex-col items-center justify-center p-8 text-center text-white">
                 <span className="material-symbols-outlined text-6xl text-red-500 mb-4">gpp_bad</span>
                 <h1 className="text-xl font-bold mb-2">Erro de Validação</h1>
-                <p className="text-gray-400 text-sm">{error || "Link inválido."}</p>
+                <p className="text-gray-400 text-sm max-w-sm">{error || "Link inválido ou expirado."}</p>
+                {token && (
+                    <p className="text-gray-600 text-xs mt-4 font-mono break-all max-w-xs">Token: {token}</p>
+                )}
             </div>
         );
     }
@@ -129,18 +145,18 @@ const OrderConfirmation: React.FC = () => {
                 <div className="flex flex-col items-center relative z-10">
                     <div className="size-16 sm:size-20 rounded-full border-2 border-primary shadow-lg overflow-hidden bg-white mb-3">
                         {order.driver?.photo_url ? (
-                            <img src={order.driver.photo_url} className="w-full h-full object-cover" />
+                            <img src={order.driver.photo_url} className="w-full h-full object-cover" alt="Entregador" />
                         ) : (
                             <div className="w-full h-full flex items-center justify-center text-gray-400">
                                 <span className="material-symbols-outlined text-3xl">person</span>
                             </div>
                         )}
                     </div>
-                    <h2 className="text-lg font-black uppercase tracking-tight">{order.driver?.name || "Entregador Brilho Essenza"}</h2>
+                    <h2 className="text-lg font-black uppercase tracking-tight">{order.driver?.name || order.deliverer_name || "Entregador Brilho Essenza"}</h2>
                     <div className="flex items-center gap-2 mt-1.5 text-[10px] text-gray-400 font-bold bg-white/5 px-3 py-1.5 rounded-full">
                         <span>{order.driver?.vehicle_type || "Veículo"}</span>
                         <span className="opacity-30">•</span>
-                        <span className="font-mono text-white tracking-widest">{order.driver?.license_plate || "AAA-000"}</span>
+                        <span className="font-mono text-white tracking-widest">{order.driver?.license_plate || "---"}</span>
                     </div>
                 </div>
             </div>
@@ -151,22 +167,31 @@ const OrderConfirmation: React.FC = () => {
                     <h3 className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-4 border-b border-gray-100 dark:border-[#222115] pb-3">Itens do Pedido</h3>
 
                     <div className="flex flex-col gap-3 mb-5">
-                        {order.items?.map((item: any, idx: number) => (
-                            <div key={idx} className="flex gap-3 items-center">
-                                <div className="size-10 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center overflow-hidden shrink-0 border border-gray-100 dark:border-white/5">
-                                    {item.image ? <img src={item.image} className="w-full h-full object-cover" /> : <span className="material-symbols-outlined text-gray-300">inventory_2</span>}
+                        {(order.items && order.items.length > 0) ? order.items.map((item: any, idx: number) => {
+                            const product = item.product || item;
+                            const name = product.name || item.name || 'Produto';
+                            const qty = item.quantity || item.qty || 1;
+                            const price = product.price || item.price || 0;
+                            const image = product.image || item.image || '';
+                            return (
+                                <div key={idx} className="flex gap-3 items-center">
+                                    <div className="size-10 bg-gray-100 dark:bg-white/5 rounded-lg flex items-center justify-center overflow-hidden shrink-0 border border-gray-100 dark:border-white/5">
+                                        {image ? <img src={image} className="w-full h-full object-cover" alt={name} /> : <span className="material-symbols-outlined text-gray-300">inventory_2</span>}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <p className="font-black text-xs truncate leading-tight uppercase tracking-tight">{name}</p>
+                                        <p className="text-[10px] font-bold text-gray-400">{qty}x {price > 0 ? new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(price) : ''}</p>
+                                    </div>
                                 </div>
-                                <div className="flex-1 min-w-0">
-                                    <p className="font-black text-xs truncate leading-tight uppercase tracking-tight">{item.name}</p>
-                                    <p className="text-[10px] font-bold text-gray-400">{item.quantity}x {item.price ? new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(item.price) : ''}</p>
-                                </div>
-                            </div>
-                        ))}
+                            );
+                        }) : (
+                            <p className="text-xs text-gray-400 italic">Sem detalhe de itens disponível.</p>
+                        )}
                     </div>
 
                     <div className="bg-gray-50/50 dark:bg-[#1c1a0d] rounded-xl p-3 flex justify-between items-center mb-6">
                         <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total</span>
-                        <span className="text-base font-black text-primary">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order?.total || order?.amount || 0)}</span>
+                        <span className="text-base font-black text-primary">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order.amount || 0)}</span>
                     </div>
 
                     <button
