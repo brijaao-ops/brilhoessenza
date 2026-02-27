@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
 import { ProductDetailsSkeleton } from '../components/Skeletons';
 import { Product } from '../types';
@@ -12,6 +12,7 @@ interface ProductDetailProps {
 
 const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) => {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const [isAdded, setIsAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
@@ -57,8 +58,21 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
 
   return (
     <div className="pb-32 animate-fade-up px-4 md:px-0">
+      {/* Botão Voltar Premium */}
+      <div className="pt-6 sm:pt-10">
+        <button
+          onClick={() => navigate(-1)}
+          className="group flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-gray-400 hover:text-primary transition-all active:scale-95"
+        >
+          <div className="size-8 rounded-full bg-gray-50 dark:bg-white/5 flex items-center justify-center group-hover:bg-primary group-hover:text-black transition-colors">
+            <span className="material-symbols-outlined !text-lg">chevron_left</span>
+          </div>
+          <span>Voltar</span>
+        </button>
+      </div>
+
       {/* Breadcrumbs de Luxo */}
-      <nav className="flex py-6 sm:py-10 text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] sm:tracking-[0.4em] text-gray-400 gap-2 sm:gap-3 items-center overflow-x-auto no-scrollbar whitespace-nowrap">
+      <nav className="flex py-6 sm:py-8 text-[8px] sm:text-[9px] font-black uppercase tracking-[0.3em] sm:tracking-[0.4em] text-gray-400 gap-2 sm:gap-3 items-center overflow-x-auto no-scrollbar whitespace-nowrap">
         <Link to="/" className="hover:text-primary transition-colors">Atelier</Link>
         <span className="text-gray-200">/</span>
         <span className="hover:text-primary transition-colors cursor-default">{product?.category || 'Coleção'}</span>
