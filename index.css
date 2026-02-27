@@ -152,3 +152,38 @@
     box-shadow: 0 30px 60px -12px rgba(242, 208, 13, 0.15);
     transform: translateY(-8px);
 }
+
+/* Water Floating Animation */
+@keyframes waterFloat {
+    0% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    33% {
+        transform: translateY(-8px) rotate(0.5deg);
+    }
+
+    66% {
+        transform: translateY(-4px) rotate(-0.5deg);
+    }
+
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+}
+
+.animate-water-float {
+    animation: waterFloat 4s ease-in-out infinite;
+}
+
+/* Scroll Reveal Animation */
+.product-card-reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-card-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
