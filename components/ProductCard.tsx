@@ -39,14 +39,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             className={`relative flex flex-col justify-between h-[420px] sm:h-[450px] w-full bg-white dark:bg-background-dark/80 organic-card-shape overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl cursor-pointer product-card-reveal ${isVisible ? 'is-visible animate-water-float' : ''}`}
         >
             {/* Price Badge - Floating Solid Boutique */}
-            <div className="absolute top-4 right-4 z-[60] px-4 py-2 boutique-price-badge rounded-xl flex flex-col items-end gap-0.5 opacity-100 group-hover:scale-105 transition-transform duration-300">
+            <div className="absolute top-4 right-4 z-[60] px-4 py-2 boutique-price-badge rounded-xl flex flex-col items-end gap-0.5 opacity-100 group-hover:scale-105 transition-all duration-300 [transform-style:preserve-3d] [backface-visibility:hidden]">
                 {(product.salePrice || 0) > 0 && (product.salePrice || 0) < (product.price || 0) ? (
                     <>
-                        <span className="text-[8px] line-through opacity-70 font-bold uppercase tracking-tighter">
+                        <span className="text-[8px] line-through opacity-75 font-extrabold uppercase tracking-tighter filter drop-shadow-[0_1px_1px_rgba(0,0,0,0.1)]">
                             {(product.price || 0).toLocaleString()} Kz
                         </span>
                         <div className="flex items-baseline gap-0.5">
-                            <span className="text-base sm:text-lg font-black tracking-tighter">
+                            <span className="text-base sm:text-lg font-black tracking-tighter filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
                                 {(product.salePrice || 0).toLocaleString()}
                             </span>
                             <span className="text-[9px] font-black uppercase">Kz</span>
@@ -54,7 +54,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                     </>
                 ) : (
                     <div className="flex items-baseline gap-0.5">
-                        <span className="text-lg sm:text-xl font-black tracking-tighter">
+                        <span className="text-lg sm:text-xl font-black tracking-tighter filter drop-shadow-[0_1px_2px_rgba(0,0,0,0.1)]">
                             {(product.price || 0).toLocaleString()}
                         </span>
                         <span className="text-[9px] font-black uppercase">Kz</span>
