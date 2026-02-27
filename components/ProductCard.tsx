@@ -38,29 +38,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             ref={cardRef}
             className={`relative flex flex-col justify-between h-[420px] sm:h-[450px] w-full bg-white dark:bg-background-dark/80 organic-card-shape overflow-hidden group shadow-lg border border-gray-100 dark:border-white/5 transition-all duration-500 hover:shadow-2xl cursor-pointer product-card-reveal ${isVisible ? 'is-visible animate-water-float' : ''}`}
         >
-            {/* Price Pill - Floating Glassmorphism */}
-            <div className="absolute top-4 right-4 z-40 px-5 py-2.5 glass-pill-price rounded-2xl flex flex-col items-end gap-0.5 opacity-100 group-hover:scale-110 transition-transform duration-300">
+            {/* Price Badge - Floating Solid Boutique */}
+            <div className="absolute top-4 right-4 z-[60] px-4 py-2 boutique-price-badge rounded-xl flex flex-col items-end gap-0.5 opacity-100 group-hover:scale-105 transition-transform duration-300">
                 {(product.salePrice || 0) > 0 && (product.salePrice || 0) < (product.price || 0) ? (
                     <>
-                        <span className="text-[9px] line-through opacity-60 font-medium">
+                        <span className="text-[8px] line-through opacity-70 font-bold uppercase tracking-tighter">
                             {(product.price || 0).toLocaleString()} Kz
                         </span>
                         <div className="flex items-baseline gap-0.5">
-                            <span className="text-lg sm:text-xl font-black text-secondary">
+                            <span className="text-base sm:text-lg font-black tracking-tighter">
                                 {(product.salePrice || 0).toLocaleString()}
                             </span>
-                            <span className="text-[10px] font-black text-secondary">Kz</span>
+                            <span className="text-[9px] font-black uppercase">Kz</span>
                         </div>
                     </>
                 ) : (
                     <div className="flex items-baseline gap-0.5">
-                        <span className="text-xl font-black text-primary drop-shadow-[0_2px_4px_rgba(0,0,0,0.2)]">
+                        <span className="text-lg sm:text-xl font-black tracking-tighter">
                             {(product.price || 0).toLocaleString()}
                         </span>
-                        <span className="text-[10px] font-black text-primary">Kz</span>
+                        <span className="text-[9px] font-black uppercase">Kz</span>
                     </div>
                 )}
             </div>
+
             {/* INVISIBLE OVERLAY LINK - COVERS EVERYTHING */}
             <Link
                 to={`/produto/${product.id}`}
@@ -70,17 +71,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 <span className="sr-only">Ver produto {product.name}</span>
             </Link>
 
-            {/* Header: Category/Signature & Stock */}
-            <div className="absolute top-0 left-0 w-full flex justify-between items-center p-4 sm:p-6 z-30 pointer-events-none">
+            {/* Header: Category/Signature & Stock - Moved down to avoid price badge */}
+            <div className="absolute top-[70px] left-0 w-full flex justify-between items-center px-4 sm:px-6 z-30 pointer-events-none">
                 <div className="flex items-center gap-1.5 sm:gap-2">
-                    <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 drop-shadow-sm">
+                    <span className="text-[7px] sm:text-[9px] font-black uppercase tracking-[0.2em] text-gray-500 bg-white/80 dark:bg-black/40 px-2 py-0.5 rounded-md backdrop-blur-sm shadow-sm border border-gray-100 dark:border-white/5">
                         {product?.subCategory || product?.category || 'Geral'}
                     </span>
-                    <span className="material-symbols-outlined !text-[12px] sm:!text-[14px] text-primary bg-primary/10 size-5 sm:size-6 flex items-center justify-center rounded-lg shadow-sm border border-primary/20">
+                    <span className="material-symbols-outlined !text-[10px] sm:!text-[12px] text-primary bg-primary/20 size-4 sm:size-5 flex items-center justify-center rounded-md shadow-sm border border-primary/30">
                         {product?.gender === 'masculino' ? 'male' : product?.gender === 'feminino' ? 'female' : 'wc'}
                     </span>
                     {product.stock > 0 && (
-                        <span className="ml-2 text-[9px] font-black text-green-600 bg-green-500/10 px-2 py-0.5 rounded-full">
+                        <span className="ml-1 text-[8px] font-black text-green-600 bg-white/80 dark:bg-black/40 px-2 py-0.5 rounded-full border border-green-500/20 shadow-sm backdrop-blur-sm">
                             {product.stock} em stock
                         </span>
                     )}
@@ -88,8 +89,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </div>
 
             {/* Image Container */}
-            <div className="flex-1 relative flex items-center justify-center p-4 sm:p-6 transition-transform duration-700 pointer-events-none">
-                <div className="block w-full h-full flex items-center justify-center overflow-hidden">
+            <div className="flex-1 relative flex items-center justify-center p-6 sm:p-8 transition-transform duration-700 pointer-events-none">
+                <div className="block w-full h-full flex items-center justify-center organic-image-clip bg-gray-50/50 dark:bg-white/5 border border-black/5 dark:border-white/5 shadow-inner">
                     <img
                         src={product?.image || ''}
                         alt={product?.name || 'Produto'}
