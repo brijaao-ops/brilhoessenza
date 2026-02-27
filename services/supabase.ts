@@ -283,17 +283,17 @@ export const fetchOrders = async (): Promise<Order[]> => {
     return (data || []).map((o: any) => ({
         ...o,
         customer: o.customer || o.customer_name,
-        amount: Number(o.total || o.amount || 0),
+        amount: Number(o.amount || o.total || 0),
         productId: o.product_id || o.productId,
     }));
 };
 
 export const createOrder = async (order: Order) => {
-    // Map camelCase to snake_case for DB insertion
+    // Map field names to real DB column names
     const dbOrder: any = {
         customer: order.customer,
         phone: order.phone,
-        total: order.amount,
+        amount: order.amount,
         status: order.status,
         date: order.date,
         time: order.time,
@@ -335,7 +335,7 @@ export const createOrder = async (order: Order) => {
 export const updateOrder = async (id: string, updates: Partial<Order>) => {
     const dbUpdates: any = { ...updates };
     if (updates.customer !== undefined) dbUpdates.customer = updates.customer;
-    if (updates.amount !== undefined) dbUpdates.total = updates.amount;
+    if (updates.amount !== undefined) dbUpdates.amount = updates.amount;
     if (updates.productId !== undefined) dbUpdates.product_id = updates.productId;
 
     // Remove the camelCase versions to avoid DB projection errors

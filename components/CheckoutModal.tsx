@@ -61,7 +61,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
         <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-10 sm:pt-20">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
 
-            <div className="relative w-full max-w-xl bg-white dark:bg-[#15140b] rounded-[3rem] shadow-2xl overflow-hidden animate-fade-up max-h-[80vh] overflow-y-auto">
+            <div className="relative w-full max-w-xl bg-white dark:bg-[#15140b] rounded-[3rem] shadow-2xl overflow-visible animate-fade-up max-h-[80vh] overflow-y-auto">
                 <div className="p-6 lg:p-8">
                     <div className="flex items-center justify-between mb-6">
                         <div>
@@ -102,7 +102,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                             </div>
                         </div>
 
-                        <div className="flex flex-col gap-1.5 relative">
+                        <div className="flex flex-col gap-1.5 relative z-30">
                             <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Localização (Província/Município/Bairro)</label>
                             <div className="relative group">
                                 <span className="absolute left-4 top-1/2 -translate-y-1/2 material-symbols-outlined text-gray-400 !text-lg">map</span>
@@ -119,30 +119,30 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                                     className="w-full bg-gray-50 dark:bg-white/5 p-4 pl-12 rounded-xl font-bold outline-none border border-transparent focus:border-primary transition-all text-xs"
                                     placeholder="Comece a digitar sua zona..."
                                 />
-                            </div>
 
-                            {showSuggestions && suggestions.length > 0 && (
-                                <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#1c1a0d] border border-gray-100 dark:border-white/5 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.3)] z-[100] overflow-hidden">
-                                    {suggestions.map((loc, i) => (
-                                        <button
-                                            key={i}
-                                            type="button"
-                                            onClick={() => {
-                                                setSelectedLocation(loc);
-                                                setFormData({ ...formData, locationSearch: loc.combined });
-                                                setShowSuggestions(false);
-                                            }}
-                                            className="w-full p-4 text-left hover:bg-primary/10 border-b border-gray-50 dark:border-white/5 last:border-none flex items-center gap-3 transition-colors bg-white dark:bg-[#1c1a0d]"
-                                        >
-                                            <span className="material-symbols-outlined text-gray-400 !text-sm">location_on</span>
-                                            <div>
-                                                <p className="text-sm font-black text-[#1c1a0d] dark:text-white">{loc.neighborhood}, {loc.municipality}</p>
-                                                <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{loc.province}</p>
-                                            </div>
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
+                                {showSuggestions && suggestions.length > 0 && (
+                                    <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[#1c1a0d] border border-gray-200 dark:border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.4)] z-[200] overflow-hidden">
+                                        {suggestions.map((loc, i) => (
+                                            <button
+                                                key={i}
+                                                type="button"
+                                                onClick={() => {
+                                                    setSelectedLocation(loc);
+                                                    setFormData({ ...formData, locationSearch: loc.combined });
+                                                    setShowSuggestions(false);
+                                                }}
+                                                className="w-full p-4 text-left hover:bg-primary/10 active:bg-primary/20 border-b border-gray-100 dark:border-white/5 last:border-none flex items-center gap-3 transition-colors bg-white dark:bg-[#1c1a0d]"
+                                            >
+                                                <span className="material-symbols-outlined text-primary !text-sm shrink-0">location_on</span>
+                                                <div>
+                                                    <p className="text-sm font-black text-[#1c1a0d] dark:text-white leading-tight">{loc.neighborhood}, {loc.municipality}</p>
+                                                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{loc.province}</p>
+                                                </div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </div>
 
                         <div className="flex flex-col gap-2">
