@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Slide } from '../../types';
 import { fetchSlides, addSlide, updateSlide, uploadImage } from '../../services/supabase';
@@ -87,7 +87,7 @@ const AdminSlideForm: React.FC = () => {
     return (
         <div className="p-4 md:p-8 lg:p-12 max-w-5xl mx-auto">
             <div className="flex items-center gap-4 lg:gap-6 mb-8 lg:mb-12">
-                <Link to="/admin/slides" className="size-12 lg:size-14 bg-white dark:bg-[#15140b] rounded-2xl flex items-center justify-center hover:bg-primary border border-gray-100 dark:border-white/5 transition-all shadow-sm">
+                <Link to="/admin/slides" className="size-12 lg:size-14 bg-white dark:bg-[#0d1840] rounded-2xl flex items-center justify-center hover:bg-primary border border-gray-100 dark:border-white/5 transition-all shadow-sm">
                     <span className="material-symbols-outlined">arrow_back</span>
                 </Link>
                 <div>
@@ -100,7 +100,7 @@ const AdminSlideForm: React.FC = () => {
 
             <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
                 <div className="lg:col-span-12">
-                    <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[3rem] border border-gray-100 dark:border-white/5 shadow-sm space-y-8 lg:space-y-10">
+                    <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[3rem] border border-gray-100 dark:border-white/5 shadow-sm space-y-8 lg:space-y-10">
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8">
                             <div className="flex flex-col gap-4 lg:gap-6 md:col-span-2">

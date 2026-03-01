@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { Order } from '../../types';
 
 interface AdminPaymentsProps {
@@ -17,7 +17,7 @@ const AdminPayments: React.FC<AdminPaymentsProps> = ({ orders }) => {
           <h2 className="text-3xl font-black uppercase tracking-tighter">Fluxo <span className="text-primary italic">Financeiro</span></h2>
           <p className="text-sm text-gray-500 font-medium">Gestão de recebíveis e conciliação de {paidOrders.length} transações confirmadas.</p>
         </div>
-        <div className="flex items-center gap-4 bg-white dark:bg-[#15140b] p-2 rounded-2xl border border-gray-100 dark:border-[#222115]">
+        <div className="flex items-center gap-4 bg-white dark:bg-[#0d1840] p-2 rounded-2xl border border-gray-100 dark:border-[#222115]">
           <div className="px-6 py-2 text-center border-r border-gray-100 dark:border-[#222115]">
             <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Saldo Bruto Confirmado</p>
             <p className="text-xl font-black">{totalRevenue.toLocaleString()} Kz</p>
@@ -26,7 +26,7 @@ const AdminPayments: React.FC<AdminPaymentsProps> = ({ orders }) => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#15140b] rounded-[2.5rem] border border-gray-100 dark:border-[#222115] overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-[#0d1840] rounded-[2.5rem] border border-gray-100 dark:border-[#222115] overflow-hidden shadow-sm">
         <table className="w-full text-left">
           <thead>
             <tr className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-50 dark:border-[#222115]">
@@ -44,7 +44,7 @@ const AdminPayments: React.FC<AdminPaymentsProps> = ({ orders }) => {
                 <td className="px-8 py-5 font-black text-xs uppercase text-primary">#{o.id.slice(0, 5)}</td>
                 <td className="px-8 py-5">
                   <div className="flex flex-col">
-                    <span className="text-sm font-black text-[#1c1a0d] dark:text-white">{o.customer}</span>
+                    <span className="text-sm font-black text-navy dark:text-white">{o.customer}</span>
                     <span className="text-[10px] font-bold text-gray-400">{o.phone || 'Geral'}</span>
                   </div>
                 </td>

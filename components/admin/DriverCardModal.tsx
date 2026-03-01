@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import QRCode from 'react-qr-code';
 import { DeliveryDriver } from '../../types';
 
@@ -16,7 +16,7 @@ const DriverCardModal: React.FC<DriverCardModalProps> = ({ driver, isOpen, onClo
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
-            <div className="relative bg-white dark:bg-[#15140b] rounded-[2rem] w-full max-w-sm shadow-2xl overflow-hidden animate-scale-up border border-gray-100 dark:border-[#222115]">
+            <div className="relative bg-white dark:bg-[#0d1840] rounded-[2rem] w-full max-w-sm shadow-2xl overflow-hidden animate-scale-up border border-gray-100 dark:border-[#222115]">
 
                 {/* Visual Card Representation */}
                 <div id="driver-card" className="bg-gradient-to-br from-[#1c1a0d] to-black p-6 relative overflow-hidden text-white">
@@ -66,7 +66,7 @@ const DriverCardModal: React.FC<DriverCardModalProps> = ({ driver, isOpen, onClo
                     </div>
                 </div>
 
-                <div className="p-6 bg-gray-50 dark:bg-[#1c1a0d]">
+                <div className="p-6 bg-gray-50 dark:bg-navy">
                     <p className="text-center text-xs text-gray-400 mb-6">Este cartão identifica o portador como parceiro logístico autorizado.</p>
                     <button
                         onClick={onClose}

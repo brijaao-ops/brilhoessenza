@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { supabase, UserProfile, fetchTeam, createEmployee, UserPermissions, updateEmployeePermissions, deleteEmployee, fetchProfile, updateAppSetting, fetchAppSetting } from '../../services/supabase';
 
 const AdminSettings: React.FC = () => {
@@ -179,20 +179,20 @@ const AdminSettings: React.FC = () => {
       case 0: // O Atelier
         return (
           <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
               <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Narrativa do Atelier</h4>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nome da Marca</label>
-                  <input type="text" value={companyName} onChange={e => setCompanyName(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
+                  <input type="text" value={companyName} onChange={e => setCompanyName(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Herança & Filosofia (Sobre Nós)</label>
-                  <textarea rows={4} value={heritage} onChange={e => setHeritage(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none resize-none" />
+                  <textarea rows={4} value={heritage} onChange={e => setHeritage(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none resize-none" />
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Endereço Principal</label>
-                  <textarea rows={2} value={companyAddress} onChange={e => setCompanyAddress(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none resize-none" />
+                  <textarea rows={2} value={companyAddress} onChange={e => setCompanyAddress(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none resize-none" />
                 </div>
               </div>
             </div>
@@ -201,7 +201,7 @@ const AdminSettings: React.FC = () => {
       case 1: // Aparência
         return (
           <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
               <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Identidade Visual</h4>
               <div className="flex flex-col gap-8">
                 <div className="flex items-center gap-10">
@@ -233,20 +233,20 @@ const AdminSettings: React.FC = () => {
       case 2: // Apoio ao Cliente
         return (
           <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
               <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Políticas de Serviço</h4>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">WhatsApp de Suporte (Concierge)</label>
-                  <input type="text" value={companyPhone} onChange={e => setCompanyPhone(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
+                  <input type="text" value={companyPhone} onChange={e => setCompanyPhone(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Política de Envio & Logística</label>
-                  <textarea rows={3} value={shippingPolicy} onChange={e => setShippingPolicy(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none resize-none" />
+                  <textarea rows={3} value={shippingPolicy} onChange={e => setShippingPolicy(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none resize-none" />
                 </div>
                 <div className="flex flex-col gap-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Política de Devolução (Luxo)</label>
-                  <textarea rows={3} value={returnPolicy} onChange={e => setReturnPolicy(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none resize-none" />
+                  <textarea rows={3} value={returnPolicy} onChange={e => setReturnPolicy(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none resize-none" />
                 </div>
               </div>
             </div>
@@ -255,23 +255,23 @@ const AdminSettings: React.FC = () => {
       case 3: // Pagamentos & Taxas
         return (
           <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
               <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Fiscalidade & Moeda</h4>
               <div className="flex flex-col gap-6">
                 <div className="flex flex-col gap-2">
                   <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Taxa de IVA (%)</label>
-                  <input type="number" value={taxRate} onChange={e => setTaxRate(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
+                  <input type="number" value={taxRate} onChange={e => setTaxRate(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
                   <p className="text-[10px] text-gray-400">O padrão em Angola é 14%.</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
               <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Métodos de Pagamento</h4>
               <div className="flex flex-col gap-8">
 
                 {/* MCX Express */}
-                <div className="p-6 rounded-2xl border border-gray-100 dark:border-[#222115] bg-gray-50/50 dark:bg-[#0f0e08]/50">
+                <div className="p-6 rounded-2xl border border-gray-100 dark:border-[#222115] bg-gray-50/50 dark:bg-[#08112e]/50">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <span className="material-symbols-outlined text-primary">payments</span>
@@ -285,13 +285,13 @@ const AdminSettings: React.FC = () => {
                   {enableMCX && (
                     <div className="animate-slide-in">
                       <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Telemóvel Associado (Express)</label>
-                      <input type="text" value={mcxPhone} onChange={e => setMcxPhone(e.target.value)} placeholder="923 000 000" className="w-full mt-2 bg-white dark:bg-[#15140b] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
+                      <input type="text" value={mcxPhone} onChange={e => setMcxPhone(e.target.value)} placeholder="923 000 000" className="w-full mt-2 bg-white dark:bg-[#0d1840] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
                     </div>
                   )}
                 </div>
 
                 {/* Transferência Bancária */}
-                <div className="p-6 rounded-2xl border border-gray-100 dark:border-[#222115] bg-gray-50/50 dark:bg-[#0f0e08]/50">
+                <div className="p-6 rounded-2xl border border-gray-100 dark:border-[#222115] bg-gray-50/50 dark:bg-[#08112e]/50">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <span className="material-symbols-outlined text-primary">account_balance</span>
@@ -306,11 +306,11 @@ const AdminSettings: React.FC = () => {
                     <div className="flex flex-col gap-4 animate-slide-in">
                       <div className="flex flex-col gap-2">
                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nome do Banco</label>
-                        <input type="text" value={bankName} onChange={e => setBankName(e.target.value)} placeholder="Ex: Banco BAI" className="w-full bg-white dark:bg-[#15140b] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
+                        <input type="text" value={bankName} onChange={e => setBankName(e.target.value)} placeholder="Ex: Banco BAI" className="w-full bg-white dark:bg-[#0d1840] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
                       </div>
                       <div className="flex flex-col gap-2">
                         <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Coordenada Bancária (IBAN)</label>
-                        <input type="text" value={bankIBAN} onChange={e => setBankIBAN(e.target.value)} placeholder="AO06 ...." className="w-full bg-white dark:bg-[#15140b] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
+                        <input type="text" value={bankIBAN} onChange={e => setBankIBAN(e.target.value)} placeholder="AO06 ...." className="w-full bg-white dark:bg-[#0d1840] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
                       </div>
                     </div>
                   )}
@@ -323,32 +323,32 @@ const AdminSettings: React.FC = () => {
       case 4: // Logística
         return (
           <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
               <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Zonas de Entrega</h4>
               <div className="flex flex-col gap-6">
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0f0e08] rounded-xl">
+                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#08112e] rounded-xl">
                   <label className="text-xs font-black uppercase tracking-widest">Luanda (Capital)</label>
                   <div className="flex items-center gap-2">
-                    <input type="number" value={shippingLuanda} onChange={e => setShippingLuanda(e.target.value)} className="w-24 sm:w-32 bg-white dark:bg-[#15140b] p-2 rounded-lg text-right font-bold outline-none border border-transparent focus:border-primary" />
+                    <input type="number" value={shippingLuanda} onChange={e => setShippingLuanda(e.target.value)} className="w-24 sm:w-32 bg-white dark:bg-[#0d1840] p-2 rounded-lg text-right font-bold outline-none border border-transparent focus:border-primary" />
                     <span className="text-[10px] font-bold">Kz</span>
                   </div>
                 </div>
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#0f0e08] rounded-xl">
+                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#08112e] rounded-xl">
                   <label className="text-xs font-black uppercase tracking-widest">Outras Províncias</label>
                   <div className="flex items-center gap-2">
-                    <input type="number" value={shippingProvinces} onChange={e => setShippingProvinces(e.target.value)} className="w-24 sm:w-32 bg-white dark:bg-[#15140b] p-2 rounded-lg text-right font-bold outline-none border border-transparent focus:border-primary" />
+                    <input type="number" value={shippingProvinces} onChange={e => setShippingProvinces(e.target.value)} className="w-24 sm:w-32 bg-white dark:bg-[#0d1840] p-2 rounded-lg text-right font-bold outline-none border border-transparent focus:border-primary" />
                     <span className="text-[10px] font-bold">Kz</span>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
               <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Ofertas de Frete</h4>
               <div className="flex flex-col gap-2">
                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Frete Grátis para pedidos acima de:</label>
                 <div className="flex items-center gap-4">
-                  <input type="number" value={freeShippingThreshold} onChange={e => setFreeShippingThreshold(e.target.value)} className="flex-1 bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
+                  <input type="number" value={freeShippingThreshold} onChange={e => setFreeShippingThreshold(e.target.value)} className="flex-1 bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
                   <span className="font-black text-sm">Kz</span>
                 </div>
               </div>
@@ -358,7 +358,7 @@ const AdminSettings: React.FC = () => {
       case 5: // Segurança
         return (
           <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
               <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Credenciais de Acesso</h4>
               <div className="bg-red-50 dark:bg-red-900/10 p-6 rounded-2xl mb-6">
                 <p className="text-xs text-red-600 dark:text-red-400 font-bold">Atenção: A alteração da palavra-passe é imediata. Você precisará fazer login novamente com a nova credencial.</p>
@@ -370,7 +370,7 @@ const AdminSettings: React.FC = () => {
                     type="password"
                     id="new-password"
                     placeholder="Mínimo 6 caracteres"
-                    className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none"
+                    className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none"
                     onChange={(e) => {
                       // Storing in a temporary window variable or state would be better, but for this 'bulk save' flow we need to adapt handleSave or make this immediate.
                       // Given the current architecture where handleSave dumps everything to localStorage, we need a separate handler for Password.

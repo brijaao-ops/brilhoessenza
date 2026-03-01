@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Slide } from '../../types';
 import { fetchSlides, deleteSlide } from '../../services/supabase';
@@ -29,7 +29,7 @@ const AdminSlides: React.FC = () => {
         <div className="p-6 lg:p-12">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 md:mb-12">
                 <div>
-                    <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-[#1c1a0d] dark:text-white">Gestão de <span className="text-primary italic">Slides</span></h2>
+                    <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-navy dark:text-white">Gestão de <span className="text-primary italic">Slides</span></h2>
                     <p className="text-[10px] md:text-sm text-gray-500 font-medium uppercase tracking-widest mt-1">Configure os banners principais da Home.</p>
                 </div>
                 <Link
@@ -51,7 +51,7 @@ const AdminSlides: React.FC = () => {
                     </div>
                 ) : (
                     slides.map((slide) => (
-                        <div key={slide.id} className="bg-white dark:bg-[#15140b] rounded-[2.5rem] overflow-hidden border border-gray-100 dark:border-[#222115] group hover:shadow-2xl transition-all">
+                        <div key={slide.id} className="bg-white dark:bg-[#0d1840] rounded-[2.5rem] overflow-hidden border border-gray-100 dark:border-[#222115] group hover:shadow-2xl transition-all">
                             <div className="aspect-video relative overflow-hidden bg-gray-100 dark:bg-black">
                                 <img src={slide.image_url} alt={slide.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                                 <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity gap-4 lg:flex hidden">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 interface OrderSuccessModalProps {
     isOpen: boolean;
@@ -30,7 +30,7 @@ const OrderSuccessModal: React.FC<OrderSuccessModalProps> = ({ isOpen, onClose, 
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4">
             <div className="absolute inset-0 bg-black/90 backdrop-blur-md" onClick={onClose}></div>
 
-            <div className="relative w-full max-w-md bg-white dark:bg-[#15140b] rounded-[3rem] shadow-2xl overflow-hidden animate-bounce-in border border-gray-100 dark:border-white/5">
+            <div className="relative w-full max-w-md bg-white dark:bg-[#0d1840] rounded-[3rem] shadow-2xl overflow-hidden animate-bounce-in border border-gray-100 dark:border-white/5">
                 <div className="p-10 flex flex-col items-center text-center">
                     <div className="size-20 bg-green-500/10 rounded-full flex items-center justify-center mb-6 text-green-500 animate-pulse">
                         <span className="material-symbols-outlined !text-4xl">check_circle</span>

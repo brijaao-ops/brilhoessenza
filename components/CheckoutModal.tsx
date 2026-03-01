@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+﻿import React, { useState, useMemo } from 'react';
 import { ANGOLA_LOCATIONS, LocationSuggestion } from '../data/locations';
 
 interface CheckoutModalProps {
@@ -61,7 +61,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
         <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-10 sm:pt-20">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose}></div>
 
-            <div className="relative w-full max-w-xl bg-white dark:bg-[#15140b] rounded-[3rem] shadow-2xl overflow-visible animate-fade-up max-h-[80vh] overflow-y-auto">
+            <div className="relative w-full max-w-xl bg-white dark:bg-[#0d1840] rounded-[3rem] shadow-2xl overflow-visible animate-fade-up max-h-[80vh] overflow-y-auto">
                 <div className="p-6 lg:p-8">
                     <div className="flex items-center justify-between mb-6">
                         <div>
@@ -121,7 +121,7 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                                 />
 
                                 {showSuggestions && suggestions.length > 0 && (
-                                    <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-[#1c1a0d] border border-gray-200 dark:border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.4)] z-[200] overflow-hidden">
+                                    <div className="absolute top-full left-0 right-0 mt-1 bg-white dark:bg-navy border border-gray-200 dark:border-white/10 rounded-2xl shadow-[0_20px_60px_rgba(0,0,0,0.4)] z-[200] overflow-hidden">
                                         {suggestions.map((loc, i) => (
                                             <button
                                                 key={i}
@@ -131,11 +131,11 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                                                     setFormData({ ...formData, locationSearch: loc.combined });
                                                     setShowSuggestions(false);
                                                 }}
-                                                className="w-full p-4 text-left hover:bg-primary/10 active:bg-primary/20 border-b border-gray-100 dark:border-white/5 last:border-none flex items-center gap-3 transition-colors bg-white dark:bg-[#1c1a0d]"
+                                                className="w-full p-4 text-left hover:bg-primary/10 active:bg-primary/20 border-b border-gray-100 dark:border-white/5 last:border-none flex items-center gap-3 transition-colors bg-white dark:bg-navy"
                                             >
                                                 <span className="material-symbols-outlined text-primary !text-sm shrink-0">location_on</span>
                                                 <div>
-                                                    <p className="text-sm font-black text-[#1c1a0d] dark:text-white leading-tight">{loc.neighborhood}, {loc.municipality}</p>
+                                                    <p className="text-sm font-black text-navy dark:text-white leading-tight">{loc.neighborhood}, {loc.municipality}</p>
                                                     <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">{loc.province}</p>
                                                 </div>
                                             </button>

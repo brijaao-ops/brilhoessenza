@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { fetchTeam, createEmployee, updateEmployeePermissions, deleteEmployee, markFirstLoginComplete, updateEmployeeProfile } from '../../services/supabase';
 import { UserProfile, UserPermissions } from '../../types';
 
@@ -168,7 +168,7 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
         return (
             <div className="flex flex-col gap-3 py-4 border-b border-gray-100 dark:border-white/5 last:border-none">
                 <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white">{label}</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-navy dark:text-white">{label}</span>
                     <button
                         type="button"
                         onClick={() => {
@@ -187,7 +187,7 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
                                 key={sub.key}
                                 type="button"
                                 onClick={() => togglePermission(area, sub.key, isEdit)}
-                                className={`px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${perms[area]?.[sub.key] ? 'bg-primary/10 border-primary text-primary' : 'bg-white dark:bg-[#15140b] border-gray-100 dark:border-white/5 text-gray-400'}`}
+                                className={`px-4 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${perms[area]?.[sub.key] ? 'bg-primary/10 border-primary text-primary' : 'bg-white dark:bg-[#0d1840] border-gray-100 dark:border-white/5 text-gray-400'}`}
                             >
                                 {sub.label}
                             </button>
@@ -202,7 +202,7 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
         <div className="p-4 md:p-8 lg:p-12 animate-slide-in pb-20 md:pb-12">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 lg:mb-12 gap-6">
                 <div>
-                    <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tighter text-[#1c1a0d] dark:text-white">Gestão de <span className="text-primary italic">Equipe</span></h2>
+                    <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tighter text-navy dark:text-white">Gestão de <span className="text-primary italic">Equipe</span></h2>
                     <p className="text-[10px] lg:text-sm text-gray-400 font-bold uppercase tracking-widest mt-1">Controle de acesso e colaboradores.</p>
                 </div>
                 {(userProfile?.role === 'admin' || userProfile?.permissions?.team?.edit || userProfile?.permissions?.team?.manage) && (
@@ -223,7 +223,7 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
                         <p className="text-gray-500 font-bold">Carregando equipe...</p>
                     </div>
                 ) : team.map(member => (
-                    <div key={member.id} className={`bg-white dark:bg-[#15140b] p-6 md:p-8 rounded-2xl md:rounded-[2rem] border ${member.is_active === false ? 'border-red-500/30' : 'border-gray-100 dark:border-[#222115]'} shadow-sm relative group overflow-hidden transition-all ${member.is_active === false ? 'opacity-70 bg-gray-50 dark:bg-black/20' : ''}`}>
+                    <div key={member.id} className={`bg-white dark:bg-[#0d1840] p-6 md:p-8 rounded-2xl md:rounded-[2rem] border ${member.is_active === false ? 'border-red-500/30' : 'border-gray-100 dark:border-[#222115]'} shadow-sm relative group overflow-hidden transition-all ${member.is_active === false ? 'opacity-70 bg-gray-50 dark:bg-black/20' : ''}`}>
 
                         {(userProfile?.role === 'admin' || userProfile?.permissions?.team?.edit || userProfile?.permissions?.team?.manage) && (
                             <div className="absolute top-6 right-6 flex gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
@@ -239,7 +239,7 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
                         )}
 
                         <div className="flex items-center gap-4 mb-6">
-                            <div className="size-12 bg-gray-100 dark:bg-[#0f0e08] rounded-full flex items-center justify-center font-black text-gray-500 uppercase">
+                            <div className="size-12 bg-gray-100 dark:bg-[#08112e] rounded-full flex items-center justify-center font-black text-gray-500 uppercase">
                                 {member.full_name?.substring(0, 2) || 'FW'}
                             </div>
                             <div>
@@ -315,7 +315,7 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
             {/* Modal Criar Funcionário */}
             {showModal && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white dark:bg-[#15140b] w-full max-w-lg rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 relative max-h-[90vh] overflow-y-auto">
+                    <div className="bg-white dark:bg-[#0d1840] w-full max-w-lg rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 relative max-h-[90vh] overflow-y-auto">
                         <button onClick={() => setShowModal(false)} className="absolute top-8 right-8 text-gray-400 hover:text-red-500">
                             <span className="material-symbols-outlined">close</span>
                         </button>
@@ -326,19 +326,19 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="flex flex-col gap-2">
                                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nome</label>
-                                    <input required type="text" value={newName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewName(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="Ex: Ana Silva" />
+                                    <input required type="text" value={newName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewName(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="Ex: Ana Silva" />
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Senha Provisória</label>
-                                    <input required type="text" value={newPass} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPass(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="Min 6 caracteres" />
+                                    <input required type="text" value={newPass} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPass(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="Min 6 caracteres" />
                                 </div>
                             </div>
                             <div className="flex flex-col gap-2">
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Email Corporativo</label>
-                                <input required type="email" value={newEmail} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEmail(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="ana@brilho.com" />
+                                <input required type="email" value={newEmail} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEmail(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="ana@brilho.com" />
                             </div>
 
-                            <div className="bg-gray-50 dark:bg-[#0f0e08] p-6 rounded-2xl max-h-[300px] overflow-y-auto custom-scrollbar">
+                            <div className="bg-gray-50 dark:bg-[#08112e] p-6 rounded-2xl max-h-[300px] overflow-y-auto custom-scrollbar">
                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Permissões de Acesso</p>
                                 <PermissionRow area="orders" label="Pedidos" perms={permissions} />
                                 <PermissionRow area="sales" label="Vendas" perms={permissions} />
@@ -359,7 +359,7 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
             {/* Modal Editar Funcionário */}
             {editingMember && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white dark:bg-[#15140b] w-full max-w-lg rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 relative max-h-[90vh] overflow-y-auto">
+                    <div className="bg-white dark:bg-[#0d1840] w-full max-w-lg rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 relative max-h-[90vh] overflow-y-auto">
                         <button onClick={() => setEditingMember(null)} className="absolute top-8 right-8 text-gray-400 hover:text-red-500">
                             <span className="material-symbols-outlined">close</span>
                         </button>
@@ -369,10 +369,10 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
                         <form onSubmit={handleUpdate} className="flex flex-col gap-6">
                             <div className="flex flex-col gap-2">
                                 <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nome Completo</label>
-                                <input required type="text" value={editName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditName(e.target.value)} className="bg-gray-50 dark:bg-[#0f0e08] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
+                                <input required type="text" value={editName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditName(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
                             </div>
 
-                            <div className="bg-gray-50 dark:bg-[#0f0e08] p-6 rounded-2xl max-h-[300px] overflow-y-auto custom-scrollbar">
+                            <div className="bg-gray-50 dark:bg-[#08112e] p-6 rounded-2xl max-h-[300px] overflow-y-auto custom-scrollbar">
                                 <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Acessos Permitidos</p>
                                 <PermissionRow area="orders" label="Pedidos" perms={editPerms} isEdit />
                                 <PermissionRow area="sales" label="Vendas" perms={editPerms} isEdit />

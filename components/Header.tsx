@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Category, UserProfile } from '../types';
@@ -191,7 +191,7 @@ const Header: React.FC<HeaderProps> = ({
 
             <button
               onClick={onOpenCart}
-              className="size-10 sm:size-12 bg-[#1c1a0d] dark:bg-primary text-white dark:text-black rounded-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 relative shadow-xl shadow-black/10 dark:shadow-primary/10"
+              className="size-10 sm:size-12 bg-navy dark:bg-primary text-white dark:text-navy rounded-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 relative shadow-xl shadow-navy/20 dark:shadow-primary/10"
               title="Seu Pedido"
             >
               <span className="material-symbols-outlined !text-xl">shopping_cart</span>
@@ -215,8 +215,8 @@ const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 right-0 z-[100] bg-white dark:bg-[#0c0b06] border-t border-gray-100 dark:border-white/5 shadow-2xl overflow-y-auto animate-slide-in">
-          <nav className="flex flex-col p-8 gap-6 min-h-[50vh] bg-white dark:bg-[#0c0b06]">
+        <div className="lg:hidden absolute top-full left-0 right-0 z-[100] bg-white dark:bg-[#060e1e] border-t border-gray-100 dark:border-white/5 shadow-2xl overflow-y-auto animate-slide-in">
+          <nav className="flex flex-col p-8 gap-6 min-h-[50vh] bg-white dark:bg-[#060e1e]">
             {/* Mobile Search - Visible only in menu on mobile */}
             <div className="relative w-full md:hidden group">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors">search</span>
@@ -236,8 +236,7 @@ const Header: React.FC<HeaderProps> = ({
                   ensureHomeAndAction(() => onCategoryChange(item.value));
                   setIsMenuOpen(false);
                 }}
-                className={`text-sm font-black uppercase tracking-widest text-left py-4 border-b border-gray-100 dark:border-white/5 ${selectedCategory === item.value ? 'text-primary' : 'text-gray-500'
-                  }`}
+                className="text-sm font-black uppercase tracking-widest text-left py-4 border-b border-gray-100 dark:border-white/5 text-navy dark:text-gray-500"
               >
                 {item.label}
               </button>

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { createDriver, uploadImage } from '../services/supabase';
 import { useNavigate } from 'react-router-dom';
 import { createWorker } from 'tesseract.js';
@@ -206,8 +206,8 @@ const DriverRegistration: React.FC = () => {
 
     if (success) {
         return (
-            <div className="min-h-screen bg-[#fcfbf8] dark:bg-[#0f0e08] flex items-center justify-center p-6">
-                <div className="max-w-md w-full bg-white dark:bg-[#15140b] rounded-[3rem] p-12 text-center shadow-2xl border border-primary/10 animate-fade-up">
+            <div className="min-h-screen bg-[#fcfbf8] dark:bg-[#08112e] flex items-center justify-center p-6">
+                <div className="max-w-md w-full bg-white dark:bg-[#0d1840] rounded-[3rem] p-12 text-center shadow-2xl border border-primary/10 animate-fade-up">
                     <div className="size-20 bg-green-500/10 text-green-500 rounded-full flex items-center justify-center mx-auto mb-8">
                         <span className="material-symbols-outlined !text-4xl">verified</span>
                     </div>
@@ -222,8 +222,8 @@ const DriverRegistration: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#fcfbf8] dark:bg-[#0f0e08] flex items-center justify-center p-6 py-20">
-            <div className="max-w-4xl w-full bg-white dark:bg-[#15140b] rounded-[4rem] p-8 lg:p-16 shadow-2xl border border-gray-100 dark:border-white/5">
+        <div className="min-h-screen bg-[#fcfbf8] dark:bg-[#08112e] flex items-center justify-center p-6 py-20">
+            <div className="max-w-4xl w-full bg-white dark:bg-[#0d1840] rounded-[4rem] p-8 lg:p-16 shadow-2xl border border-gray-100 dark:border-white/5">
 
                 {/* Progress Bar */}
                 <div className="flex justify-center mb-12 gap-2">

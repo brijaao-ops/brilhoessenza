@@ -1,4 +1,4 @@
-
+﻿
 import React from 'react';
 
 const AdminLogistics: React.FC = () => {
@@ -18,7 +18,7 @@ const AdminLogistics: React.FC = () => {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
-        <div className="bg-white dark:bg-[#15140b] rounded-3xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] p-6 lg:p-8">
+        <div className="bg-white dark:bg-[#0d1840] rounded-3xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] p-6 lg:p-8">
           <h4 className="font-black uppercase tracking-widest text-xs mb-8 flex items-center gap-2">
             <span className="material-symbols-outlined text-primary text-sm">local_shipping</span> Entregas Ativas
           </h4>
@@ -35,7 +35,7 @@ const AdminLogistics: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-black dark:bg-[#15140b] rounded-3xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] p-6 lg:p-8 text-white">
+        <div className="bg-black dark:bg-[#0d1840] rounded-3xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] p-6 lg:p-8 text-white">
           <h4 className="font-black uppercase tracking-widest text-[10px] mb-8 text-primary">Painel de Operações</h4>
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between py-4 border-b border-white/5">

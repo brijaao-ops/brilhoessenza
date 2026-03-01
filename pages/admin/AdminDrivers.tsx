@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { DeliveryDriver, UserProfile } from '../../types';
 import DriverTable from '../../components/admin/DriverTable';
 import { fetchDrivers, updateDriver, deleteDriver, supabase, createDriverCredentials } from '../../services/supabase';
@@ -100,9 +100,9 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile, drivers, setDr
                         <span className="text-[10px] font-black uppercase tracking-widest text-primary">Comissões</span>
                     </button>
                     <div className="flex gap-2 bg-gray-50 dark:bg-white/5 p-1.5 rounded-2xl border border-gray-100 dark:border-white/5">
-                        <button onClick={() => setFilter('all')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'all' ? 'bg-white dark:bg-[#1c1a0d] text-primary shadow-sm' : 'text-gray-400'}`}>Todos</button>
-                        <button onClick={() => setFilter('verified')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'verified' ? 'bg-white dark:bg-[#1c1a0d] text-primary shadow-sm' : 'text-gray-400'}`}>Verificados</button>
-                        <button onClick={() => setFilter('pending')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'pending' ? 'bg-white dark:bg-[#1c1a0d] text-primary shadow-sm' : 'text-gray-400'}`}>Pendentes</button>
+                        <button onClick={() => setFilter('all')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'all' ? 'bg-white dark:bg-navy text-primary shadow-sm' : 'text-gray-400'}`}>Todos</button>
+                        <button onClick={() => setFilter('verified')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'verified' ? 'bg-white dark:bg-navy text-primary shadow-sm' : 'text-gray-400'}`}>Verificados</button>
+                        <button onClick={() => setFilter('pending')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'pending' ? 'bg-white dark:bg-navy text-primary shadow-sm' : 'text-gray-400'}`}>Pendentes</button>
                     </div>
                 </div>
             </div>

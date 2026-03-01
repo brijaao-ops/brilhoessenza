@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { fetchCategories, deleteCategory, fetchProducts } from '../../services/supabase';
@@ -51,7 +51,7 @@ const AdminCategories: React.FC<AdminCategoriesProps> = ({ userProfile }) => {
     <div className="p-6 lg:p-12">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 md:mb-12">
         <div>
-          <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-[#1c1a0d] dark:text-white">Gestão de <span className="text-primary italic">Categorias</span></h2>
+          <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter text-navy dark:text-white">Gestão de <span className="text-primary italic">Categorias</span></h2>
           <p className="text-[10px] md:text-sm text-gray-500 font-medium uppercase tracking-widest mt-1">Estruture seu catálogo em departamentos exclusivos.</p>
         </div>
         {(userProfile?.role === 'admin' || userProfile?.permissions?.products?.create || userProfile?.permissions?.products?.edit) && (
@@ -66,7 +66,7 @@ const AdminCategories: React.FC<AdminCategoriesProps> = ({ userProfile }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
         {categories.map((cat, i) => (
-          <div key={i} className="bg-white dark:bg-[#15140b] p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] hover:border-primary transition-all group flex flex-col relative overflow-hidden shadow-sm hover:shadow-xl">
+          <div key={i} className="bg-white dark:bg-[#0d1840] p-6 md:p-10 rounded-2xl md:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] hover:border-primary transition-all group flex flex-col relative overflow-hidden shadow-sm hover:shadow-xl">
             {/* Background Accent */}
             <div className={`absolute top-0 right-0 size-32 bg-primary/5 rounded-bl-[100px] -mr-8 -mt-8 group-hover:bg-primary/10 transition-colors`}></div>
 

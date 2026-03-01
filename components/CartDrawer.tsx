@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Product } from '../types';
 
 interface CartDrawerProps {
@@ -37,11 +37,11 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
             ></div>
 
             {/* Drawer */}
-            <div className={`w-full max-w-[calc(100%-2rem)] sm:max-w-md bg-white dark:bg-[#0f0e08] h-fit max-h-[80vh] rounded-[2rem] sm:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden border border-gray-100 dark:border-white/5 z-[110] pointer-events-auto ${positionClasses}`}>
+            <div className={`w-full max-w-[calc(100%-2rem)] sm:max-w-md bg-white dark:bg-[#08112e] h-fit max-h-[80vh] rounded-[2rem] sm:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden border border-gray-100 dark:border-white/5 z-[110] pointer-events-auto ${positionClasses}`}>
                 {/* Header */}
                 <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
                     <div>
-                        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tighter text-[#1c1a0d] dark:text-white leading-tight">
+                        <h2 className="text-xl sm:text-2xl font-black uppercase tracking-tighter text-navy dark:text-white leading-tight">
                             Meu <span className="text-primary italic">Pedido</span>
                         </h2>
                         <p className="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em] mt-0.5">
@@ -76,7 +76,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                                 <div className="flex-1 flex flex-col justify-between py-0.5">
                                     <div>
                                         <div className="flex justify-between items-start gap-2">
-                                            <h3 className="text-[10px] sm:text-[11px] font-black uppercase tracking-tight text-[#1c1a0d] dark:text-white line-clamp-1">
+                                            <h3 className="text-[10px] sm:text-[11px] font-black uppercase tracking-tight text-navy dark:text-white line-clamp-1">
                                                 {item.product?.name || 'Produto'}
                                             </h3>
                                             <button
@@ -122,7 +122,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                     <div className="flex items-center justify-between px-1">
                         <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Total</span>
                         <div className="text-right">
-                            <span className="text-2xl font-black text-[#1c1a0d] dark:text-white leading-none">
+                            <span className="text-2xl font-black text-navy dark:text-white leading-none">
                                 {total.toLocaleString()}
                             </span>
                             <span className="text-[9px] font-black text-primary ml-1 uppercase">Kz</span>
@@ -133,7 +133,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                         <button
                             onClick={onCheckout}
                             disabled={items.length === 0}
-                            className="w-full bg-[#1c1a0d] dark:bg-primary text-white dark:text-black py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/10 hover:scale-[1.01] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                            className="w-full bg-navy dark:bg-primary text-white dark:text-black py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/10 hover:scale-[1.01] active:scale-95 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                         >
                             <span className="material-symbols-outlined !text-base">shopping_cart_checkout</span>
                             Finalizar Pedido

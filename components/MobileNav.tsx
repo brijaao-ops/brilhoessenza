@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 interface MobileNavProps {
@@ -19,7 +19,7 @@ const MobileNav: React.FC<MobileNavProps> = ({ onOpenCart, cartCount, isAuthenti
     ];
 
     return (
-        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/95 dark:bg-[#15140b]/95 backdrop-blur-xl border-t border-gray-100 dark:border-white/5 px-6 pb-safe pt-3 flex justify-between items-center shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
+        <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-[60] bg-white/95 dark:bg-[#0d1840]/95 backdrop-blur-xl border-t border-gray-100 dark:border-white/5 px-6 pb-safe pt-3 flex justify-between items-center shadow-[0_-10px_30px_rgba(0,0,0,0.05)]">
             {navItems.map((item) => {
                 const isActive = item.path === location.pathname;
                 return (

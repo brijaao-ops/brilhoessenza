@@ -1,4 +1,4 @@
-
+﻿
 import React, { useMemo } from 'react';
 import { Product } from '../../types';
 
@@ -15,13 +15,13 @@ const AdminStock: React.FC<AdminStockProps> = ({ products }) => {
     <div className="p-4 md:p-8 lg:p-12">
       <div className="flex flex-col md:flex-row justify-between items-center gap-6 mb-8 lg:mb-12">
         <h2 className="text-3xl font-black uppercase tracking-tighter">Estoque & <span className="text-primary italic">Lotes</span></h2>
-        <div className="bg-white dark:bg-[#15140b] p-4 lg:p-6 rounded-xl lg:rounded-2xl border text-right">
+        <div className="bg-white dark:bg-[#0d1840] p-4 lg:p-6 rounded-xl lg:rounded-2xl border text-right">
           <p className="text-[9px] lg:text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Valor Total em Ativos</p>
           <p className="text-2xl lg:text-3xl font-black text-primary">{totalValue.toLocaleString()} Kz</p>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#15140b] rounded-[1.5rem] md:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-[#0d1840] rounded-[1.5rem] md:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] overflow-hidden shadow-sm">
         {/* Desktop Table */}
         <div className="hidden md:block">
           <table className="w-full text-left">

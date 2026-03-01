@@ -1,4 +1,4 @@
-
+﻿
 import React from 'react';
 
 interface ImageUploadProps {
@@ -19,7 +19,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ image, onImageChange, 
     };
 
     return (
-        <div className="bg-white dark:bg-[#15140b] p-5 md:p-8 rounded-2xl border shadow-sm flex flex-col gap-4">
+        <div className="bg-white dark:bg-[#0d1840] p-5 md:p-8 rounded-2xl border shadow-sm flex flex-col gap-4">
             <div className="flex items-center gap-2">
                 <span className="material-symbols-outlined !text-base text-primary">image</span>
                 <h4 className="font-black uppercase tracking-widest text-[10px] text-primary">Imagem do Produto</h4>
@@ -71,10 +71,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ image, onImageChange, 
                     value={image}
                     onChange={e => onImageChange(e.target.value)}
                     placeholder="Cole o link da imagem (https://...)"
-                    className="w-full bg-gray-50 dark:bg-[#0f0e08] p-3.5 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary outline-none border border-transparent"
+                    className="w-full bg-gray-50 dark:bg-[#08112e] p-3.5 rounded-xl text-xs font-bold focus:ring-2 focus:ring-primary outline-none border border-transparent"
                 />
             ) : (
-                <label className="flex flex-col items-center gap-2 bg-gray-50 dark:bg-[#0f0e08] rounded-xl p-4 border-2 border-dashed border-gray-200 dark:border-white/10 cursor-pointer hover:border-primary/40 transition-colors">
+                <label className="flex flex-col items-center gap-2 bg-gray-50 dark:bg-[#08112e] rounded-xl p-4 border-2 border-dashed border-gray-200 dark:border-white/10 cursor-pointer hover:border-primary/40 transition-colors">
                     <span className="material-symbols-outlined !text-2xl text-gray-400">upload_file</span>
                     <span className="text-[10px] font-black text-gray-400 uppercase">Toca para escolher imagem</span>
                     <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />

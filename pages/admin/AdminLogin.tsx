@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -75,7 +75,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
           <div className="relative z-10 flex items-center gap-6">
             <div className="flex -space-x-3">
               {[1, 2, 3].map(i => (
-                <div key={i} className="size-10 rounded-full border-2 border-[#1c1a0d] bg-gray-800 flex items-center justify-center text-[10px] font-bold text-gray-500">
+                <div key={i} className="size-10 rounded-full border-2 border-navy bg-gray-800 flex items-center justify-center text-[10px] font-bold text-gray-500">
                   {i === 1 ? 'AD' : i === 2 ? 'MG' : '+'}
                 </div>
               ))}
@@ -85,7 +85,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
         </div>
 
         {/* Right Side: Login Form */}
-        <div className="w-full lg:w-1/2 p-12 lg:p-24 flex flex-col justify-center relative bg-[#15140b]/50">
+        <div className="w-full lg:w-1/2 p-12 lg:p-24 flex flex-col justify-center relative bg-[#0d1840]/50">
           {/* Back button for mobile */}
           <Link
             to="/"

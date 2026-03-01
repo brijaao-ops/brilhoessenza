@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Order, Product, UserProfile, DeliveryDriver } from '../../types';
 import { updateOrder, fetchProducts, fetchDrivers } from '../../services/supabase';
 import { useToast } from '../../contexts/ToastContext';
@@ -116,7 +116,7 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
           <h2 className="text-3xl font-black uppercase tracking-tighter">Gestão de <span className="text-primary italic">Pedidos</span></h2>
           <p className="text-sm text-gray-500 font-medium">Gerencie solicitações e atribua entregas.</p>
         </div>
-        <div className="flex gap-2 bg-white dark:bg-[#15140b] p-1.5 rounded-2xl border border-gray-100 dark:border-[#222115]">
+        <div className="flex gap-2 bg-white dark:bg-[#0d1840] p-1.5 rounded-2xl border border-gray-100 dark:border-[#222115]">
           <button
             onClick={() => setActiveTab('requests')}
             className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all flex items-center gap-2 ${activeTab === 'requests' ? 'bg-black text-white shadow-lg' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5'}`}
@@ -134,7 +134,7 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#15140b] rounded-[2.5rem] border border-gray-100 dark:border-[#222115] overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-[#0d1840] rounded-[2.5rem] border border-gray-100 dark:border-[#222115] overflow-hidden shadow-sm">
         {activeTab === 'requests' ? (
           <div className="flex flex-col">
             {/* Desktop Table */}
@@ -231,7 +231,7 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfil
                   <div key={o.id} className="p-5 flex flex-col gap-4">
                     <div className="flex justify-between items-start">
                       <div>
-                        <p className="text-sm font-black text-[#1c1a0d] dark:text-white uppercase leading-none mb-1">{o.customer}</p>
+                        <p className="text-sm font-black text-navy dark:text-white uppercase leading-none mb-1">{o.customer}</p>
                         <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{o.date} às {o.time}</p>
                       </div>
                       <div className="flex gap-2">

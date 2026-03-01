@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { fetchDriverById, fetchAppSetting } from '../services/supabase';
 import { DeliveryDriver } from '../types';
@@ -52,7 +52,7 @@ const DriverProfile: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#0f0e08]">
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#08112e]">
                 <div className="size-10 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
             </div>
         );
@@ -60,7 +60,7 @@ const DriverProfile: React.FC = () => {
 
     if (error || !driver) {
         return (
-            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-[#0f0e08] p-8 text-center">
+            <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-[#08112e] p-8 text-center">
                 <span className="material-symbols-outlined text-6xl text-gray-300 mb-4">no_accounts</span>
                 <h1 className="text-xl font-black uppercase tracking-tighter mb-2">Entregador não encontrado</h1>
                 <p className="text-gray-400 text-sm mb-4">O perfil que você está procurando não existe ou foi desativado.</p>
@@ -76,8 +76,8 @@ const DriverProfile: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0f0e08] flex items-center justify-center p-4">
-            <div className="w-full max-w-sm bg-white dark:bg-[#15140b] rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100 dark:border-[#222115] relative group">
+        <div className="min-h-screen bg-gray-50 dark:bg-[#08112e] flex items-center justify-center p-4">
+            <div className="w-full max-w-sm bg-white dark:bg-[#0d1840] rounded-[2.5rem] shadow-2xl overflow-hidden border border-gray-100 dark:border-[#222115] relative group">
 
                 {/* Header Background */}
                 <div className="h-32 bg-primary relative overflow-hidden">

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+﻿import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 
 interface FooterProps {
@@ -39,7 +39,7 @@ const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
   };
 
   return (
-    <footer className="bg-[#0c0b06] text-white pt-20 pb-16 border-t border-white/5 relative overflow-hidden">
+    <footer className="bg-[#060e1e] text-white pt-20 pb-16 border-t border-white/5 relative overflow-hidden">
       <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
 
       <div className="max-w-[1400px] mx-auto px-8 lg:px-12">

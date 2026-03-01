@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { fetchOrders } from '../../services/supabase';
 import { Order } from '../../types';
 
@@ -56,7 +56,7 @@ const AdminCustomers: React.FC<AdminCustomersProps> = ({ orders }) => {
           <p className="text-gray-400 font-medium">Nenhum cliente registrado ainda.</p>
         ) : (
           customers.map((c, i) => (
-            <div key={i} className="bg-white dark:bg-[#15140b] p-6 lg:p-8 rounded-2xl lg:rounded-[2rem] border border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-lg transition-all">
+            <div key={i} className="bg-white dark:bg-[#0d1840] p-6 lg:p-8 rounded-2xl lg:rounded-[2rem] border border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:shadow-lg transition-all">
               <div>
                 <h4 className="font-black text-lg lg:text-xl">{c.name}</h4>
                 <div className="flex flex-wrap gap-x-4 gap-y-1 mt-1">

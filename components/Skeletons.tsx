@@ -1,4 +1,4 @@
-
+﻿
 import React from 'react';
 
 export const Skeleton: React.FC<{ className?: string }> = ({ className }) => (
@@ -6,7 +6,7 @@ export const Skeleton: React.FC<{ className?: string }> = ({ className }) => (
 );
 
 export const ProductCardSkeleton: React.FC = () => (
-    <div className="bg-white dark:bg-[#15140b] p-4 rounded-[2rem] border border-gray-100 dark:border-[#222115] flex flex-col gap-4">
+    <div className="bg-white dark:bg-[#0d1840] p-4 rounded-[2rem] border border-gray-100 dark:border-[#222115] flex flex-col gap-4">
         <div className="w-full aspect-[4/5] bg-gray-100 dark:bg-white/5 rounded-[1.5rem] animate-pulse relative overflow-hidden">
 
         </div>

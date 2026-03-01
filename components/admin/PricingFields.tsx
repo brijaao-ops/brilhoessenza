@@ -1,4 +1,4 @@
-
+﻿
 import React from 'react';
 
 interface PricingFieldsProps {
@@ -62,7 +62,7 @@ export const PricingFields: React.FC<PricingFieldsProps> = ({
     const isGoodMargin = margin ? Number(margin) >= 30 : null;
 
     return (
-        <div className="bg-white dark:bg-[#15140b] p-5 md:p-8 rounded-2xl border shadow-sm flex flex-col gap-4">
+        <div className="bg-white dark:bg-[#0d1840] p-5 md:p-8 rounded-2xl border shadow-sm flex flex-col gap-4">
             {/* Section Header */}
             <div className="flex items-center gap-2 px-1">
                 <span className="material-symbols-outlined !text-base text-primary">payments</span>
@@ -76,7 +76,7 @@ export const PricingFields: React.FC<PricingFieldsProps> = ({
                     min="0"
                     value={price || ''}
                     onChange={e => onChange('price', Number(e.target.value))}
-                    className="bg-gray-50 dark:bg-[#0f0e08] px-4 py-3 rounded-xl font-black text-2xl outline-none w-full focus:ring-2 focus:ring-primary/30 transition-all"
+                    className="bg-gray-50 dark:bg-[#08112e] px-4 py-3 rounded-xl font-black text-2xl outline-none w-full focus:ring-2 focus:ring-primary/30 transition-all"
                     placeholder="0"
                     required
                 />
@@ -114,7 +114,7 @@ export const PricingFields: React.FC<PricingFieldsProps> = ({
                     min="0"
                     value={stock || ''}
                     onChange={e => onChange('stock', Number(e.target.value))}
-                    className="bg-gray-50 dark:bg-[#0f0e08] px-4 py-3 rounded-xl font-bold text-2xl outline-none w-full focus:ring-2 focus:ring-primary/30 transition-all"
+                    className="bg-gray-50 dark:bg-[#08112e] px-4 py-3 rounded-xl font-bold text-2xl outline-none w-full focus:ring-2 focus:ring-primary/30 transition-all"
                     placeholder="0"
                     required
                 />

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+﻿import React, { useState, useEffect, useMemo } from 'react';
 import { Order, Product, DeliveryDriver } from '../../types';
 import { fetchOrders, fetchProducts } from '../../services/supabase';
 
@@ -158,7 +158,7 @@ const DriverCommissionModal: React.FC<DriverCommissionModalProps> = ({ isOpen, o
         <div className="fixed inset-0 z-[9999] flex items-center justify-center" onClick={onClose}>
             <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
             <div
-                className="relative bg-white dark:bg-[#15140b] rounded-[2rem] w-[95vw] max-w-[1400px] h-[90vh] overflow-hidden shadow-2xl animate-fade-up border border-gray-100 dark:border-[#222115] flex flex-col"
+                className="relative bg-white dark:bg-[#0d1840] rounded-[2rem] w-[95vw] max-w-[1400px] h-[90vh] overflow-hidden shadow-2xl animate-fade-up border border-gray-100 dark:border-[#222115] flex flex-col"
                 onClick={e => e.stopPropagation()}
             >
                 {/* Header */}

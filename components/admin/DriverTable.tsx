@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { DeliveryDriver, UserProfile } from '../../types';
 
 interface DriverTableProps {
@@ -16,7 +16,7 @@ const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, 
     return (
         <div className="space-y-4">
             {/* Desktop Table - Hidden on Mobile */}
-            <div className="hidden md:block overflow-x-auto bg-white dark:bg-[#15140b] rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+            <div className="hidden md:block overflow-x-auto bg-white dark:bg-[#0d1840] rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
                 <table className="w-full text-left">
                     <thead>
                         <tr className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b border-gray-100 dark:border-[#222115]">
@@ -42,14 +42,14 @@ const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, 
                                             )}
                                         </div>
                                         <div>
-                                            <p className="font-black text-sm uppercase tracking-tight text-[#1c1a0d] dark:text-white">{d.name}</p>
+                                            <p className="font-black text-sm uppercase tracking-tight text-navy dark:text-white">{d.name}</p>
                                             <p className="text-[10px] font-bold text-gray-400">{d.whatsapp}</p>
                                             <p className="text-[9px] text-gray-400 italic max-w-[150px] truncate">{d.address}</p>
                                         </div>
                                     </div>
                                 </td>
                                 <td className="px-8 py-6">
-                                    <span className="px-3 py-1 bg-gray-100 dark:bg-white/5 rounded-lg text-[9px] font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white">
+                                    <span className="px-3 py-1 bg-gray-100 dark:bg-white/5 rounded-lg text-[9px] font-black uppercase tracking-widest text-navy dark:text-white">
                                         {d.transport_type}
                                     </span>
                                 </td>
@@ -132,7 +132,7 @@ const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, 
             {/* Mobile Cards - Visible only on Mobile */}
             <div className="md:hidden grid grid-cols-1 gap-4">
                 {drivers.map((d) => (
-                    <div key={d.id} className="bg-white dark:bg-[#15140b] p-5 rounded-3xl border border-gray-100 dark:border-[#222115] shadow-sm flex flex-col gap-4">
+                    <div key={d.id} className="bg-white dark:bg-[#0d1840] p-5 rounded-3xl border border-gray-100 dark:border-[#222115] shadow-sm flex flex-col gap-4">
                         <div className="flex items-center gap-4">
                             <div className="size-14 rounded-2xl overflow-hidden bg-gray-100 dark:bg-white/10 flex-shrink-0 border-2 border-primary/20">
                                 {d.selfie_url ? (
@@ -144,12 +144,12 @@ const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, 
                                 )}
                             </div>
                             <div className="flex-1 min-w-0">
-                                <p className="font-black text-base uppercase tracking-tight text-[#1c1a0d] dark:text-white truncate">{d.name}</p>
+                                <p className="font-black text-base uppercase tracking-tight text-navy dark:text-white truncate">{d.name}</p>
                                 <div className="flex items-center gap-2 mt-1">
                                     <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${d.verified ? 'bg-green-500/10 text-green-500' : 'bg-orange-500/10 text-orange-500'}`}>
                                         {d.verified ? 'Verificado' : 'Pendente'}
                                     </span>
-                                    <span className="px-2 py-0.5 bg-gray-100 dark:bg-white/5 rounded-full text-[8px] font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white">
+                                    <span className="px-2 py-0.5 bg-gray-100 dark:bg-white/5 rounded-full text-[8px] font-black uppercase tracking-widest text-navy dark:text-white">
                                         {d.transport_type}
                                     </span>
                                 </div>

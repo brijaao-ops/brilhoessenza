@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../services/supabase';
 
@@ -133,9 +133,9 @@ const OrderConfirmation: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0f0e08] pb-12">
+        <div className="min-h-screen bg-gray-50 dark:bg-[#08112e] pb-12">
             {/* Driver Identity (Top) */}
-            <div className="bg-[#1c1a0d] text-white p-6 sm:p-8 rounded-b-[2.5rem] shadow-xl relative overflow-hidden">
+            <div className="bg-navy text-white p-6 sm:p-8 rounded-b-[2.5rem] shadow-xl relative overflow-hidden">
                 <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
                     <span className="material-symbols-outlined !text-7xl">local_shipping</span>
                 </div>
@@ -163,7 +163,7 @@ const OrderConfirmation: React.FC = () => {
 
             {/* Content */}
             <div className="p-4 sm:p-6 -mt-3 relative z-20 max-w-lg mx-auto w-full">
-                <div className="bg-white dark:bg-[#15140b] rounded-[2rem] p-5 sm:p-6 shadow-lg border border-gray-100 dark:border-[#222115]">
+                <div className="bg-white dark:bg-[#0d1840] rounded-[2rem] p-5 sm:p-6 shadow-lg border border-gray-100 dark:border-[#222115]">
                     <h3 className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-4 border-b border-gray-100 dark:border-[#222115] pb-3">Itens do Pedido</h3>
 
                     <div className="flex flex-col gap-3 mb-5">
@@ -189,7 +189,7 @@ const OrderConfirmation: React.FC = () => {
                         )}
                     </div>
 
-                    <div className="bg-gray-50/50 dark:bg-[#1c1a0d] rounded-xl p-3 flex justify-between items-center mb-6">
+                    <div className="bg-gray-50/50 dark:bg-navy rounded-xl p-3 flex justify-between items-center mb-6">
                         <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">Total</span>
                         <span className="text-base font-black text-primary">{new Intl.NumberFormat('pt-AO', { style: 'currency', currency: 'AOA' }).format(order.amount || 0)}</span>
                     </div>

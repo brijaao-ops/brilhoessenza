@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Product, UserProfile, Category } from '../../types';
@@ -168,7 +168,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
         <div className="flex items-center gap-3 min-w-0">
           <Link
             to="/admin/produtos"
-            className="size-10 bg-white dark:bg-[#15140b] rounded-xl flex items-center justify-center hover:bg-primary border shrink-0 transition-all active:scale-95 shadow-sm"
+            className="size-10 bg-white dark:bg-[#0d1840] rounded-xl flex items-center justify-center hover:bg-primary border shrink-0 transition-all active:scale-95 shadow-sm"
           >
             <span className="material-symbols-outlined !text-base">arrow_back</span>
           </Link>
@@ -227,7 +227,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
         <div className="lg:col-span-8 flex flex-col gap-5">
 
           {/* ── CATALOG CARD ── */}
-          <div className="bg-white dark:bg-[#15140b] p-5 md:p-8 rounded-2xl border shadow-sm text-black dark:text-white flex flex-col gap-5">
+          <div className="bg-white dark:bg-[#0d1840] p-5 md:p-8 rounded-2xl border shadow-sm text-black dark:text-white flex flex-col gap-5">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined !text-base text-primary">inventory_2</span>
               <h4 className="font-black uppercase tracking-widest text-[10px] text-primary">Dados do Produto</h4>
@@ -249,7 +249,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
                   const dup = norm ? products.find(p => p.name.trim().toLowerCase() === norm && !(isEditing && p.id === id)) : null;
                   setNameError(dup ? `"${dup.name}" já existe no catálogo.` : null);
                 }}
-                className={`bg-gray-50 dark:bg-[#0f0e08] px-4 py-3.5 rounded-xl font-bold text-base outline-none border-2 transition-all w-full ${nameError ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-transparent focus:border-primary/30'}`}
+                className={`bg-gray-50 dark:bg-[#08112e] px-4 py-3.5 rounded-xl font-bold text-base outline-none border-2 transition-all w-full ${nameError ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-transparent focus:border-primary/30'}`}
                 placeholder="Ex: Rose Velour Parfum"
                 required
               />
@@ -276,7 +276,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
                 rows={4}
                 value={formData.description}
                 onChange={e => setFormData({ ...formData, description: e.target.value })}
-                className="bg-gray-50 dark:bg-[#0f0e08] px-4 py-3.5 rounded-xl font-bold outline-none resize-none w-full border-2 border-transparent focus:border-primary/30 transition-all text-sm"
+                className="bg-gray-50 dark:bg-[#08112e] px-4 py-3.5 rounded-xl font-bold outline-none resize-none w-full border-2 border-transparent focus:border-primary/30 transition-all text-sm"
                 placeholder="Descreve o produto em detalhe..."
               />
             </div>
@@ -300,7 +300,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
                       type="text"
                       value={(formData.notes as any)?.[n.key] || ''}
                       onChange={e => setFormData({ ...formData, notes: { ...formData.notes, [n.key]: e.target.value } as any })}
-                      className="bg-gray-50 dark:bg-[#0f0e08] px-3 py-3 rounded-xl text-xs font-bold outline-none border border-transparent focus:border-primary/20 transition-all"
+                      className="bg-gray-50 dark:bg-[#08112e] px-3 py-3 rounded-xl text-xs font-bold outline-none border border-transparent focus:border-primary/20 transition-all"
                       placeholder={n.placeholder}
                     />
                   </div>

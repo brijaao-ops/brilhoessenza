@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useEffect } from 'react';
 import {
   ResponsiveContainer,
@@ -108,7 +108,7 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ products, orders }) => 
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 mb-8 lg:mb-10">
-        <div className="bg-white dark:bg-[#15140b] p-6 lg:p-10 rounded-3xl lg:rounded-[2.5rem] border shadow-sm">
+        <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-3xl lg:rounded-[2.5rem] border shadow-sm">
           <h4 className="font-black uppercase text-[10px] mb-6 lg:mb-8 text-primary tracking-widest">Performance da Equipe</h4>
           <div className="flex flex-col gap-4">
             {teamStats.length > 0 ? teamStats.map((s, i) => (

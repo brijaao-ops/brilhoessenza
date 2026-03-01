@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -590,11 +590,11 @@ const AppContent: React.FC = () => {
   });
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fcfbf8] dark:bg-[#0f0e08] overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#fcfbf8] dark:bg-[#08112e] overflow-x-hidden">
       {isAdminPath ? (
         isAuthenticated ? (
           <div className="flex flex-col md:flex-row h-screen overflow-hidden">
-            <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-gray-100 dark:border-[#222115] bg-white dark:bg-[#15140b] p-4 md:p-6 flex flex-col gap-4 md:gap-8 shrink-0 max-h-[40vh] md:max-h-screen overflow-y-auto">
+            <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-gray-100 dark:border-[#222115] bg-white dark:bg-[#0d1840] p-4 md:p-6 flex flex-col gap-4 md:gap-8 shrink-0 max-h-[40vh] md:max-h-screen overflow-y-auto">
               <Link to="/" onClick={resetFilters} className="flex items-center gap-2 mb-2 md:mb-4">
                 <div className="size-10 bg-primary rounded-xl flex items-center justify-center text-black font-black overflow-hidden">
                   {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" /> : 'BE'}

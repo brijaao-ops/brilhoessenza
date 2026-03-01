@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Product } from '../types';
 
@@ -112,7 +112,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                 </h3>
                 {/* Cart icon */}
                 {product.stock > 0 && (
-                    <div className="flex-shrink-0 size-8 sm:size-10 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg bg-[#1c1a0d] text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100">
+                    <div className="flex-shrink-0 size-8 sm:size-10 rounded-xl flex items-center justify-center transition-all duration-300 shadow-lg bg-navy text-white opacity-100 lg:opacity-0 lg:group-hover:opacity-100">
                         <span className="material-symbols-outlined !text-sm">
                             add_shopping_cart
                         </span>

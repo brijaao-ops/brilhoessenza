@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState, useMemo } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Product, UserProfile } from '../../types';
@@ -91,11 +91,11 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
 
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
-        <div className="bg-white dark:bg-[#15140b] p-4 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm">
+        <div className="bg-white dark:bg-[#0d1840] p-4 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm">
           <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Total Itens</p>
           <p className="text-2xl font-black mt-0.5">{filtered.length}</p>
         </div>
-        <div className="bg-white dark:bg-[#15140b] p-4 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm">
+        <div className="bg-white dark:bg-[#0d1840] p-4 rounded-2xl border border-gray-100 dark:border-white/5 shadow-sm">
           <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Valor em Stock</p>
           <p className="text-2xl font-black mt-0.5">{totalValue.toLocaleString('pt-AO')} <span className="text-sm text-gray-400">Kz</span></p>
         </div>
@@ -148,7 +148,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
 
       {/* Table */}
       {/* Multi-Format List (Desktop Table / Mobile Cards) */}
-      <div className="bg-white dark:bg-[#15140b] rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm overflow-x-auto md:overflow-visible min-h-0">
+      <div className="bg-white dark:bg-[#0d1840] rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm overflow-x-auto md:overflow-visible min-h-0">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center p-12 min-h-[300px]">
             <span className="material-symbols-outlined !text-5xl text-gray-200 dark:text-gray-700">inventory_2</span>

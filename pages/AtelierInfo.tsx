@@ -1,4 +1,4 @@
-
+﻿
 import React, { useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 
@@ -43,7 +43,7 @@ const AtelierInfo: React.FC = () => {
 
         <header className="mb-16">
           <span className="text-primary text-xs font-black uppercase tracking-[0.4em] mb-4 block">{current.subtitle}</span>
-          <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-[#1c1a0d] dark:text-white leading-none mb-10">{current.title}</h1>
+          <h1 className="text-5xl lg:text-7xl font-black tracking-tighter text-navy dark:text-white leading-none mb-10">{current.title}</h1>
           <div className="w-full aspect-[21/9] rounded-[3rem] overflow-hidden shadow-2xl border border-gray-100 dark:border-white/5">
             <img src={current.image} alt={current.title} className="w-full h-full object-cover" />
           </div>

@@ -1,4 +1,4 @@
-
+﻿
 import React, { createContext, useContext, useState, useCallback } from 'react';
 
 type ToastType = 'success' | 'error' | 'info';
@@ -39,10 +39,10 @@ export const ToastProvider: React.FC<{ children: React.ReactNode }> = ({ childre
                     <div
                         key={toast.id}
                         className={`pointer-events-auto min-w-[300px] p-4 rounded-2xl shadow-2xl border flex items-center gap-3 animate-fade-in transition-all transform hover:scale-105 ${toast.type === 'success'
-                                ? 'bg-white dark:bg-[#1c1a0d] border-green-500/20 text-green-600'
+                                ? 'bg-white dark:bg-navy border-green-500/20 text-green-600'
                                 : toast.type === 'error'
-                                    ? 'bg-white dark:bg-[#1c1a0d] border-red-500/20 text-red-500'
-                                    : 'bg-white dark:bg-[#1c1a0d] border-blue-500/20 text-blue-500'
+                                    ? 'bg-white dark:bg-navy border-red-500/20 text-red-500'
+                                    : 'bg-white dark:bg-navy border-blue-500/20 text-blue-500'
                             }`}
                         role="alert"
                     >

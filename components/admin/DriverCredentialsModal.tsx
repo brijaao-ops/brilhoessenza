@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { DeliveryDriver } from '../../types';
 
 interface DriverCredentialsModalProps {
@@ -39,7 +39,7 @@ const DriverCredentialsModal: React.FC<DriverCredentialsModalProps> = ({ driver,
 
     return (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-            <div className="bg-white dark:bg-[#15140b] w-full max-w-md rounded-[2.5rem] p-8 relative shadow-2xl border border-gray-100 dark:border-white/10">
+            <div className="bg-white dark:bg-[#0d1840] w-full max-w-md rounded-[2.5rem] p-8 relative shadow-2xl border border-gray-100 dark:border-white/10">
                 <button
                     onClick={onClose}
                     className="absolute top-6 right-6 text-gray-400 hover:text-red-500 transition-colors"
@@ -65,7 +65,7 @@ const DriverCredentialsModal: React.FC<DriverCredentialsModalProps> = ({ driver,
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            className="w-full bg-gray-50 dark:bg-[#0f0e08] border-none px-6 py-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none transition-all"
+                            className="w-full bg-gray-50 dark:bg-[#08112e] border-none px-6 py-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none transition-all"
                             placeholder="exemplo@brilho.com"
                             autoComplete="off"
                         />
@@ -78,7 +78,7 @@ const DriverCredentialsModal: React.FC<DriverCredentialsModalProps> = ({ driver,
                             type="text"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            className="w-full bg-gray-50 dark:bg-[#0f0e08] border-none px-6 py-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none transition-all"
+                            className="w-full bg-gray-50 dark:bg-[#08112e] border-none px-6 py-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none transition-all"
                             placeholder="Mínimo 6 caracteres"
                             minLength={6}
                             autoComplete="new-password"

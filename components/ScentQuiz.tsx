@@ -1,4 +1,4 @@
-
+﻿
 import React, { useState } from 'react';
 
 interface ScentQuizProps {
@@ -55,7 +55,7 @@ const ScentQuiz: React.FC<ScentQuizProps> = ({ onClose, onFilterCategory }) => {
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 lg:p-10">
             <div className="absolute inset-0 bg-black/80 backdrop-blur-xl animate-fade-in" onClick={onClose}></div>
 
-            <div className="relative w-full max-w-2xl bg-white dark:bg-[#15140b] rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 animate-fade-up">
+            <div className="relative w-full max-w-2xl bg-white dark:bg-[#0d1840] rounded-[3rem] overflow-hidden shadow-2xl border border-white/10 animate-fade-up">
                 {/* Progress Bar */}
                 <div className="h-1.5 w-full bg-gray-100 dark:bg-white/5">
                     <div
@@ -82,7 +82,7 @@ const ScentQuiz: React.FC<ScentQuizProps> = ({ onClose, onFilterCategory }) => {
                                 className="group flex items-center justify-between p-6 bg-gray-50 dark:bg-white/5 rounded-2xl border border-transparent hover:border-primary hover:bg-primary/5 transition-all text-left"
                             >
                                 <div className="flex items-center gap-4">
-                                    <div className="size-12 bg-white dark:bg-[#1c1a0d] rounded-xl flex items-center justify-center shadow-sm group-hover:bg-primary group-hover:text-black transition-colors">
+                                    <div className="size-12 bg-white dark:bg-navy rounded-xl flex items-center justify-center shadow-sm group-hover:bg-primary group-hover:text-black transition-colors">
                                         <span className="material-symbols-outlined">{opt.icon}</span>
                                     </div>
                                     <span className="font-bold text-sm lg:text-base">{opt.label}</span>

@@ -1,4 +1,4 @@
-
+﻿
 import React from 'react';
 import { Category } from '../../types';
 
@@ -18,7 +18,7 @@ export const CategorySelect: React.FC<CategorySelectProps> = ({ category, subCat
                 <select
                     value={category}
                     onChange={e => onChange('category', e.target.value)}
-                    className="bg-gray-50 dark:bg-[#0f0e08] p-5 rounded-2xl font-bold outline-none appearance-none"
+                    className="bg-gray-50 dark:bg-[#08112e] p-5 rounded-2xl font-bold outline-none appearance-none"
                 >
                     {categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
                 </select>
@@ -32,7 +32,7 @@ export const CategorySelect: React.FC<CategorySelectProps> = ({ category, subCat
                             key={g}
                             type="button"
                             onClick={() => onChange('gender', g)}
-                            className={`flex-1 py-4 rounded-xl text-[10px] font-black uppercase transition-all border ${gender === g ? 'bg-[#1c1a0d] text-white border-[#1c1a0d] dark:bg-white dark:text-black' : 'border-gray-200 text-gray-400'}`}
+                            className={`flex-1 py-4 rounded-xl text-[10px] font-black uppercase transition-all border ${gender === g ? 'bg-navy text-white border-navy dark:bg-white dark:text-black' : 'border-gray-200 text-gray-400'}`}
                         >
                             {g}
                         </button>
@@ -47,7 +47,7 @@ export const CategorySelect: React.FC<CategorySelectProps> = ({ category, subCat
                     value={subCategory}
                     onChange={e => onChange('subCategory', e.target.value)}
                     placeholder="Ex: Gold Edition"
-                    className="bg-gray-50 dark:bg-[#0f0e08] p-5 rounded-2xl font-bold outline-none"
+                    className="bg-gray-50 dark:bg-[#08112e] p-5 rounded-2xl font-bold outline-none"
                 />
             </div>
         </div>

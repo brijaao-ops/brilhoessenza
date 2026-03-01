@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase, signOut, getCurrentUser, fetchOrders, fetchProducts } from '../../services/supabase';
 import { Order, DeliveryDriver, Product } from '../../types';
@@ -113,9 +113,9 @@ const DriverDashboard: React.FC = () => {
     const totalEarnings = filteredHistory.reduce((sum, o) => sum + calcOrderCommission(o), 0);
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-[#0f0e08] pb-24">
+        <div className="min-h-screen bg-gray-50 dark:bg-[#08112e] pb-24">
             {/* Header */}
-            <header className="bg-white dark:bg-[#15140b] px-6 py-5 sticky top-0 z-40 border-b border-gray-100 dark:border-[#222115] shadow-sm">
+            <header className="bg-white dark:bg-[#0d1840] px-6 py-5 sticky top-0 z-40 border-b border-gray-100 dark:border-[#222115] shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                     <div>
                         <h2 className="text-xl font-black uppercase tracking-tighter">Minhas <span className="text-primary">Missões</span></h2>
@@ -129,7 +129,7 @@ const DriverDashboard: React.FC = () => {
                 <div className="flex gap-2 bg-gray-100 dark:bg-white/5 p-1 rounded-xl">
                     <button
                         onClick={() => setActiveTab('active')}
-                        className={`flex-1 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${activeTab === 'active' ? 'bg-white dark:bg-[#15140b] text-black dark:text-white shadow-sm' : 'text-gray-400'}`}
+                        className={`flex-1 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${activeTab === 'active' ? 'bg-white dark:bg-[#0d1840] text-black dark:text-white shadow-sm' : 'text-gray-400'}`}
                     >
                         <span className="material-symbols-outlined text-sm">local_shipping</span>
                         Pendentes
@@ -141,7 +141,7 @@ const DriverDashboard: React.FC = () => {
                     </button>
                     <button
                         onClick={() => setActiveTab('history')}
-                        className={`flex-1 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${activeTab === 'history' ? 'bg-white dark:bg-[#15140b] text-black dark:text-white shadow-sm' : 'text-gray-400'}`}
+                        className={`flex-1 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${activeTab === 'history' ? 'bg-white dark:bg-[#0d1840] text-black dark:text-white shadow-sm' : 'text-gray-400'}`}
                     >
                         <span className="material-symbols-outlined text-sm">history</span>
                         Histórico
@@ -168,7 +168,7 @@ const DriverDashboard: React.FC = () => {
                         </div>
                     ) : (
                         activeOrders.map(order => (
-                            <div key={order.id} onClick={() => setSelectedOrder(order)} className="bg-white dark:bg-[#15140b] p-5 rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm active:scale-95 transition-transform cursor-pointer">
+                            <div key={order.id} onClick={() => setSelectedOrder(order)} className="bg-white dark:bg-[#0d1840] p-5 rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm active:scale-95 transition-transform cursor-pointer">
                                 <div className="flex justify-between items-start mb-4">
                                     <div>
                                         <span className="text-[10px] font-black bg-primary/10 text-primary px-2 py-1 rounded uppercase tracking-wider">#{order.id.slice(0, 6)}</span>
@@ -255,7 +255,7 @@ const DriverDashboard: React.FC = () => {
                         </div>
 
                         {/* Date Filters */}
-                        <div className="bg-white dark:bg-[#15140b] p-4 rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm">
+                        <div className="bg-white dark:bg-[#0d1840] p-4 rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm">
                             <p className="text-[9px] font-black uppercase tracking-widest text-gray-400 mb-3">Filtrar por período</p>
                             <div className="flex gap-3">
                                 <div className="flex-1">
@@ -300,7 +300,7 @@ const DriverDashboard: React.FC = () => {
                             </div>
                         ) : (
                             filteredHistory.map(order => (
-                                <div key={order.id} className="bg-white dark:bg-[#15140b] p-4 rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm">
+                                <div key={order.id} className="bg-white dark:bg-[#0d1840] p-4 rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm">
                                     <div className="flex items-center justify-between mb-3">
                                         <div className="flex items-center gap-2">
                                             <div className="size-8 bg-green-500/10 rounded-lg flex items-center justify-center">
@@ -354,7 +354,7 @@ const DriverDashboard: React.FC = () => {
             {/* QR Code Modal */}
             {selectedOrder && (
                 <div className="fixed inset-0 z-50 flex flex-col bg-black">
-                    <div className="bg-[#15140b] p-6 flex justify-between items-center border-b border-white/10">
+                    <div className="bg-[#0d1840] p-6 flex justify-between items-center border-b border-white/10">
                         <button onClick={() => setSelectedOrder(null)} className="text-white flex items-center gap-2">
                             <span className="material-symbols-outlined">arrow_back</span>
                             <span className="text-xs font-bold uppercase">Voltar</span>

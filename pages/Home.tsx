@@ -1,4 +1,4 @@
-import React from 'react';
+﻿import React from 'react';
 import { Product, Slide } from '../types';
 import ProductCard from '../components/ProductCard';
 import ScentQuiz from '../components/ScentQuiz';
@@ -176,7 +176,7 @@ const Home: React.FC<HomeProps> = ({
       <section className="py-12 sm:py-20" id="produtos">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-20 px-4 gap-8">
           <div className="flex flex-col gap-3 sm:gap-4">
-            <h3 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-[#1c1a0d] dark:text-white leading-[0.85]">
+            <h3 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-navy dark:text-white leading-[0.85]">
               {searchTerm
                 ? `Resultados: "${searchTerm}"`
                 : selectedCategory
@@ -189,9 +189,9 @@ const Home: React.FC<HomeProps> = ({
             </div>
           </div>
           <div className="flex items-center gap-2 bg-white/40 backdrop-blur-md dark:bg-white/5 p-1.5 sm:p-2 rounded-2xl border border-white/20 dark:border-white/5 overflow-x-auto max-w-full no-scrollbar">
-            <button onClick={() => onCategorySelect(null)} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${!selectedCategory ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Todos</button>
-            <button onClick={() => onCategorySelect('Novidades')} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Novidades' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Novidades</button>
-            <button onClick={() => onCategorySelect('Ofertas')} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Ofertas' ? 'bg-white dark:bg-[#1c1a0d] text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Ofertas</button>
+            <button onClick={() => onCategorySelect(null)} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${!selectedCategory ? 'bg-white dark:bg-navy text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Todos</button>
+            <button onClick={() => onCategorySelect('Novidades')} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Novidades' ? 'bg-white dark:bg-navy text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Novidades</button>
+            <button onClick={() => onCategorySelect('Ofertas')} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Ofertas' ? 'bg-white dark:bg-navy text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Ofertas</button>
           </div>
         </div>
 
@@ -207,11 +207,11 @@ const Home: React.FC<HomeProps> = ({
               <div className="size-20 sm:size-24 bg-red-100 dark:bg-red-500/20 rounded-3xl flex items-center justify-center mx-auto mb-8">
                 <span className="material-symbols-outlined !text-4xl sm:text-5xl text-red-500">wifi_off</span>
               </div>
-              <h4 className="text-xl sm:text-2xl font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white mb-4">Falha na ligação</h4>
+              <h4 className="text-xl sm:text-2xl font-black uppercase tracking-widest text-navy dark:text-white mb-4">Falha na ligação</h4>
               <p className="text-gray-400 text-xs sm:text-sm font-medium mb-10 leading-relaxed">Não foi possível carregar os produtos no momento. Verifique sua conexão e tente novamente.</p>
               <button
                 onClick={() => onRetry ? onRetry() : window.location.reload()}
-                className="w-full sm:w-auto px-10 py-5 bg-[#1c1a0d] dark:bg-white text-white dark:text-black text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-red-500/10"
+                className="w-full sm:w-auto px-10 py-5 bg-navy dark:bg-white text-white dark:text-black text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-xl shadow-red-500/10"
               >
                 Tentar Novamente
               </button>
@@ -226,15 +226,15 @@ const Home: React.FC<HomeProps> = ({
         ) : products.length === 0 ? (
           <div className="py-48 text-center border-2 border-dashed border-gray-200 dark:border-white/5 rounded-[5rem] animate-fade-up">
             <span className="material-symbols-outlined !text-8xl text-primary/20 mb-8">inventory_2</span>
-            <h4 className="text-2xl font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white mb-4">Catálogo vazio</h4>
+            <h4 className="text-2xl font-black uppercase tracking-widest text-navy dark:text-white mb-4">Catálogo vazio</h4>
             <p className="text-gray-400 font-medium mb-10 max-w-sm mx-auto">Nenhum produto foi encontrado no catálogo. Adicione produtos no painel administrativo.</ p>
           </div>
         ) : (
           <div className="py-48 text-center border-2 border-dashed border-gray-200 dark:border-white/5 rounded-[5rem] animate-fade-up">
             <span className="material-symbols-outlined !text-8xl text-primary/20 mb-8">search_off</span>
-            <h4 className="text-2xl font-black uppercase tracking-widest text-[#1c1a0d] dark:text-white mb-4">Essência não encontrada</h4>
+            <h4 className="text-2xl font-black uppercase tracking-widest text-navy dark:text-white mb-4">Essência não encontrada</h4>
             <p className="text-gray-400 font-medium mb-10 max-w-sm mx-auto">Tente ajustar sua busca ou explore outras categorias da nossa boutique.</p>
-            <button onClick={() => onCategorySelect(null)} className="px-10 py-4 bg-[#1c1a0d] dark:bg-white text-white dark:text-black text-[10px] font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all">Ver Tudo</button>
+            <button onClick={() => onCategorySelect(null)} className="px-10 py-4 bg-navy dark:bg-white text-white dark:text-black text-[10px] font-black uppercase tracking-widest rounded-2xl hover:scale-105 transition-all">Ver Tudo</button>
           </div>
         )}
       </section>
@@ -252,9 +252,9 @@ const Home: React.FC<HomeProps> = ({
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Seu melhor e-mail"
               required
-              className="flex-1 bg-white dark:bg-[#1c1a0d] border-none px-6 py-5 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none text-[#1c1a0d] dark:text-white"
+              className="flex-1 bg-white dark:bg-navy border-none px-6 py-5 rounded-2xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none text-navy dark:text-white"
             />
-            <button type="submit" className="bg-[#1c1a0d] dark:bg-white text-white dark:text-black px-8 py-5 rounded-2xl font-black uppercase tracking-widest text-[9px] hover:scale-105 transition-all">
+            <button type="submit" className="bg-navy dark:bg-white text-white dark:text-black px-8 py-5 rounded-2xl font-black uppercase tracking-widest text-[9px] hover:scale-105 transition-all">
               Participar
             </button>
 

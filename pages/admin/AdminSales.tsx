@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { Order, UserProfile, DeliveryDriver } from '../../types';
 import { updateOrder, fetchDrivers, assignDriverToOrder } from '../../services/supabase';
 
@@ -231,7 +231,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                             <span className="material-symbols-outlined text-sm">download</span>
                             Exportar CSV
                         </button>
-                        <div className="bg-white dark:bg-[#15140b] px-6 py-3 rounded-2xl border text-right shadow-sm">
+                        <div className="bg-white dark:bg-[#0d1840] px-6 py-3 rounded-2xl border text-right shadow-sm">
                             <p className="text-[8px] font-black text-gray-400 uppercase tracking-widest">Receita (Filtrada)</p>
                             <p className="text-xl font-black">{totalAmount.toLocaleString()} Kz</p>
                         </div>
@@ -240,7 +240,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
 
                 {/* Filters */}
                 {/* Filters */}
-                <div className="bg-white dark:bg-[#15140b] p-4 rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm grid grid-cols-2 md:grid-cols-4 gap-4 items-end">
+                <div className="bg-white dark:bg-[#0d1840] p-4 rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm grid grid-cols-2 md:grid-cols-4 gap-4 items-end">
                     <div className="flex flex-col gap-1">
                         <label className="text-[9px] font-bold uppercase tracking-wider text-gray-500">Status</label>
                         <select
@@ -302,11 +302,11 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
                 </div>
             </div>
 
-            <div className="flex-1 bg-white dark:bg-[#15140b] rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm flex flex-col overflow-hidden">
+            <div className="flex-1 bg-white dark:bg-[#0d1840] rounded-2xl border border-gray-100 dark:border-[#222115] shadow-sm flex flex-col overflow-hidden">
                 {/* Desktop View */}
                 <div className="hidden md:block flex-1 overflow-auto relative">
                     <table className="w-full text-left border-collapse table-fixed" style={{ minWidth: Object.values(columns).reduce((a, b) => a + b, 0) }}>
-                        <thead className="sticky top-0 z-10 bg-white dark:bg-[#15140b] shadow-sm">
+                        <thead className="sticky top-0 z-10 bg-white dark:bg-[#0d1840] shadow-sm">
                             <tr className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
                                 <th style={{ width: columns.id }} className="px-4 py-3 relative border-r border-gray-50 dark:border-[#222115]">
                                     ID Venda <Resizer colKey="id" />
@@ -447,7 +447,7 @@ const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile 
 
                             <div className="flex justify-between items-end">
                                 <div>
-                                    <p className="text-sm font-black text-[#1c1a0d] dark:text-white uppercase leading-none mb-1">{o.customer}</p>
+                                    <p className="text-sm font-black text-navy dark:text-white uppercase leading-none mb-1">{o.customer}</p>
                                     <p className="text-[10px] font-bold text-gray-400">{o.phone || '---'}</p>
                                 </div>
                                 <div className="text-right">
