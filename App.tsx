@@ -153,6 +153,28 @@ const AppContent: React.FC = () => {
     loadAllData();
   }, [isAuthenticated, userProfile?.id]);
 
+  // Logo URL from settings (synced from Supabase via localStorage)
+  const getLogoUrl = () => {
+    try {
+      const s = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
+      return s.logoUrl || null;
+    } catch { return null; }
+  };
+  const [logoUrl, setLogoUrl] = useState<string | null>(getLogoUrl);
+
+  // Re-read logo whenever settings are saved by AdminSettings
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'brilho_essenza_settings' || e.key === 'brilho_essenza_settings_updated') {
+        setLogoUrl(getLogoUrl());
+      }
+    };
+    window.addEventListener('storage', onStorage);
+    // Also poll every 2s so changes within the same tab are picked up immediately
+    const interval = setInterval(() => setLogoUrl(getLogoUrl()), 2000);
+    return () => { window.removeEventListener('storage', onStorage); clearInterval(interval); };
+  }, []);
+
   // Optimized Settings Fetching (Batched)
   useEffect(() => {
     const loadSettings = async () => {
@@ -188,6 +210,8 @@ const AppContent: React.FC = () => {
           const current = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
           const merged = { ...current, ...dbSettings };
           localStorage.setItem('brilho_essenza_settings', JSON.stringify(merged));
+          // Apply logo immediately to state (don't wait for polling)
+          if (dbSettings.logoUrl) setLogoUrl(dbSettings.logoUrl);
         }
       } catch (e) {
         console.error("Erro ao carregar configurações do Supabase:", e);
@@ -203,7 +227,6 @@ const AppContent: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
-
 
   // Check Auth Session & Profile
   useEffect(() => {
@@ -573,7 +596,9 @@ const AppContent: React.FC = () => {
           <div className="flex flex-col md:flex-row h-screen overflow-hidden">
             <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-gray-100 dark:border-[#222115] bg-white dark:bg-[#15140b] p-4 md:p-6 flex flex-col gap-4 md:gap-8 shrink-0 max-h-[40vh] md:max-h-screen overflow-y-auto">
               <Link to="/" onClick={resetFilters} className="flex items-center gap-2 mb-2 md:mb-4">
-                <div className="size-10 bg-primary rounded-xl flex items-center justify-center text-black font-black">BE</div>
+                <div className="size-10 bg-primary rounded-xl flex items-center justify-center text-black font-black overflow-hidden">
+                  {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" /> : 'BE'}
+                </div>
                 <div>
                   <h1 className="font-black uppercase tracking-tighter text-sm">Brilho <span className="text-primary">Essenza</span></h1>
                   <span className="text-[10px] text-gray-400 font-bold uppercase">Gestão Luxo</span>
@@ -712,6 +737,7 @@ const AppContent: React.FC = () => {
             isAuthenticated={isAuthenticated}
             userProfile={userProfile}
             onLogout={handleLogout}
+            logoUrl={logoUrl}
           />
           <main className="flex-1">
             <Routes>

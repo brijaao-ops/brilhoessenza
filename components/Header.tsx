@@ -15,6 +15,7 @@ interface HeaderProps {
   isAuthenticated?: boolean;
   userProfile?: UserProfile | null;
   onLogout?: () => void;
+  logoUrl?: string | null;
 }
 
 const Header: React.FC<HeaderProps> = ({
@@ -28,7 +29,8 @@ const Header: React.FC<HeaderProps> = ({
   categories,
   isAuthenticated,
   userProfile,
-  onLogout
+  onLogout,
+  logoUrl
 }) => {
   const [isDark, setIsDark] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -106,8 +108,8 @@ const Header: React.FC<HeaderProps> = ({
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-4 sm:py-6 flex items-center justify-between gap-4 sm:gap-12">
         {/* Boutique Branding */}
         <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-2 sm:gap-3 group shrink-0">
-          <div className="bg-primary text-black size-10 sm:size-12 rounded-xl sm:rounded-2xl flex items-center justify-center font-black group-hover:rotate-[15deg] transition-all shadow-xl shadow-primary/20">
-            BE
+          <div className="bg-primary text-black size-10 sm:size-12 rounded-xl sm:rounded-2xl flex items-center justify-center font-black group-hover:rotate-[15deg] transition-all shadow-xl shadow-primary/20 overflow-hidden">
+            {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" /> : 'BE'}
           </div>
           <div className="hidden xs:block">
             <h1 className="text-base sm:text-xl font-black uppercase tracking-tighter leading-none mb-0.5">
