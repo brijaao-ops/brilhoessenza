@@ -111,11 +111,11 @@ const Header: React.FC<HeaderProps> = ({
           <div className="absolute inset-y-0 left-0 w-[50%] lg:w-[40%] bg-gradient-to-r from-white via-white/95 to-transparent"></div>
         </div>
 
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-4 sm:py-6 flex items-center justify-between gap-4 sm:gap-12 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-2 flex items-center justify-between gap-4 sm:gap-12 relative z-10">
           {/* Boutique Branding */}
-          <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-4 group shrink-0 py-2">
-            <div className="bg-transparent text-[#060e1e] w-[6cm] h-14 flex items-center justify-center font-black group-hover:scale-105 transition-all overflow-hidden">
-              {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" /> : <span className="text-3xl tracking-tighter">BRILHO <span className="text-[#060e1e] opacity-80 italic">ESSENZA</span></span>}
+          <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-4 group shrink-0 py-1">
+            <div className="bg-transparent text-[#060e1e] w-[6cm] h-[4cm] flex items-center justify-center font-black group-hover:scale-105 transition-all overflow-hidden">
+              {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain object-left" /> : <span className="text-4xl tracking-tighter">BRILHO <span className="text-[#060e1e] opacity-80 italic">ESSENZA</span></span>}
             </div>
           </Link>
 
