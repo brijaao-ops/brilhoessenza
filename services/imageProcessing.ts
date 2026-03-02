@@ -1,5 +1,5 @@
 
-import removeBackground, { Config } from '@imgly/background-removal';
+// Dynamic import will be used inside the function to prevent crash on boot
 
 /**
  * Removes the background from an image using AI (client-side).
@@ -10,19 +10,17 @@ export const removeImageBackground = async (
     imageSource: string | File | Blob,
     onProgress?: (progress: number) => void
 ): Promise<Blob> => {
-    const config: Config = {
-        progress: (percent: number) => {
-            if (onProgress) onProgress(percent);
-        },
-        // You can customize the model path or other options here if needed
-        // By default it fetches them from the official CDN
-        output: {
-            type: 'image/png',
-            quality: 1.0,
-        }
-    };
-
     try {
+        const { default: removeBackground } = await import('@imgly/background-removal');
+        const config: any = { // Using any to avoid complex type export issues with dynamic import
+            progress: (percent: number) => {
+                if (onProgress) onProgress(percent);
+            },
+            output: {
+                type: 'image/png',
+                quality: 1.0,
+            }
+        };
         const resultBlob = await removeBackground(imageSource, config);
         return resultBlob;
     } catch (error) {
