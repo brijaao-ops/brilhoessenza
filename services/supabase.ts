@@ -556,16 +556,25 @@ export const createDriver = async (driver: Omit<DeliveryDriver, 'id' | 'verified
         }
     }
 
-    // Insert into public table
-    const dbDriver = {
+    // Insert into public table — map all fields from the DriverRegistration form
+    const dbDriver: any = {
         name: driver.name,
-        vehicle_type: driver.vehicle_type,
-        license_plate: driver.license_plate,
-        phone: driver.phone,
-        photo_url: driver.photo_url,
-        email: driver.email,
+        email: driver.email || null,
         user_id: userId,
-        verified: true // Default verified if created by admin
+        verified: false, // Pending admin verification for self-registered drivers
+        active: (driver as any).active ?? true,
+        // Fields from the public registration form
+        transport_type: (driver as any).transport_type || driver.vehicle_type || null,
+        whatsapp: (driver as any).whatsapp || driver.phone || null,
+        address: (driver as any).address || null,
+        id_front_url: (driver as any).id_front_url || null,
+        id_back_url: (driver as any).id_back_url || null,
+        selfie_url: (driver as any).selfie_url || null,
+        // Legacy/admin fields (kept for backward compat)
+        vehicle_type: driver.vehicle_type || (driver as any).transport_type || null,
+        license_plate: driver.license_plate || null,
+        phone: driver.phone || (driver as any).whatsapp || null,
+        photo_url: driver.photo_url || (driver as any).selfie_url || null,
     };
 
     const { error } = await supabase
@@ -573,8 +582,14 @@ export const createDriver = async (driver: Omit<DeliveryDriver, 'id' | 'verified
         .insert([dbDriver]);
 
     if (error) {
-        // Optimization: In a real app we might want to delete the Auth User if this fails to keep consistency.
-        throw error;
+        console.error('createDriver DB Insert Error:', {
+            message: error.message,
+            details: error.details,
+            hint: error.hint,
+            code: error.code,
+            dbDriver,
+        });
+        throw new Error(error.message || 'Erro ao guardar registo do entregador.');
     }
 
     // Also create a Profile entry so they can log in via standard flow if needed?
