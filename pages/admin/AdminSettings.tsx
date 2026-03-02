@@ -87,6 +87,7 @@ const AdminSettings: React.FC = () => {
         if (settings.shipping_policy) setShippingPolicy(settings.shipping_policy);
         if (settings.return_policy) setReturnPolicy(settings.return_policy);
         if (settings.brand_color) setBrandColor(settings.brand_color);
+        if (settings.logo_url) setLogoUrl(settings.logo_url); // CRITICAL FIX: Load logo from DB
         if (settings.tax_rate) setTaxRate(settings.tax_rate);
         if (settings.shipping_luanda) setShippingLuanda(settings.shipping_luanda);
         if (settings.shipping_provinces) setShippingProvinces(settings.shipping_provinces);
@@ -188,7 +189,10 @@ const AdminSettings: React.FC = () => {
       setBulkCurrent(0);
       const { data: products, error } = await supabase.from('products').select('id, image, name');
       if (error) throw error;
-      if (!products || products.length === 0) return;
+      if (!products || products.length === 0) {
+        alert("Nenhum produto cadastrado.");
+        return;
+      }
       setBulkTotal(products.length);
 
       for (let i = 0; i < products.length; i++) {
@@ -274,6 +278,28 @@ const AdminSettings: React.FC = () => {
                     <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} className="size-10 rounded-full cursor-pointer bg-transparent border-none" />
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* AI Shortcut within Appearance Tab */}
+            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary !text-3xl">psychology</span>
+                </div>
+                <div>
+                  <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight text-primary">Ferramentas de IA</h4>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase">Melhorias Visuais Inteligentes</p>
+                </div>
+              </div>
+              <div className="p-6 bg-primary/5 rounded-2xl border-2 border-dashed border-primary/20 flex flex-col md:flex-row items-center gap-6 justify-between">
+                <div>
+                  <h5 className="font-black uppercase text-xs tracking-tight">Otimizador de Catálogo IA</h5>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase">Vetorizar todas as imagens de produtos agora</p>
+                </div>
+                <button onClick={() => setActiveTab(2)} className="bg-primary text-black font-black px-6 py-3 rounded-xl uppercase tracking-widest text-[9px] shadow-lg hover:scale-105 transition-all">
+                  Abrir Painel IA
+                </button>
               </div>
             </div>
           </div>
