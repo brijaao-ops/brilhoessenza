@@ -205,7 +205,7 @@ const AdminSettings: React.FC = () => {
               <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Identidade Visual</h4>
               <div className="flex flex-col gap-8">
                 <div className="flex items-center gap-10">
-                  <div className="size-32 bg-gray-100 dark:bg-white/5 rounded-3xl border-2 border-dashed border-gray-200 dark:border-[#222115] flex items-center justify-center relative group cursor-pointer overflow-hidden">
+                  <div className="w-[6cm] h-32 bg-gray-100 dark:bg-white/5 rounded-3xl border-2 border-dashed border-gray-200 dark:border-[#222115] flex items-center justify-center relative group cursor-pointer overflow-hidden">
                     {logoUrl ? <img src={logoUrl} className="w-full h-full object-contain" /> : <span className="material-symbols-outlined !text-4xl text-gray-300">image</span>}
                     <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleLogoUpload} />
                   </div>

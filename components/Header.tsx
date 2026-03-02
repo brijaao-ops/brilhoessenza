@@ -74,7 +74,7 @@ const Header: React.FC<HeaderProps> = ({
   }));
 
   return (
-    <header className="sticky top-0 z-50 glass-effect border-b border-[#f4f2e7] dark:border-[#222115] shadow-sm">
+    <header className="sticky top-0 z-50 bg-[#060e1e] border-b border-primary/20 shadow-2xl">
       {/* Session Notification Bar - Ultra Visible on Mobile & Desktop */}
       {isAuthenticated && userProfile && (
         <div className="bg-primary/90 backdrop-blur-md px-4 sm:px-8 py-2.5 flex items-center justify-between gap-4 border-b border-primary/20">
@@ -107,15 +107,9 @@ const Header: React.FC<HeaderProps> = ({
 
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-4 sm:py-6 flex items-center justify-between gap-4 sm:gap-12">
         {/* Boutique Branding */}
-        <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-2 sm:gap-3 group shrink-0">
-          <div className="bg-primary text-black size-10 sm:size-12 rounded-xl sm:rounded-2xl flex items-center justify-center font-black group-hover:rotate-[15deg] transition-all shadow-xl shadow-primary/20 overflow-hidden">
-            {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" /> : 'BE'}
-          </div>
-          <div className="hidden xs:block">
-            <h1 className="text-base sm:text-xl font-black uppercase tracking-tighter leading-none mb-0.5">
-              Brilho <span className="text-primary italic">Essenza</span>
-            </h1>
-            <p className="text-[7px] sm:text-[9px] font-black uppercase tracking-[0.4em] text-gray-400 opacity-80">Maison de Fragrance</p>
+        <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-4 group shrink-0 py-2">
+          <div className="bg-transparent text-primary w-[6cm] h-12 flex items-center justify-center font-black group-hover:scale-105 transition-all overflow-hidden">
+            {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" /> : <span className="text-3xl tracking-tighter">BRILHO <span className="text-white italic">ESSENZA</span></span>}
           </div>
         </Link>
 
@@ -127,7 +121,7 @@ const Header: React.FC<HeaderProps> = ({
               onClick={() => ensureHomeAndAction(() => onCategoryChange(item.value))}
               className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all relative py-2 ${selectedCategory === item.value
                 ? 'text-primary'
-                : 'text-gray-500 dark:text-gray-400 hover:text-primary'
+                : 'text-gray-300 hover:text-primary'
                 }`}
             >
               {item.label}
@@ -138,7 +132,7 @@ const Header: React.FC<HeaderProps> = ({
           ))}
           <Link
             to="/driver/login"
-            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 hover:text-primary transition-all border border-gray-200 dark:border-white/10 px-3 py-2 rounded-xl hover:border-primary/50"
+            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-300 hover:text-primary transition-all border border-primary/20 px-3 py-2 rounded-xl hover:border-primary/50"
           >
             <span className="material-symbols-outlined !text-sm">local_shipping</span>
             Entregador
@@ -152,7 +146,7 @@ const Header: React.FC<HeaderProps> = ({
             <input
               value={searchTerm}
               onChange={(e) => handleSearchChange(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-gray-50 dark:bg-white/5 border-none rounded-[1.5rem] focus:ring-1 focus:ring-primary/20 text-xs font-bold outline-none transition-all placeholder:text-gray-300 dark:placeholder:text-gray-600"
+              className="w-full pl-12 pr-4 py-4 bg-white/5 border border-primary/10 rounded-[1.5rem] focus:ring-1 focus:ring-primary/40 text-xs font-bold outline-none transition-all placeholder:text-gray-500 text-white"
               placeholder="Encontrar sua essência..."
               type="text"
             />
@@ -185,7 +179,7 @@ const Header: React.FC<HeaderProps> = ({
               </div>
             )}
 
-            <button onClick={toggleDarkMode} className="size-10 flex items-center justify-center hover:bg-primary/10 rounded-full transition-all text-gray-500 dark:text-gray-400" title="Alternar tema">
+            <button onClick={toggleDarkMode} className="size-10 flex items-center justify-center hover:bg-primary/10 rounded-full transition-all text-gray-300" title="Alternar tema">
               <span className="material-symbols-outlined !text-xl">{isDark ? 'light_mode' : 'dark_mode'}</span>
             </button>
 
@@ -205,7 +199,7 @@ const Header: React.FC<HeaderProps> = ({
             {/* Mobile Menu Toggle */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="size-10 flex lg:hidden items-center justify-center hover:bg-primary/10 rounded-full transition-all text-gray-500 dark:text-gray-400"
+              className="size-10 flex lg:hidden items-center justify-center hover:bg-primary/10 rounded-full transition-all text-gray-300"
             >
               <span className="material-symbols-outlined !text-2xl">{isMenuOpen ? 'close' : 'menu'}</span>
             </button>
@@ -215,8 +209,8 @@ const Header: React.FC<HeaderProps> = ({
 
       {/* Mobile Menu Overlay */}
       {isMenuOpen && (
-        <div className="lg:hidden absolute top-full left-0 right-0 z-[100] bg-white dark:bg-[#060e1e] border-t border-gray-100 dark:border-white/5 shadow-2xl overflow-y-auto animate-slide-in">
-          <nav className="flex flex-col p-8 gap-6 min-h-[50vh] bg-white dark:bg-[#060e1e]">
+        <div className="lg:hidden absolute top-full left-0 right-0 z-[100] bg-[#060e1e] border-t border-primary/10 shadow-2xl overflow-y-auto animate-slide-in">
+          <nav className="flex flex-col p-8 gap-6 min-h-[50vh] bg-[#060e1e]">
             {/* Mobile Search - Visible only in menu on mobile */}
             <div className="relative w-full md:hidden group">
               <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors">search</span>
@@ -236,7 +230,7 @@ const Header: React.FC<HeaderProps> = ({
                   ensureHomeAndAction(() => onCategoryChange(item.value));
                   setIsMenuOpen(false);
                 }}
-                className="text-sm font-black uppercase tracking-widest text-left py-4 border-b border-gray-100 dark:border-white/5 text-navy dark:text-gray-500"
+                className="text-sm font-black uppercase tracking-widest text-left py-4 border-b border-white/5 text-gray-300"
               >
                 {item.label}
               </button>

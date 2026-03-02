@@ -53,7 +53,7 @@ const AdminLogin: React.FC<AdminLoginProps> = ({ onLogin }) => {
 
           <div className="relative z-10">
             <Link to="/" className="flex items-center gap-4 group mb-16">
-              <div className="size-16 bg-primary text-black rounded-2xl flex items-center justify-center font-black text-2xl shadow-2xl shadow-primary/30 group-hover:scale-110 transition-transform">
+              <div className="w-[6cm] h-16 bg-transparent flex items-center justify-center font-black text-2xl group-hover:scale-110 transition-all overflow-hidden text-primary">
                 BE
               </div>
               <div>
