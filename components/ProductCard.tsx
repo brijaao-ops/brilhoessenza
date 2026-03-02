@@ -177,12 +177,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                   IMAGE ZONE
             ══════════════════════════════════════════ */}
             <div className="flex-1 relative flex items-center justify-center px-3 sm:px-5 pt-1 pb-1 pointer-events-none min-h-0 overflow-hidden" style={{ minHeight: '160px', maxHeight: '220px' }}>
-                <div className="w-full h-full flex items-center justify-center organic-image-clip bg-gradient-to-b from-gray-50/60 to-gray-100/30 dark:from-white/5 dark:to-white/2 border border-black/5 dark:border-white/5 shadow-inner overflow-hidden">
+                <div className="w-full h-full flex items-center justify-center organic-image-clip bg-white border border-black/5 shadow-inner overflow-hidden">
                     <img
                         src={product?.image || ''}
                         alt={product?.name || 'Produto'}
                         loading="lazy"
-                        className={`max-w-full max-h-full w-auto h-auto object-contain object-center transition-transform duration-700 ${product?.stock === 0 ? 'grayscale opacity-50' : 'group-hover:scale-110'}`}
+                        className={`max-w-full max-h-full w-auto h-auto object-contain object-center transition-all duration-700 mix-blend-multiply contrast-[1.08] brightness-[1.02] ${product?.stock === 0 ? 'grayscale opacity-50' : 'group-hover:scale-110'}`}
                         style={{ maxHeight: '180px' }}
                     />
                     {product.stock === 0 && (
