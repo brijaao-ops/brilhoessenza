@@ -43,13 +43,10 @@ const DriverRegistration: React.FC = () => {
     const [step, setStep] = useState(1); // 1: Info, 2: Documents
     const navigate = useNavigate();
 
-    // Camera States
-    const [isCameraOpen, setIsCameraOpen] = useState(false);
-    const [activeCaptureType, setActiveCaptureType] = useState<keyof typeof images | null>(null);
-    const videoRef = useRef<HTMLVideoElement>(null);
-    const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [stream, setStream] = useState<MediaStream | null>(null);
-
+    // Refs for hidden file inputs
+    const idFrontInputRef = useRef<HTMLInputElement>(null);
+    const idBackInputRef = useRef<HTMLInputElement>(null);
+    const selfieInputRef = useRef<HTMLInputElement>(null);
 
     // Scroll to top on mount
     useEffect(() => {
@@ -68,59 +65,28 @@ const DriverRegistration: React.FC = () => {
         }
     };
 
-    const openCamera = async (type: keyof typeof images) => {
-        setActiveCaptureType(type);
-        setIsCameraOpen(true);
-        try {
-            const facingMode = type === 'selfie' ? 'user' : 'environment';
-            const newStream = await navigator.mediaDevices.getUserMedia({
-                video: { facingMode: { exact: facingMode } }
-            }).catch(() => navigator.mediaDevices.getUserMedia({ video: true })); // Fallback if exact fails
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: keyof typeof images) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
 
-            setStream(newStream);
-            if (videoRef.current) {
-                videoRef.current.srcObject = newStream;
-            }
-        } catch (err) {
-            console.error("Error accessing camera:", err);
-            showToast("Não foi possível aceder à câmara. Verifique as permissões.", "error");
-            setIsCameraOpen(false);
+        // Create preview
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            setPreviews(prev => ({ ...prev, [type]: reader.result as string }));
+        };
+        reader.readAsDataURL(file);
+
+        setImages(prev => ({ ...prev, [type]: file }));
+
+        if (type === 'id_front') {
+            performOCR(file);
         }
     };
 
-    const closeCamera = () => {
-        if (stream) {
-            stream.getTracks().forEach(track => track.stop());
-        }
-        setStream(null);
-        setIsCameraOpen(false);
-        setActiveCaptureType(null);
-    };
-
-    const capturePhoto = () => {
-        if (videoRef.current && canvasRef.current && activeCaptureType) {
-            const video = videoRef.current;
-            const canvas = canvasRef.current;
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            const context = canvas.getContext('2d');
-            if (context) {
-                context.drawImage(video, 0, 0, canvas.width, canvas.height);
-                canvas.toBlob((blob) => {
-                    if (blob) {
-                        const file = new File([blob], `${activeCaptureType}.jpg`, { type: 'image/jpeg' });
-                        setImages(prev => ({ ...prev, [activeCaptureType]: file }));
-                        const dataUrl = canvas.toDataURL('image/jpeg');
-                        setPreviews(prev => ({ ...prev, [activeCaptureType]: dataUrl }));
-
-                        if (activeCaptureType === 'id_front') {
-                            performOCR(file);
-                        }
-                        closeCamera();
-                    }
-                }, 'image/jpeg', 0.8);
-            }
-        }
+    const triggerInput = (type: keyof typeof images) => {
+        if (type === 'id_front') idFrontInputRef.current?.click();
+        else if (type === 'id_back') idBackInputRef.current?.click();
+        else if (type === 'selfie') selfieInputRef.current?.click();
     };
 
     const performOCR = async (file: File) => {
@@ -223,6 +189,32 @@ const DriverRegistration: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#fcfbf8] dark:bg-[#08112e] flex items-center justify-center p-6 py-20">
+            {/* Hidden Inputs for Native Camera */}
+            <input
+                type="file"
+                ref={idFrontInputRef}
+                className="hidden"
+                accept="image/*"
+                capture="environment"
+                onChange={(e) => handleFileChange(e, 'id_front')}
+            />
+            <input
+                type="file"
+                ref={idBackInputRef}
+                className="hidden"
+                accept="image/*"
+                capture="environment"
+                onChange={(e) => handleFileChange(e, 'id_back')}
+            />
+            <input
+                type="file"
+                ref={selfieInputRef}
+                className="hidden"
+                accept="image/*"
+                capture="user"
+                onChange={(e) => handleFileChange(e, 'selfie')}
+            />
+
             <div className="max-w-4xl w-full bg-white dark:bg-[#0d1840] rounded-[4rem] p-8 lg:p-16 shadow-2xl border border-gray-100 dark:border-white/5">
 
                 {/* Progress Bar */}
@@ -341,11 +333,11 @@ const DriverRegistration: React.FC = () => {
                             <div className="space-y-4">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block ml-2">BI Frente (Horizontal)</label>
                                 <div
-                                    onClick={() => openCamera('id_front')}
+                                    onClick={() => triggerInput('id_front')}
                                     className="relative aspect-[1.6/1] w-full max-w-2xl mx-auto rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-white/5 border-2 border-dashed border-gray-200 dark:border-white/10 cursor-pointer hover:border-primary transition-colors group"
                                 >
                                     {previews.id_front ? (
-                                        <img src={previews.id_front} className="w-full h-full object-cover" />
+                                        <img src={previews.id_front} className="w-full h-full object-cover" alt="BI Frente" />
                                     ) : (
                                         <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center">
                                             <span className="material-symbols-outlined !text-5xl text-primary mb-3">badge</span>
@@ -374,11 +366,11 @@ const DriverRegistration: React.FC = () => {
                             <div className="space-y-4">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block ml-2">BI Verso (Horizontal)</label>
                                 <div
-                                    onClick={() => openCamera('id_back')}
+                                    onClick={() => triggerInput('id_back')}
                                     className="relative aspect-[1.6/1] w-full max-w-2xl mx-auto rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-white/5 border-2 border-dashed border-gray-200 dark:border-white/10 cursor-pointer hover:border-primary transition-colors group"
                                 >
                                     {previews.id_back ? (
-                                        <img src={previews.id_back} className="w-full h-full object-cover" />
+                                        <img src={previews.id_back} className="w-full h-full object-cover" alt="BI Verso" />
                                     ) : (
                                         <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center">
                                             <span className="material-symbols-outlined !text-5xl text-primary mb-3">identity</span>
@@ -395,11 +387,11 @@ const DriverRegistration: React.FC = () => {
                             <div className="space-y-4">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block text-center">Selfie Facial</label>
                                 <div
-                                    onClick={() => openCamera('selfie')}
+                                    onClick={() => triggerInput('selfie')}
                                     className="relative aspect-[3/4] w-48 mx-auto rounded-[3rem] overflow-hidden bg-gray-100 dark:bg-white/5 border-2 border-dashed border-gray-200 dark:border-white/10 cursor-pointer hover:border-primary transition-colors group"
                                 >
                                     {previews.selfie ? (
-                                        <img src={previews.selfie} className="w-full h-full object-cover" />
+                                        <img src={previews.selfie} className="w-full h-full object-cover" alt="Selfie" />
                                     ) : (
                                         <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center">
                                             <span className="material-symbols-outlined !text-4xl text-primary mb-2">face</span>
@@ -442,47 +434,6 @@ const DriverRegistration: React.FC = () => {
                     </form>
                 )}
             </div>
-
-            {/* Camera Modal Overlay */}
-            {isCameraOpen && (
-                <div className="fixed inset-0 z-[200] bg-black flex flex-col items-center justify-between p-6">
-                    <div className="w-full flex justify-between items-center text-white">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">
-                            Capturando {activeCaptureType === 'id_front' ? 'BI Frente' : activeCaptureType === 'id_back' ? 'BI Verso' : 'Selfie'}
-                        </span>
-                        <button onClick={closeCamera} className="size-12 flex items-center justify-center hover:bg-white/10 rounded-full">
-                            <span className="material-symbols-outlined">close</span>
-                        </button>
-                    </div>
-
-                    <div className={`relative overflow-hidden bg-[#111] border-2 border-primary/30 shadow-2xl ${activeCaptureType === 'selfie' ? 'aspect-[3/4] h-[60vh]' : 'aspect-[1.6/1] w-full max-w-3xl'}`}>
-                        <video
-                            ref={videoRef}
-                            autoPlay
-                            playsInline
-                            className="w-full h-full object-cover"
-                        />
-                        {/* Overlay Card Frame */}
-                        {!activeCaptureType?.includes('selfie') && (
-                            <div className="absolute inset-8 border-2 border-dashed border-white/50 rounded-2xl pointer-events-none flex items-center justify-center">
-                                <p className="text-white/30 text-[10px] font-black uppercase tracking-widest">Enquadre o BI aqui</p>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="w-full flex flex-col items-center gap-8 pb-10">
-                        <button
-                            onClick={capturePhoto}
-                            className="size-20 bg-white rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-all border-4 border-primary"
-                        >
-                            <div className="size-14 bg-white border-2 border-black rounded-full"></div>
-                        </button>
-                        <p className="text-white/50 text-[10px] font-black uppercase tracking-widest">Toque no botão para capturar</p>
-                    </div>
-
-                    <canvas ref={canvasRef} className="hidden" />
-                </div>
-            )}
         </div>
     );
 };

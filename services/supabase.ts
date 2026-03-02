@@ -598,14 +598,18 @@ export const createDriver = async (driver: Omit<DeliveryDriver, 'id' | 'verified
     // Given the `createEmployee` logic, it seems `profiles` table is used for permission checking.
     // Let's also add them to `profiles` with role 'driver' to be safe and consistent.
     if (userId && driver.email) {
-        await supabase.from('profiles').insert([{
-            id: userId,
-            email: driver.email,
-            full_name: driver.name,
-            role: 'driver',
-            permissions: {}, // Drivers don't have admin panel permissions
-            is_active: true
-        }]);
+        try {
+            await supabase.from('profiles').insert([{
+                id: userId,
+                email: driver.email,
+                full_name: driver.name,
+                role: 'driver',
+                permissions: {}, // Drivers don't have admin panel permissions
+                is_active: true
+            }]);
+        } catch (profileError) {
+            console.warn('Profile creation failed for driver (likely RLS), but registration continues:', profileError);
+        }
     }
 
     return null;
