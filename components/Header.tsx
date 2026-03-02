@@ -105,104 +105,111 @@ const Header: React.FC<HeaderProps> = ({
         </div>
       )}
 
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-4 sm:py-6 flex items-center justify-between gap-4 sm:gap-12">
-        {/* Boutique Branding */}
-        <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-4 group shrink-0 py-2">
-          <div className="bg-transparent text-primary w-[6cm] h-12 flex items-center justify-center font-black group-hover:scale-105 transition-all overflow-hidden">
-            {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" /> : <span className="text-3xl tracking-tighter">BRILHO <span className="text-white italic">ESSENZA</span></span>}
-          </div>
-        </Link>
+      <div className="relative">
+        {/* Logo Background Gradient - Premium Transition */}
+        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
+          <div className="absolute inset-y-0 left-0 w-[50%] lg:w-[40%] bg-gradient-to-r from-white via-white/95 to-transparent"></div>
+        </div>
 
-        {/* Curator Navigation - Desktop Only */}
-        <nav className="hidden lg:flex items-center gap-10">
-          {menuItems.map((item) => (
-            <button
-              key={item.value}
-              onClick={() => ensureHomeAndAction(() => onCategoryChange(item.value))}
-              className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all relative py-2 ${selectedCategory === item.value
-                ? 'text-primary'
-                : 'text-gray-300 hover:text-primary'
-                }`}
-            >
-              {item.label}
-              {selectedCategory === item.value && (
-                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span>
-              )}
-            </button>
-          ))}
-          <Link
-            to="/driver/login"
-            className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-300 hover:text-primary transition-all border border-primary/20 px-3 py-2 rounded-xl hover:border-primary/50"
-          >
-            <span className="material-symbols-outlined !text-sm">local_shipping</span>
-            Entregador
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-4 sm:py-6 flex items-center justify-between gap-4 sm:gap-12 relative z-10">
+          {/* Boutique Branding */}
+          <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-4 group shrink-0 py-2">
+            <div className="bg-transparent text-[#060e1e] w-[6cm] h-14 flex items-center justify-center font-black group-hover:scale-105 transition-all overflow-hidden">
+              {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" /> : <span className="text-3xl tracking-tighter">BRILHO <span className="text-[#060e1e] opacity-80 italic">ESSENZA</span></span>}
+            </div>
           </Link>
-        </nav>
 
-        {/* Actions & Concierge Search */}
-        <div className="flex items-center gap-3 sm:gap-6 flex-1 max-w-md justify-end">
-          <div className="relative w-full hidden md:block max-w-[280px] group">
-            <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors">search</span>
-            <input
-              value={searchTerm}
-              onChange={(e) => handleSearchChange(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 bg-white/5 border border-primary/10 rounded-[1.5rem] focus:ring-1 focus:ring-primary/40 text-xs font-bold outline-none transition-all placeholder:text-gray-500 text-white"
-              placeholder="Encontrar sua essência..."
-              type="text"
-            />
-          </div>
-
-          <div className="flex items-center gap-3 sm:gap-4 shrink-0">
-            {/* Session Indicator - Desktop Only */}
-            {isAuthenticated && userProfile && (
-              <div className="hidden lg:flex items-center gap-3 bg-primary/10 pl-2 pr-1 py-1 rounded-2xl border border-primary/20">
-                <div className="flex flex-col items-end">
-                  <span className="text-[9px] font-black uppercase text-primary leading-none">Sessão Ativa</span>
-                  <span className="text-[10px] font-bold text-gray-500 truncate max-w-[80px]">{userProfile.full_name?.split(' ')[0]}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <Link
-                    to="/admin"
-                    className="size-8 bg-primary/20 hover:bg-primary/40 rounded-xl flex items-center justify-center transition-all group"
-                    title="Ir para Gestão"
-                  >
-                    <span className="material-symbols-outlined !text-sm text-primary group-hover:scale-110 transition-transform">dashboard</span>
-                  </Link>
-                  <button
-                    onClick={onLogout}
-                    className="size-8 bg-red-500/10 hover:bg-red-500/20 rounded-xl flex items-center justify-center transition-all group"
-                    title="Terminar Sessão"
-                  >
-                    <span className="material-symbols-outlined !text-sm text-red-500 group-hover:rotate-12 transition-transform">logout</span>
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <button onClick={toggleDarkMode} className="size-10 flex items-center justify-center hover:bg-primary/10 rounded-full transition-all text-gray-300" title="Alternar tema">
-              <span className="material-symbols-outlined !text-xl">{isDark ? 'light_mode' : 'dark_mode'}</span>
-            </button>
-
-            <button
-              onClick={onOpenCart}
-              className="size-10 sm:size-12 bg-navy dark:bg-primary text-white dark:text-navy rounded-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 relative shadow-xl shadow-navy/20 dark:shadow-primary/10"
-              title="Seu Pedido"
+          {/* Curator Navigation - Desktop Only */}
+          <nav className="hidden lg:flex items-center gap-10">
+            {menuItems.map((item) => (
+              <button
+                key={item.value}
+                onClick={() => ensureHomeAndAction(() => onCategoryChange(item.value))}
+                className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all relative py-2 ${selectedCategory === item.value
+                  ? 'text-primary'
+                  : 'text-gray-300 hover:text-primary'
+                  }`}
+              >
+                {item.label}
+                {selectedCategory === item.value && (
+                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span>
+                )}
+              </button>
+            ))}
+            <Link
+              to="/driver/login"
+              className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-300 hover:text-primary transition-all border border-primary/20 px-3 py-2 rounded-xl hover:border-primary/50"
             >
-              <span className="material-symbols-outlined !text-xl">shopping_cart</span>
-              {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-[9px] font-black text-white size-5 rounded-full flex items-center justify-center border-4 border-white dark:border-[#15140b] shadow-xl">
-                  {cartCount}
-                </span>
+              <span className="material-symbols-outlined !text-sm">local_shipping</span>
+              Entregador
+            </Link>
+          </nav>
+
+          {/* Actions & Concierge Search */}
+          <div className="flex items-center gap-3 sm:gap-6 flex-1 max-w-md justify-end">
+            <div className="relative w-full hidden md:block max-w-[280px] group">
+              <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-300 group-focus-within:text-primary transition-colors">search</span>
+              <input
+                value={searchTerm}
+                onChange={(e) => handleSearchChange(e.target.value)}
+                className="w-full pl-12 pr-4 py-4 bg-white/5 border border-primary/10 rounded-[1.5rem] focus:ring-1 focus:ring-primary/40 text-xs font-bold outline-none transition-all placeholder:text-gray-500 text-white"
+                placeholder="Encontrar sua essência..."
+                type="text"
+              />
+            </div>
+
+            <div className="flex items-center gap-3 sm:gap-4 shrink-0">
+              {/* Session Indicator - Desktop Only */}
+              {isAuthenticated && userProfile && (
+                <div className="hidden lg:flex items-center gap-3 bg-primary/10 pl-2 pr-1 py-1 rounded-2xl border border-primary/20">
+                  <div className="flex flex-col items-end">
+                    <span className="text-[9px] font-black uppercase text-primary leading-none">Sessão Ativa</span>
+                    <span className="text-[10px] font-bold text-gray-500 truncate max-w-[80px]">{userProfile.full_name?.split(' ')[0]}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Link
+                      to="/admin"
+                      className="size-8 bg-primary/20 hover:bg-primary/40 rounded-xl flex items-center justify-center transition-all group"
+                      title="Ir para Gestão"
+                    >
+                      <span className="material-symbols-outlined !text-sm text-primary group-hover:scale-110 transition-transform">dashboard</span>
+                    </Link>
+                    <button
+                      onClick={onLogout}
+                      className="size-8 bg-red-500/10 hover:bg-red-500/20 rounded-xl flex items-center justify-center transition-all group"
+                      title="Terminar Sessão"
+                    >
+                      <span className="material-symbols-outlined !text-sm text-red-500 group-hover:rotate-12 transition-transform">logout</span>
+                    </button>
+                  </div>
+                </div>
               )}
-            </button>
 
-            {/* Mobile Menu Toggle */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="size-10 flex lg:hidden items-center justify-center hover:bg-primary/10 rounded-full transition-all text-gray-300"
-            >
-              <span className="material-symbols-outlined !text-2xl">{isMenuOpen ? 'close' : 'menu'}</span>
-            </button>
+              <button onClick={toggleDarkMode} className="size-10 flex items-center justify-center hover:bg-primary/10 rounded-full transition-all text-gray-300" title="Alternar tema">
+                <span className="material-symbols-outlined !text-xl">{isDark ? 'light_mode' : 'dark_mode'}</span>
+              </button>
+
+              <button
+                onClick={onOpenCart}
+                className="size-10 sm:size-12 bg-navy dark:bg-primary text-white dark:text-navy rounded-2xl flex items-center justify-center transition-all hover:scale-110 active:scale-95 relative shadow-xl shadow-navy/20 dark:shadow-primary/10"
+                title="Seu Pedido"
+              >
+                <span className="material-symbols-outlined !text-xl">shopping_cart</span>
+                {cartCount > 0 && (
+                  <span className="absolute -top-2 -right-2 bg-red-500 text-[9px] font-black text-white size-5 rounded-full flex items-center justify-center border-4 border-white dark:border-[#15140b] shadow-xl">
+                    {cartCount}
+                  </span>
+                )}
+              </button>
+
+              {/* Mobile Menu Toggle */}
+              <button
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="size-10 flex lg:hidden items-center justify-center hover:bg-primary/10 rounded-full transition-all text-gray-300"
+              >
+                <span className="material-symbols-outlined !text-2xl">{isMenuOpen ? 'close' : 'menu'}</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
