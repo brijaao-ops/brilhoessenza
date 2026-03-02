@@ -1,9 +1,19 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { supabase, UserProfile, fetchTeam, createEmployee, UserPermissions, updateEmployeePermissions, deleteEmployee, fetchProfile, updateAppSetting, fetchAppSetting } from '../../services/supabase';
+import { removeImageBackground, blobToBase64 } from '../../services/imageProcessing';
 
 const AdminSettings: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [isSaving, setIsSaving] = useState(false);
+  const [isProcessingLogo, setIsProcessingLogo] = useState(false);
+  const [logoProgress, setLogoProgress] = useState(0);
+
+  // Bulk Vectorization State
+  const [isBulkProcessing, setIsBulkProcessing] = useState(false);
+  const [bulkTotal, setBulkTotal] = useState(0);
+  const [bulkCurrent, setBulkCurrent] = useState(0);
+  const [bulkErrors, setBulkErrors] = useState(0);
+
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
   // Estados Carregados do LocalStorage
@@ -165,12 +175,79 @@ const AdminSettings: React.FC = () => {
     }, 800);
   };
 
-  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => setLogoUrl(reader.result as string);
-      reader.readAsDataURL(file);
+      try {
+        setIsProcessingLogo(true);
+        setLogoProgress(0);
+
+        const processedBlob = await removeImageBackground(file, (p) => {
+          setLogoProgress(Math.round(p * 100));
+        });
+
+        const base64 = await blobToBase64(processedBlob);
+        setLogoUrl(base64);
+      } catch (error) {
+        console.error("Erro no processamento da logo:", error);
+        const reader = new FileReader();
+        reader.onloadend = () => setLogoUrl(reader.result as string);
+        reader.readAsDataURL(file);
+      } finally {
+        setIsProcessingLogo(false);
+      }
+    }
+  };
+
+  const handleBulkVectorize = async () => {
+    if (!confirm("Isso irá processar TODAS as imagens de produtos já cadastradas para remover o fundo automaticamente. Dependendo da quantidade, pode levar alguns minutos. Deseja continuar?")) return;
+
+    try {
+      setIsBulkProcessing(true);
+      setBulkErrors(0);
+      setBulkCurrent(0);
+
+      const { data: products, error } = await supabase.from('products').select('id, image, name');
+      if (error) throw error;
+      if (!products || products.length === 0) {
+        alert("Nenhum produto encontrado para processar.");
+        return;
+      }
+
+      setBulkTotal(products.length);
+
+      for (let i = 0; i < products.length; i++) {
+        const product = products[i];
+        setBulkCurrent(i + 1);
+
+        if (product.image) {
+          try {
+            const vectorImage = await removeImageBackground(product.image);
+            const base64 = await blobToBase64(vectorImage);
+            await supabase.from('products').update({ image: base64 }).eq('id', product.id);
+          } catch (err) {
+            console.error(`Failed to vectorize product ${product.name}:`, err);
+            setBulkErrors(prev => prev + 1);
+          }
+        }
+      }
+
+      if (logoUrl) {
+        try {
+          const vectorLogo = await removeImageBackground(logoUrl);
+          const base64 = await blobToBase64(vectorLogo);
+          setLogoUrl(base64);
+          await updateAppSetting('logo_url', base64);
+        } catch (err) {
+          console.error("Failed to vectorize logo:", err);
+        }
+      }
+
+      alert(`Processamento concluído! ${products.length - bulkErrors} imagens vetorizadas com sucesso.`);
+    } catch (error: any) {
+      alert("Erro no processamento em massa: " + error.message);
+    } finally {
+      setIsBulkProcessing(false);
     }
   };
 
@@ -206,8 +283,15 @@ const AdminSettings: React.FC = () => {
               <div className="flex flex-col gap-8">
                 <div className="flex items-center gap-10">
                   <div className="w-[6cm] h-32 bg-gray-100 dark:bg-white/5 rounded-3xl border-2 border-dashed border-gray-200 dark:border-[#222115] flex items-center justify-center relative group cursor-pointer overflow-hidden">
-                    {logoUrl ? <img src={logoUrl} className="w-full h-full object-contain" /> : <span className="material-symbols-outlined !text-4xl text-gray-300">image</span>}
-                    <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer" onChange={handleLogoUpload} />
+                    {logoUrl ? <img src={logoUrl} className={`w-full h-full object-contain ${isProcessingLogo ? 'opacity-30 blur-sm' : ''}`} /> : <span className="material-symbols-outlined !text-4xl text-gray-300">image</span>}
+                    <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-wait" onChange={handleLogoUpload} disabled={isProcessingLogo} />
+
+                    {isProcessingLogo && (
+                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 dark:bg-black/40 backdrop-blur-[2px] z-50">
+                        <div className="size-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mb-2"></div>
+                        <p className="text-[8px] font-black uppercase tracking-widest text-primary">{logoProgress}%</p>
+                      </div>
+                    )}
                   </div>
                   <div>
                     <p className="text-[10px] font-black text-gray-400 uppercase mb-2">Logotipo do Atelier</p>
@@ -225,6 +309,44 @@ const AdminSettings: React.FC = () => {
                     ))}
                     <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} className="size-10 rounded-full cursor-pointer bg-transparent border-none" />
                   </div>
+                </div>
+
+                {/* Bulk Vectorizer Action */}
+                <div className="mt-4 p-6 bg-primary/5 rounded-[2rem] border border-primary/20">
+                  <div className="flex items-center gap-4 mb-4">
+                    <span className="material-symbols-outlined text-primary !text-4xl">auto_fix_high</span>
+                    <div>
+                      <h5 className="font-black uppercase text-[12px] tracking-tight">Otimizador de Catálogo IA</h5>
+                      <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Vetorizar e Limpar TODAS as imagens existentes</p>
+                    </div>
+                  </div>
+
+                  {isBulkProcessing ? (
+                    <div className="flex flex-col gap-3">
+                      <div className="w-full h-3 bg-gray-100 dark:bg-black/40 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary transition-all duration-300"
+                          style={{ width: `${(bulkCurrent / bulkTotal) * 100}%` }}
+                        ></div>
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary animate-pulse">
+                          Processando {bulkCurrent} de {bulkTotal}...
+                        </p>
+                        {bulkErrors > 0 && (
+                          <p className="text-[9px] font-black uppercase text-red-500">{bulkErrors} erros</p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={handleBulkVectorize}
+                      className="w-full bg-primary text-black font-black py-4 rounded-2xl uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3"
+                    >
+                      <span className="material-symbols-outlined !text-base">magic_button</span>
+                      Vetorizar Catálogo Completo Agora
+                    </button>
+                  )}
                 </div>
               </div>
             </div>

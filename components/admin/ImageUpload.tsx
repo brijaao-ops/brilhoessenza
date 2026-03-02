@@ -1,5 +1,6 @@
 ﻿
-import React from 'react';
+import React, { useState } from 'react';
+import { removeImageBackground, blobToBase64 } from '../../services/imageProcessing';
 
 interface ImageUploadProps {
     image: string;
@@ -9,12 +10,34 @@ interface ImageUploadProps {
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({ image, onImageChange, imageMode, setImageMode }) => {
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [progress, setProgress] = useState(0);
+
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => onImageChange(reader.result as string);
-            reader.readAsDataURL(file);
+            try {
+                setIsProcessing(true);
+                setProgress(0);
+
+                // Process with AI
+                const processedBlob = await removeImageBackground(file, (p) => {
+                    setProgress(Math.round(p * 100));
+                });
+
+                // Convert to Base64 for the application
+                const base64 = await blobToBase64(processedBlob);
+                onImageChange(base64);
+            } catch (error) {
+                console.error("Falha no processamento de imagem:", error);
+
+                // Fallback: regular upload if AI fails
+                const reader = new FileReader();
+                reader.onloadend = () => onImageChange(reader.result as string);
+                reader.readAsDataURL(file);
+            } finally {
+                setIsProcessing(false);
+            }
         }
     };
 
@@ -47,7 +70,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ image, onImageChange, 
             <div className="w-full aspect-video md:aspect-square bg-gray-50 dark:bg-white/5 rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10 relative overflow-hidden flex items-center justify-center">
                 {image ? (
                     <>
-                        <img src={image} className="w-full h-full object-contain" alt="Preview" />
+                        <img src={image} className={`w-full h-full object-contain ${isProcessing ? 'opacity-30 blur-sm' : ''}`} alt="Preview" />
                         <button
                             type="button"
                             onClick={() => onImageChange('')}
@@ -58,8 +81,16 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({ image, onImageChange, 
                     </>
                 ) : (
                     <div className="flex flex-col items-center gap-2 text-gray-300">
-                        <span className="material-symbols-outlined !text-4xl">image</span>
+                        <span className="material-symbols-outlined !text-4xl text-gray-200">image</span>
                         <p className="text-[10px] font-bold uppercase">Sem imagem</p>
+                    </div>
+                )}
+
+                {isProcessing && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 dark:bg-black/40 backdrop-blur-[2px] z-50">
+                        <div className="size-16 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-4"></div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-primary animate-pulse">Vetorizando via IA...</p>
+                        <p className="text-[12px] font-black mt-2 text-primary">{progress}%</p>
                     </div>
                 )}
             </div>
