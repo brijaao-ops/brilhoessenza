@@ -22,6 +22,8 @@ import AdminLogin from './pages/admin/AdminLogin';
 import AdminTeam from './pages/admin/AdminTeam';
 import AdminSlides from './pages/admin/AdminSlides';
 import AdminSlideForm from './pages/admin/AdminSlideForm';
+import AdminVideoSlides from './pages/admin/AdminVideoSlides';
+import AdminVideoSlideForm from './pages/admin/AdminVideoSlideForm';
 import AdminDrivers from './pages/admin/AdminDrivers';
 import DriverRegistration from './pages/DriverRegistration';
 import DriverProfile from './pages/DriverProfile';
@@ -32,8 +34,8 @@ import CheckoutModal from './components/CheckoutModal';
 import CartDrawer from './components/CartDrawer';
 import OrderSuccessModal from './components/OrderSuccessModal';
 import MobileNav from './components/MobileNav';
-import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, supabase, signOut, fetchProfile, fetchAllAppSettings, fetchTeam, fetchDrivers } from './services/supabase';
-import { Product, Order, Category, Slide, UserProfile, DeliveryDriver } from './types';
+import { fetchProducts, addProduct, updateProduct as apiUpdateProduct, deleteProduct as apiDeleteProduct, fetchOrders, createOrder, fetchCategories, createCategory, fetchSlides, fetchVideoSlides, supabase, signOut, fetchProfile, fetchAllAppSettings, fetchTeam, fetchDrivers } from './services/supabase';
+import { Product, Order, Category, Slide, VideoSlide, UserProfile, DeliveryDriver } from './types';
 import { MOCK_PRODUCTS, MOCK_ORDERS } from './constants';
 import { ProductCardSkeleton } from './components/Skeletons';
 
@@ -47,6 +49,7 @@ const AppContent: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [slides, setSlides] = useState<Slide[]>([]);
+  const [videoSlides, setVideoSlides] = useState<VideoSlide[]>([]);
   const [team, setTeam] = useState<UserProfile[]>([]);
   const [drivers, setDrivers] = useState<DeliveryDriver[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,9 +72,11 @@ const AppContent: React.FC = () => {
       const cp = localStorage.getItem('brilho_products_v4');
       const cc = localStorage.getItem('brilho_categories_v4');
       const cs = localStorage.getItem('brilho_slides_v4');
+      const cvs = localStorage.getItem('brilho_video_slides_v1');
       if (cp) { try { const p = JSON.parse(cp); if (p.length > 0) setProducts(p); } catch (e) { } }
       if (cc) { try { const c = JSON.parse(cc); if (c.length > 0) setCategories(c); } catch (e) { } }
       if (cs) { try { const s = JSON.parse(cs); if (s.length > 0) setSlides(s); } catch (e) { } }
+      if (cvs) { try { const vs = JSON.parse(cvs); if (vs.length > 0) setVideoSlides(vs); } catch (e) { } }
     } catch (e) {
       console.warn("Cache load failed", e);
     }
@@ -116,7 +121,20 @@ const AppContent: React.FC = () => {
         return true; // Slides failing isn't "fatal"
       });
 
-    const [productSuccess] = await Promise.all([productPromise, categoryPromise, slidePromise]);
+    const videoSlidePromise = fetchVideoSlides()
+      .then(dbVideoSlides => {
+        if (dbVideoSlides.length > 0) {
+          setVideoSlides(dbVideoSlides);
+          localStorage.setItem('brilho_video_slides_v1', JSON.stringify(dbVideoSlides));
+        }
+        return true;
+      })
+      .catch(e => {
+        console.error('Video Slide Fetch Error:', e);
+        return true;
+      });
+
+    const [productSuccess] = await Promise.all([productPromise, categoryPromise, slidePromise, videoSlidePromise]);
 
     // Only set error if products failed AND no cached products exist
     if (!productSuccess && products.length === 0) {
@@ -581,6 +599,7 @@ const AppContent: React.FC = () => {
       ]
     },
     { name: 'Slides Home', path: '/admin/slides', icon: 'collections', perm: 'settings' },
+    { name: 'Vídeo Slides', path: '/admin/video-slides', icon: 'movie', perm: 'settings' },
     { name: 'Equipe', path: '/admin/equipe', icon: 'groups', perm: 'team' },
     { name: 'Entregadores', path: '/admin/entregadores', icon: 'delivery_dining', perm: 'drivers' },
   ];
@@ -721,6 +740,9 @@ const AppContent: React.FC = () => {
                 <Route path="/admin/slides" element={<AdminSlides />} />
                 <Route path="/admin/slides/novo" element={<AdminSlideForm />} />
                 <Route path="/admin/slides/editar/:id" element={<AdminSlideForm />} />
+                <Route path="/admin/video-slides" element={<AdminVideoSlides />} />
+                <Route path="/admin/video-slides/novo" element={<AdminVideoSlideForm />} />
+                <Route path="/admin/video-slides/editar/:id" element={<AdminVideoSlideForm />} />
                 <Route path="*" element={<div className="p-12 text-center font-black uppercase tracking-widest text-gray-400">Página de Gestão não encontrada</div>} />
               </Routes>
             </main>
@@ -763,6 +785,7 @@ const AppContent: React.FC = () => {
                   selectedCategory={selectedCategory}
                   onCategorySelect={setSelectedCategory}
                   slides={slides}
+                  videoSlides={videoSlides}
                   onRetry={() => loadAllData(true)}
                   isLoading={loading}
                   hasError={hasLoadError}

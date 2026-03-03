@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { Product, Order, Category, Slide, UserProfile, UserPermissions, DeliveryDriver } from '../types';
+import { Product, Order, Category, Slide, UserProfile, UserPermissions, DeliveryDriver, VideoSlide } from '../types';
 export type { UserProfile, UserPermissions };
 
 // @ts-ignore
@@ -433,6 +433,50 @@ export const updateSlide = async (id: string, updates: Partial<Slide>) => {
 export const deleteSlide = async (id: string) => {
     const { error } = await supabase
         .from('slides')
+        .delete()
+        .eq('id', id);
+
+    if (error) throw error;
+};
+
+// --- Video Slides ---
+
+export const fetchVideoSlides = async (): Promise<VideoSlide[]> => {
+    const { data, error } = await supabase
+        .from('video_slides')
+        .select('*')
+        .order('order_index', { ascending: true });
+
+    if (error) {
+        console.error('Error fetching video slides:', error);
+        throw error;
+    }
+    return data;
+};
+
+export const addVideoSlide = async (slide: Omit<VideoSlide, 'id'>) => {
+    const { data, error } = await supabase
+        .from('video_slides')
+        .insert([slide])
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+};
+
+export const updateVideoSlide = async (id: string, updates: Partial<VideoSlide>) => {
+    const { error } = await supabase
+        .from('video_slides')
+        .update(updates)
+        .eq('id', id);
+
+    if (error) throw error;
+};
+
+export const deleteVideoSlide = async (id: string) => {
+    const { error } = await supabase
+        .from('video_slides')
         .delete()
         .eq('id', id);
 

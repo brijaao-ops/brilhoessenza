@@ -1,5 +1,5 @@
 ﻿import React from 'react';
-import { Product, Slide } from '../types';
+import { Product, Slide, VideoSlide } from '../types';
 import ProductCard from '../components/ProductCard';
 import ScentQuiz from '../components/ScentQuiz';
 import { ProductSkeleton } from '../components/Skeleton';
@@ -11,6 +11,7 @@ interface HomeProps {
   onCategorySelect: (cat: string | null) => void;
   products: Product[];
   slides: Slide[];
+  videoSlides: VideoSlide[];
   isLoading?: boolean;
   hasError?: boolean;
   onRetry?: () => void;
@@ -23,6 +24,7 @@ const Home: React.FC<HomeProps> = ({
   onCategorySelect,
   products,
   slides,
+  videoSlides,
   isLoading = false,
   hasError = false,
   onRetry
@@ -218,10 +220,49 @@ const Home: React.FC<HomeProps> = ({
             </div>
           </div>
         ) : filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
-            {filteredProducts.map((p) => (
-              <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} />
-            ))}
+          <div className="flex flex-col gap-10 sm:gap-24">
+            {/* Split layout: Video on Left, first 2 products on Right (Desktop) */}
+            <div className="flex flex-col lg:flex-row gap-10">
+              {/* Video Slide - 1080x1350 (4:5 Ratio) */}
+              {videoSlides && videoSlides.length > 0 && videoSlides[0].active && (
+                <div className="w-full lg:w-[450px] xl:w-[500px] shrink-0">
+                  <div className="aspect-[4/5] rounded-[3rem] overflow-hidden bg-black relative group shadow-2xl border border-white/5">
+                    <video
+                      src={videoSlides[0].video_url}
+                      className="w-full h-full object-cover"
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                    />
+                    <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/80 to-transparent">
+                      <h4 className="text-white font-black uppercase tracking-widest text-lg lg:text-xl">
+                        {videoSlides[0].title || 'Elegância em Movimento'}
+                      </h4>
+                      <p className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mt-2">Coleção Exclusiva</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Products on the right or full width if no video */}
+              <div className="flex-1">
+                <div className={`grid grid-cols-1 sm:grid-cols-2 ${videoSlides && videoSlides.length > 0 && videoSlides[0].active ? 'lg:grid-cols-2' : 'lg:grid-cols-4'} gap-x-10 gap-y-24`}>
+                  {(videoSlides && videoSlides.length > 0 && videoSlides[0].active ? filteredProducts.slice(0, 2) : filteredProducts.slice(0, 4)).map((p) => (
+                    <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} />
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Remaining Products below */}
+            {filteredProducts.length > (videoSlides && videoSlides.length > 0 && videoSlides[0].active ? 2 : 4) && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
+                {filteredProducts.slice(videoSlides && videoSlides.length > 0 && videoSlides[0].active ? 2 : 4).map((p) => (
+                  <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} />
+                ))}
+              </div>
+            )}
           </div>
         ) : products.length === 0 ? (
           <div className="py-48 text-center border-2 border-dashed border-gray-200 dark:border-white/5 rounded-[5rem] animate-fade-up">

@@ -121,3 +121,11 @@ export interface Slide {
   button_link: string;
   order_index: number;
 }
+export interface VideoSlide {
+  id: string;
+  title?: string;
+  video_url: string;
+  active: boolean;
+  order_index: number;
+  created_at?: string;
+}
