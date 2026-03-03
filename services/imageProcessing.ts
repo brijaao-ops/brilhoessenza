@@ -54,3 +54,40 @@ export const vectorizeExistingImage = async (imageUrl: string): Promise<string> 
         throw error;
     }
 };
+/**
+ * Resizes an image (Blob) to fit within maxWidth and maxHeight using Canvas.
+ */
+export const resizeImage = (blob: Blob, maxWidth: number, maxHeight: number): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.src = URL.createObjectURL(blob);
+        img.onload = () => {
+            URL.revokeObjectURL(img.src);
+            let width = img.width;
+            let height = img.height;
+
+            if (width > maxWidth || height > maxHeight) {
+                const ratio = Math.min(maxWidth / width, maxHeight / height);
+                width *= ratio;
+                height *= ratio;
+            }
+
+            const canvas = document.createElement('canvas');
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            if (!ctx) {
+                reject(new Error("Não foi possível obter o contexto do canvas"));
+                return;
+            }
+
+            ctx.drawImage(img, 0, 0, width, height);
+
+            canvas.toBlob((resizedBlob) => {
+                if (resizedBlob) resolve(resizedBlob);
+                else reject(new Error("Falha ao criar blob redimensionado"));
+            }, 'image/png', 0.85);
+        };
+        img.onerror = () => reject(new Error("Falha ao carregar imagem para redimensionamento"));
+    });
+};

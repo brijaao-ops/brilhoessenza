@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { supabase, UserProfile, fetchProfile, updateAppSetting } from '../../services/supabase';
-import { removeImageBackground, blobToBase64 } from '../../services/imageProcessing';
+import { removeImageBackground, blobToBase64, resizeImage } from '../../services/imageProcessing';
 
 const AdminSettings: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
@@ -164,10 +164,26 @@ const AdminSettings: React.FC = () => {
       toast.className = "fixed bottom-8 right-8 bg-black text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest z-[200] shadow-2xl border border-primary/20 animate-slide-in";
       toast.innerText = "Configurações do Atelier Atualizadas";
       document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
-    } catch (err: any) {
-      console.error("DB Sync Error:", err);
-      alert("Erro ao salvar no banco de dados. Verifique sua conexão ou se a imagem do logo é muito grande.");
+      setLogoUrl(settings.logoUrl || null);
+      if (settings.brandColor) setBrandColor(settings.brandColor);
+      if (settings.taxRate) setTaxRate(settings.taxRate);
+      if (settings.enableMCX !== undefined) setEnableMCX(settings.enableMCX);
+      if (settings.mcxPhone) setMcxPhone(settings.mcxPhone);
+      if (settings.enableIBAN !== undefined) setEnableIBAN(settings.enableIBAN);
+      if (settings.bankName) setBankName(settings.bankName);
+      if (settings.bankIBAN) setBankIBAN(settings.bankIBAN);
+      if (settings.shippingLuanda) setShippingLuanda(settings.shippingLuanda);
+      if (settings.shippingProvinces) setShippingProvinces(settings.shippingProvinces);
+      if (settings.freeShippingThreshold) setFreeShippingThreshold(settings.freeShippingThreshold);
+
+      // Save to localStorage immediately to ensure consistency
+      localStorage.setItem('brilho_essenza_settings', JSON.stringify(settings));
+      localStorage.setItem('brilho_essenza_settings_updated', Date.now().toString());
+
+      alert("Configurações salvas com sucesso!");
+    } catch (error: any) {
+      console.error("Erro ao salvar no banco de dados:", error);
+      alert(`Erro ao salvar no banco de dados: ${error.message || "Verifique sua conexão"}. Se você alterou o logo, tente uma imagem menor ou menos complexa.`);
     } finally {
       setIsSaving(false);
     }
@@ -182,13 +198,24 @@ const AdminSettings: React.FC = () => {
         const processedBlob = await removeImageBackground(file, (p) => {
           setLogoProgress(Math.round(p * 100));
         });
-        const base64 = await blobToBase64(processedBlob);
+
+        // Resize logo to max 800px to ensure it fits in DB payload
+        const resizedBlob = await resizeImage(processedBlob, 800, 800);
+        const base64 = await blobToBase64(resizedBlob);
         setLogoUrl(base64);
       } catch (error) {
         console.error("Erro no processamento da logo:", error);
-        const reader = new FileReader();
-        reader.onloadend = () => setLogoUrl(reader.result as string);
-        reader.readAsDataURL(file);
+
+        // Fallback: still try to resize even if background removal fails
+        try {
+          const resizedBlob = await resizeImage(file, 800, 800);
+          const base64 = await blobToBase64(resizedBlob);
+          setLogoUrl(base64);
+        } catch (resizeErr) {
+          const reader = new FileReader();
+          reader.onloadend = () => setLogoUrl(reader.result as string);
+          reader.readAsDataURL(file);
+        }
       } finally {
         setIsProcessingLogo(false);
       }
