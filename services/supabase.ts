@@ -619,6 +619,7 @@ export const createDriver = async (driver: Omit<DeliveryDriver, 'id' | 'verified
         license_plate: driver.license_plate || null,
         phone: driver.phone || (driver as any).whatsapp || null,
         photo_url: driver.photo_url || (driver as any).selfie_url || null,
+        ai_verification_result: (driver as any).ai_verification_result || null,
     };
 
     const { error } = await supabase

@@ -1,4 +1,5 @@
-﻿import { createDriver, uploadImage } from '../services/supabase';
+﻿import React, { useState, useEffect } from 'react';
+import { createDriver, uploadImage } from '../services/supabase';
 import { verifyIdentity } from '../services/gemini';
 import { useNavigate } from 'react-router-dom';
 import IdentityCamera from '../components/IdentityCamera';
@@ -55,11 +56,6 @@ const DriverRegistration: React.FC = () => {
     const [step, setStep] = useState(1); // 1: Info, 2: Documents
     const navigate = useNavigate();
 
-    // Refs for hidden file inputs
-    const idFrontInputRef = useRef<HTMLInputElement>(null);
-    const idBackInputRef = useRef<HTMLInputElement>(null);
-    const selfieInputRef = useRef<HTMLInputElement>(null);
-
     // Scroll to top on mount
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -70,30 +66,13 @@ const DriverRegistration: React.FC = () => {
         if (name === 'whatsapp') {
             const numericValue = value.replace(/\D/g, '');
             if (numericValue.length <= 9) {
-                setFormData(prev => ({ ...prev, [name]: numericValue }));
+                setFormData((prev: any) => ({ ...prev, [name]: numericValue }));
             }
         } else {
-            setFormData(prev => ({ ...prev, [name]: value }));
+            setFormData((prev: any) => ({ ...prev, [name]: value }));
         }
     };
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, type: keyof typeof images) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
-
-        // Create preview
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setPreviews(prev => ({ ...prev, [type]: reader.result as string }));
-        };
-        reader.readAsDataURL(file);
-
-        setImages(prev => ({ ...prev, [type]: file }));
-
-        if (type === 'id_front') {
-            performOCR(file);
-        }
-    };
 
     const openCamera = (field: keyof typeof images, type: 'document' | 'face') => {
         setCameraState({
@@ -109,13 +88,13 @@ const DriverRegistration: React.FC = () => {
 
         const file = new File([blob], `${field}.jpg`, { type: 'image/jpeg' });
 
-        setImages(prev => ({ ...prev, [field]: file }));
-        setPreviews(prev => ({ ...prev, [field]: base64 }));
+        setImages((prev: any) => ({ ...prev, [field]: file }));
+        setPreviews((prev: any) => ({ ...prev, [field]: base64 }));
 
         if (field === 'id_front') {
-            setBase64Images(prev => ({ ...prev, id_front: base64 }));
+            setBase64Images((prev: any) => ({ ...prev, id_front: base64 }));
         } else if (field === 'selfie') {
-            setBase64Images(prev => ({ ...prev, selfie: base64 }));
+            setBase64Images((prev: any) => ({ ...prev, selfie: base64 }));
         }
 
         setCameraState({ ...cameraState, isOpen: false });
@@ -137,7 +116,7 @@ const DriverRegistration: React.FC = () => {
             if (result.nameMatches && result.faceMatches) {
                 showToast('Identidade verificada com sucesso pela IA!', 'success');
             } else {
-                showToast('A IA detectou inconsistências nos documentos.', 'warning');
+                showToast('A IA detectou inconsistências nos documentos.', 'info');
             }
         } catch (error) {
             showToast('Erro ao processar verificação por IA.', 'error');
