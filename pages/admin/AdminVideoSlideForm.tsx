@@ -42,10 +42,8 @@ const AdminVideoSlideForm: React.FC = () => {
             let finalVideoUrl = formData.video_url;
 
             if (selectedFile) {
-                // Using the existing uploadImage for video as well, 
-                // but usually videos need a 'videos' bucket. 
-                // Let's check if we should use a different bucket.
-                finalVideoUrl = await uploadImage(selectedFile, 'videos');
+                // Using 'slides' bucket as it's guaranteed to exist.
+                finalVideoUrl = await uploadImage(selectedFile, 'slides');
             }
 
             if (!finalVideoUrl) {
