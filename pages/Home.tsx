@@ -30,6 +30,7 @@ const Home: React.FC<HomeProps> = ({
   onRetry
 }) => {
   const [currentSlide, setCurrentSlide] = React.useState(0);
+  const [currentVideoSlide, setCurrentVideoSlide] = React.useState(0);
   const [email, setEmail] = React.useState('');
   const [subscribed, setSubscribed] = React.useState(false);
   const [isQuizOpen, setIsQuizOpen] = React.useState(false);
@@ -51,6 +52,16 @@ const Home: React.FC<HomeProps> = ({
       return () => clearInterval(timer);
     }
   }, [slides.length]);
+
+  React.useEffect(() => {
+    const activeVideoSlides = videoSlides.filter(s => s.active);
+    if (activeVideoSlides.length > 1) {
+      const timer = setInterval(() => {
+        setCurrentVideoSlide((prev) => (prev + 1) % activeVideoSlides.length);
+      }, 10000); // 10 seconds per video
+      return () => clearInterval(timer);
+    }
+  }, [videoSlides]);
 
   const filteredProducts = products.filter(p => {
     // 1. Search Filter (Defensive handling of missing fields)
@@ -223,32 +234,52 @@ const Home: React.FC<HomeProps> = ({
           <div className="flex flex-col gap-10 sm:gap-24">
             {/* Split layout: Video on Left, first 2 products on Right (Desktop) */}
             <div className="flex flex-col lg:flex-row gap-10">
-              {/* Video Slide - 1080x1350 (4:5 Ratio) */}
-              {videoSlides && videoSlides.length > 0 && videoSlides[0].active && (
+              {/* Video Slide Carousel - 1080x1350 (4:5 Ratio) */}
+              {videoSlides && videoSlides.length > 0 && videoSlides.some(s => s.active) && (
                 <div className="w-full lg:w-[450px] xl:w-[500px] shrink-0">
                   <div className="aspect-[4/5] rounded-[3rem] overflow-hidden bg-black relative group shadow-2xl border border-white/5">
-                    <video
-                      src={videoSlides[0].video_url}
-                      className="w-full h-full object-cover"
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                    />
-                    <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/80 to-transparent">
-                      <h4 className="text-white font-black uppercase tracking-widest text-lg lg:text-xl">
-                        {videoSlides[0].title || 'Elegância em Movimento'}
-                      </h4>
-                      <p className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mt-2">Coleção Exclusiva</p>
-                    </div>
+                    {videoSlides.filter(s => s.active).map((slide, index) => (
+                      <div
+                        key={slide.id}
+                        className={`absolute inset-0 transition-opacity duration-1000 ${index === currentVideoSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
+                      >
+                        <video
+                          src={slide.video_url}
+                          className="w-full h-full object-cover"
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                        />
+                        <div className="absolute inset-x-0 bottom-0 p-8 bg-gradient-to-t from-black/80 to-transparent z-20">
+                          <h4 className="text-white font-black uppercase tracking-widest text-lg lg:text-xl transform transition-transform duration-700 delay-300">
+                            {slide.title || 'Elegância em Movimento'}
+                          </h4>
+                          <p className="text-primary text-[10px] font-black uppercase tracking-[0.3em] mt-2">Coleção Exclusiva</p>
+                        </div>
+                      </div>
+                    ))}
+
+                    {/* Video Pagination Dots */}
+                    {videoSlides.filter(s => s.active).length > 1 && (
+                      <div className="absolute top-8 right-8 z-30 flex flex-col gap-2">
+                        {videoSlides.filter(s => s.active).map((_, i) => (
+                          <button
+                            key={i}
+                            onClick={() => setCurrentVideoSlide(i)}
+                            className={`w-1.5 transition-all duration-500 rounded-full ${i === currentVideoSlide ? 'h-8 bg-primary' : 'h-2 bg-white/20 hover:bg-white/40'}`}
+                          />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
 
               {/* Products on the right or full width if no video */}
               <div className="flex-1">
-                <div className={`grid grid-cols-1 sm:grid-cols-2 ${videoSlides && videoSlides.length > 0 && videoSlides[0].active ? 'lg:grid-cols-2' : 'lg:grid-cols-4'} gap-x-10 gap-y-24`}>
-                  {(videoSlides && videoSlides.length > 0 && videoSlides[0].active ? filteredProducts.slice(0, 2) : filteredProducts.slice(0, 4)).map((p) => (
+                <div className={`grid grid-cols-1 sm:grid-cols-2 ${videoSlides && videoSlides.length > 0 && videoSlides.some(s => s.active) ? 'lg:grid-cols-2' : 'lg:grid-cols-4'} gap-x-10 gap-y-24`}>
+                  {(videoSlides && videoSlides.length > 0 && videoSlides.some(s => s.active) ? filteredProducts.slice(0, 2) : filteredProducts.slice(0, 4)).map((p) => (
                     <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} />
                   ))}
                 </div>
@@ -256,9 +287,9 @@ const Home: React.FC<HomeProps> = ({
             </div>
 
             {/* Remaining Products below */}
-            {filteredProducts.length > (videoSlides && videoSlides.length > 0 && videoSlides[0].active ? 2 : 4) && (
+            {filteredProducts.length > (videoSlides && videoSlides.length > 0 && videoSlides.some(s => s.active) ? 2 : 4) && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
-                {filteredProducts.slice(videoSlides && videoSlides.length > 0 && videoSlides[0].active ? 2 : 4).map((p) => (
+                {filteredProducts.slice(videoSlides && videoSlides.length > 0 && videoSlides.some(s => s.active) ? 2 : 4).map((p) => (
                   <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} />
                 ))}
               </div>
