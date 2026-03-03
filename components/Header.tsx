@@ -109,6 +109,15 @@ const Header: React.FC<HeaderProps> = ({
         {/* Logo Background Gradient - Premium Transition */}
         <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
           <div className="absolute inset-y-0 left-0 w-[50%] lg:w-[40%] bg-gradient-to-r from-white via-white/95 to-transparent"></div>
+          {/* Floral Watermark Texture */}
+          <div
+            className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
+            style={{
+              backgroundImage: 'url(/assets/floral_watermark.png)',
+              backgroundSize: '300px',
+              backgroundRepeat: 'repeat'
+            }}
+          ></div>
         </div>
 
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-2 flex items-center justify-between gap-4 sm:gap-12 relative z-10">
