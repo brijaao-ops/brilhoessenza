@@ -1,7 +1,7 @@
-﻿import React, { useState, useRef, useEffect } from 'react';
-import { createDriver, uploadImage } from '../services/supabase';
+﻿import { createDriver, uploadImage } from '../services/supabase';
+import { verifyIdentity } from '../services/gemini';
 import { useNavigate } from 'react-router-dom';
-import { createWorker } from 'tesseract.js';
+import IdentityCamera from '../components/IdentityCamera';
 
 import { useToast } from '../contexts/ToastContext';
 
@@ -37,8 +37,20 @@ const DriverRegistration: React.FC = () => {
     });
 
     const [loading, setLoading] = useState(false);
-    const [ocrProcessing, setOcrProcessing] = useState(false);
-    const [ocrResult, setOcrResult] = useState<{ success: boolean; message: string } | null>(null);
+    const [aiProcessing, setAiProcessing] = useState(false);
+    const [aiResult, setAiResult] = useState<{ nameMatches: boolean; faceMatches: boolean; explanation: string } | null>(null);
+    const [cameraState, setCameraState] = useState<{ isOpen: boolean; type: 'document' | 'face'; currentField: keyof typeof images | null }>({
+        isOpen: false,
+        type: 'document',
+        currentField: null
+    });
+    const [base64Images, setBase64Images] = useState<{
+        id_front: string | null;
+        selfie: string | null;
+    }>({
+        id_front: null,
+        selfie: null
+    });
     const [success, setSuccess] = useState(false);
     const [step, setStep] = useState(1); // 1: Info, 2: Documents
     const navigate = useNavigate();
@@ -83,36 +95,54 @@ const DriverRegistration: React.FC = () => {
         }
     };
 
-    const triggerInput = (type: keyof typeof images) => {
-        if (type === 'id_front') idFrontInputRef.current?.click();
-        else if (type === 'id_back') idBackInputRef.current?.click();
-        else if (type === 'selfie') selfieInputRef.current?.click();
+    const openCamera = (field: keyof typeof images, type: 'document' | 'face') => {
+        setCameraState({
+            isOpen: true,
+            type,
+            currentField: field
+        });
     };
 
-    const performOCR = async (file: File) => {
-        setOcrProcessing(true);
-        setOcrResult(null);
+    const handleCameraCapture = (blob: Blob, base64: string) => {
+        const field = cameraState.currentField;
+        if (!field) return;
+
+        const file = new File([blob], `${field}.jpg`, { type: 'image/jpeg' });
+
+        setImages(prev => ({ ...prev, [field]: file }));
+        setPreviews(prev => ({ ...prev, [field]: base64 }));
+
+        if (field === 'id_front') {
+            setBase64Images(prev => ({ ...prev, id_front: base64 }));
+        } else if (field === 'selfie') {
+            setBase64Images(prev => ({ ...prev, selfie: base64 }));
+        }
+
+        setCameraState({ ...cameraState, isOpen: false });
+    };
+
+    const performAIVerification = async () => {
+        if (!base64Images.id_front || !base64Images.selfie) {
+            showToast('Capture o BI Frente e a Selfie antes de verificar.', 'info');
+            return;
+        }
+
+        setAiProcessing(true);
+        setAiResult(null);
+
         try {
-            const worker = await createWorker('por');
-            const { data: { text } } = await worker.recognize(file);
-            await worker.terminate();
+            const result = await verifyIdentity(formData.name, base64Images.id_front, base64Images.selfie);
+            setAiResult(result);
 
-            const normalizedStoredName = formData.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-            const normalizedOcrText = text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-
-            const nameParts = normalizedStoredName.split(/\s+/).filter(p => p.length > 2);
-            const matches = nameParts.length > 0 && nameParts.every(part => normalizedOcrText.includes(part));
-
-            if (matches) {
-                setOcrResult({ success: true, message: 'Identidade Validada: Nome encontrado no BI.' });
+            if (result.nameMatches && result.faceMatches) {
+                showToast('Identidade verificada com sucesso pela IA!', 'success');
             } else {
-                setOcrResult({ success: false, message: 'Aviso: Nome no BI parece não coincidir.' });
+                showToast('A IA detectou inconsistências nos documentos.', 'warning');
             }
         } catch (error) {
-            console.error('OCR Error:', error);
-            setOcrResult({ success: false, message: 'Erro na verificação automática.' });
+            showToast('Erro ao processar verificação por IA.', 'error');
         } finally {
-            setOcrProcessing(false);
+            setAiProcessing(false);
         }
     };
 
@@ -157,6 +187,7 @@ const DriverRegistration: React.FC = () => {
                 id_front_url,
                 id_back_url,
                 selfie_url,
+                ai_verification_result: aiResult ? JSON.stringify(aiResult) : undefined,
                 active: true
             });
 
@@ -188,32 +219,15 @@ const DriverRegistration: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-[#fcfbf8] dark:bg-[#08112e] flex items-center justify-center p-6 py-20">
-            {/* Hidden Inputs for Native Camera */}
-            <input
-                type="file"
-                ref={idFrontInputRef}
-                className="hidden"
-                accept="image/*"
-                capture="environment"
-                onChange={(e) => handleFileChange(e, 'id_front')}
-            />
-            <input
-                type="file"
-                ref={idBackInputRef}
-                className="hidden"
-                accept="image/*"
-                capture="environment"
-                onChange={(e) => handleFileChange(e, 'id_back')}
-            />
-            <input
-                type="file"
-                ref={selfieInputRef}
-                className="hidden"
-                accept="image/*"
-                capture="user"
-                onChange={(e) => handleFileChange(e, 'selfie')}
-            />
+        <div className="min-h-screen bg-[#fcfbf8] dark:bg-[#08112e] flex items-center justify-center p-6 py-20 relative">
+            {cameraState.isOpen && (
+                <IdentityCamera
+                    type={cameraState.type}
+                    title={cameraState.currentField === 'id_front' ? 'BI Parte Frontal' : cameraState.currentField === 'id_back' ? 'BI Parte Traseira' : 'Selfie de Comparação'}
+                    onCapture={handleCameraCapture}
+                    onCancel={() => setCameraState({ ...cameraState, isOpen: false })}
+                />
+            )}
 
             <div className="max-w-4xl w-full bg-white dark:bg-[#0d1840] rounded-[4rem] p-8 lg:p-16 shadow-2xl border border-gray-100 dark:border-white/5">
 
@@ -331,50 +345,38 @@ const DriverRegistration: React.FC = () => {
                         <div className="space-y-10">
                             {/* BI FRENTE - LANDSCAPE */}
                             <div className="space-y-4">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block ml-2">BI Frente (Horizontal)</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block ml-2">BI Frente (Captura com Guia)</label>
                                 <div
-                                    onClick={() => triggerInput('id_front')}
-                                    className="relative aspect-[1.6/1] w-full max-w-2xl mx-auto rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-white/5 border-2 border-dashed border-gray-200 dark:border-white/10 cursor-pointer hover:border-primary transition-colors group"
+                                    onClick={() => openCamera('id_front', 'document')}
+                                    className="relative aspect-[1.58/1] w-full max-w-2xl mx-auto rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-white/5 border-2 border-dashed border-gray-200 dark:border-white/10 cursor-pointer hover:border-primary transition-colors group"
                                 >
                                     {previews.id_front ? (
                                         <img src={previews.id_front} className="w-full h-full object-cover" alt="BI Frente" />
                                     ) : (
                                         <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center">
                                             <span className="material-symbols-outlined !text-5xl text-primary mb-3">badge</span>
-                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tirar foto da Frente do Bilhete</p>
+                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Abrir Câmera para BI Frente</p>
                                         </div>
                                     )}
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                         <span className="material-symbols-outlined text-white text-4xl">photo_camera</span>
                                     </div>
-
-                                    {ocrProcessing && (
-                                        <div className="absolute inset-0 bg-black/60 flex flex-col items-center justify-center z-10 p-4 text-center">
-                                            <div className="size-10 border-4 border-primary border-t-transparent animate-spin rounded-full mb-3"></div>
-                                            <p className="text-[10px] font-black text-white uppercase tracking-widest">Extraindo Dados...</p>
-                                        </div>
-                                    )}
                                 </div>
-                                {ocrResult && (
-                                    <div className={`mt-2 p-3 rounded-xl text-[9px] font-black uppercase tracking-widest text-center ${ocrResult.success ? 'bg-green-500/10 text-green-500' : 'bg-orange-500/10 text-orange-500'}`}>
-                                        {ocrResult.message}
-                                    </div>
-                                )}
                             </div>
 
                             {/* BI VERSO - LANDSCAPE */}
                             <div className="space-y-4">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block ml-2">BI Verso (Horizontal)</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block ml-2">BI Verso (Captura com Guia)</label>
                                 <div
-                                    onClick={() => triggerInput('id_back')}
-                                    className="relative aspect-[1.6/1] w-full max-w-2xl mx-auto rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-white/5 border-2 border-dashed border-gray-200 dark:border-white/10 cursor-pointer hover:border-primary transition-colors group"
+                                    onClick={() => openCamera('id_back', 'document')}
+                                    className="relative aspect-[1.58/1] w-full max-w-2xl mx-auto rounded-[2rem] overflow-hidden bg-gray-100 dark:bg-white/5 border-2 border-dashed border-gray-200 dark:border-white/10 cursor-pointer hover:border-primary transition-colors group"
                                 >
                                     {previews.id_back ? (
                                         <img src={previews.id_back} className="w-full h-full object-cover" alt="BI Verso" />
                                     ) : (
                                         <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center">
                                             <span className="material-symbols-outlined !text-5xl text-primary mb-3">identity</span>
-                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Tirar foto do Verso do Bilhete</p>
+                                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Abrir Câmera para BI Verso</p>
                                         </div>
                                     )}
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
@@ -385,9 +387,9 @@ const DriverRegistration: React.FC = () => {
 
                             {/* SELFIE - PORTRAIT */}
                             <div className="space-y-4">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block text-center">Selfie Facial</label>
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 block text-center">Selfie Facial Comparativa</label>
                                 <div
-                                    onClick={() => triggerInput('selfie')}
+                                    onClick={() => openCamera('selfie', 'face')}
                                     className="relative aspect-[3/4] w-48 mx-auto rounded-[3rem] overflow-hidden bg-gray-100 dark:bg-white/5 border-2 border-dashed border-gray-200 dark:border-white/10 cursor-pointer hover:border-primary transition-colors group"
                                 >
                                     {previews.selfie ? (
@@ -395,13 +397,61 @@ const DriverRegistration: React.FC = () => {
                                     ) : (
                                         <div className="w-full h-full flex flex-col items-center justify-center p-6 text-center">
                                             <span className="material-symbols-outlined !text-4xl text-primary mb-2">face</span>
-                                            <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Rosto</p>
+                                            <p className="text-[8px] font-bold text-gray-400 uppercase tracking-widest">Abrir Câmera</p>
                                         </div>
                                     )}
                                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                         <span className="material-symbols-outlined text-white">camera_front</span>
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* Verification Button & Results */}
+                            <div className="pt-8">
+                                <button
+                                    type="button"
+                                    onClick={performAIVerification}
+                                    disabled={aiProcessing || !previews.id_front || !previews.selfie}
+                                    className={`w-full py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 transition-all ${aiProcessing ? 'bg-gray-200 text-gray-400' : 'bg-navy dark:bg-white text-white dark:text-black shadow-2xl'
+                                        }`}
+                                >
+                                    {aiProcessing ? (
+                                        <div className="size-4 border-2 border-gray-400 border-t-transparent animate-spin rounded-full"></div>
+                                    ) : (
+                                        <span className="material-symbols-outlined text-sm">psychology</span>
+                                    )}
+                                    {aiProcessing ? 'Processando Biometria...' : 'Verificar Autenticidade (IA)'}
+                                </button>
+
+                                {aiResult && (
+                                    <div className={`mt-6 p-6 rounded-3xl space-y-4 border ${aiResult.nameMatches && aiResult.faceMatches ? 'bg-green-500/5 border-green-500/20' : 'bg-red-500/5 border-red-500/20'}`}>
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Status da Verificação</span>
+                                            <div className={`px-2 py-1 rounded-full text-[8px] font-black uppercase ${aiResult.nameMatches && aiResult.faceMatches ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
+                                                {aiResult.nameMatches && aiResult.faceMatches ? 'Aprovado' : 'Revisão Necessária'}
+                                            </div>
+                                        </div>
+
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="flex items-center gap-2">
+                                                <span className={`material-symbols-outlined text-sm ${aiResult.nameMatches ? 'text-green-500' : 'text-red-500'}`}>
+                                                    {aiResult.nameMatches ? 'check_circle' : 'cancel'}
+                                                </span>
+                                                <span className="text-[9px] font-bold text-gray-500">Nome s/ BI</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className={`material-symbols-outlined text-sm ${aiResult.faceMatches ? 'text-green-500' : 'text-red-500'}`}>
+                                                    {aiResult.faceMatches ? 'check_circle' : 'cancel'}
+                                                </span>
+                                                <span className="text-[9px] font-bold text-gray-500">Facial/BI</span>
+                                            </div>
+                                        </div>
+
+                                        <p className="text-[10px] font-medium text-gray-400 leading-relaxed italic">
+                                            "{aiResult.explanation}"
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </div>
 

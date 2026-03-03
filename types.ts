@@ -81,6 +81,7 @@ export interface DeliveryDriver {
   verified: boolean;
   active: boolean;
   created_at: string;
+  ai_verification_result?: string; // JSON string of the AI analysis
   email?: string;
   user_id?: string;
   phone?: string; // Standardize phone/whatsapp access
