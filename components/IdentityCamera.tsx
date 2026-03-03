@@ -64,58 +64,91 @@ const IdentityCamera: React.FC<IdentityCameraProps> = ({ type, onCapture, onCanc
     };
 
     return (
-        <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center">
+        <div className="fixed inset-0 z-[100] bg-black/98 flex flex-col items-center justify-center p-6">
+            {/* Header */}
             <div className="absolute top-0 inset-x-0 p-8 flex items-center justify-between z-20">
-                <button onClick={onCancel} className="bg-white/10 backdrop-blur-md p-4 rounded-2xl text-white">
+                <button
+                    onClick={onCancel}
+                    className="bg-white/5 hover:bg-white/10 backdrop-blur-xl size-14 rounded-2xl text-white flex items-center justify-center transition-all active:scale-95 shadow-2xl border border-white/5"
+                >
                     <span className="material-symbols-outlined">close</span>
                 </button>
-                <h3 className="text-white font-black uppercase tracking-widest text-xs">{title}</h3>
-                <div className="size-12"></div>
+                <div className="flex flex-col items-center">
+                    <h3 className="text-white font-black uppercase tracking-[0.3em] text-[10px] mb-1">{title}</h3>
+                    <div className="flex gap-1">
+                        <div className="h-1 w-4 rounded-full bg-primary"></div>
+                        <div className="h-1 w-1 rounded-full bg-white/20"></div>
+                        <div className="h-1 w-1 rounded-full bg-white/20"></div>
+                    </div>
+                </div>
+                <div className="size-14"></div>
             </div>
 
-            <div className={`relative w-full max-w-md aspect-[9/16] overflow-hidden ${type === 'face' ? 'bg-black' : ''}`}>
-                <video
-                    ref={videoRef}
-                    autoPlay
-                    playsInline
-                    className="w-full h-full object-cover"
-                />
+            {/* Centralized Focus Area */}
+            <div className="w-full max-w-xl flex flex-col items-center gap-12 animate-fade-up">
+                <div className={`relative w-full overflow-hidden rounded-[3rem] border-2 border-white/10 shadow-[0_0_100px_rgba(0,0,0,1)] group ${type === 'document' ? 'aspect-[1.58/1]' : 'aspect-[3/4] max-w-sm'
+                    }`}>
+                    <video
+                        ref={videoRef}
+                        autoPlay
+                        playsInline
+                        className="w-full h-full object-cover scale-[1.02]"
+                    />
 
-                {/* Overlays */}
-                <div className="absolute inset-0 pointer-events-none flex items-center justify-center">
-                    {type === 'document' ? (
-                        <div className="w-[85%] aspect-[1.58/1] border-2 border-primary border-dashed rounded-3xl shadow-[0_0_0_9999px_rgba(0,0,0,0.6)]">
-                            <div className="absolute -top-10 inset-x-0 text-center text-primary font-black uppercase tracking-widest text-[10px]">Alinhe o BI nesta área</div>
-                        </div>
-                    ) : (
-                        <div className="w-[70%] aspect-square rounded-full border-2 border-primary border-dashed shadow-[0_0_0_9999px_rgba(0,0,0,0.6)]">
-                            <div className="absolute -top-10 inset-x-0 text-center text-primary font-black uppercase tracking-widest text-[10px]">Posicione seu rosto</div>
+                    {/* Scanning Animation for aesthetic */}
+                    <div className="absolute inset-0 bg-gradient-to-b from-primary/20 to-transparent h-1/3 animate-scan pointer-events-none opacity-30"></div>
+
+                    {/* Guides */}
+                    <div className="absolute inset-0 pointer-events-none flex items-center justify-center m-6">
+                        {type === 'document' ? (
+                            <div className="w-full h-full border-2 border-primary/50 border-dashed rounded-[2rem] relative">
+                                <div className="absolute top-4 left-4 size-6 border-t-2 border-l-2 border-primary"></div>
+                                <div className="absolute top-4 right-4 size-6 border-t-2 border-r-2 border-primary"></div>
+                                <div className="absolute bottom-4 left-4 size-6 border-b-2 border-l-2 border-primary"></div>
+                                <div className="absolute bottom-4 right-4 size-6 border-b-2 border-r-2 border-primary"></div>
+                            </div>
+                        ) : (
+                            <div className="w-full aspect-[4/5] rounded-[5rem] border-2 border-primary/50 border-dashed relative">
+                                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] aspect-square rounded-full border border-white/10"></div>
+                            </div>
+                        )}
+                    </div>
+
+                    {error && (
+                        <div className="absolute inset-0 bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-8 text-center">
+                            <div className="size-20 bg-red-500/10 rounded-full flex items-center justify-center mb-6">
+                                <span className="material-symbols-outlined !text-4xl text-red-500">error</span>
+                            </div>
+                            <p className="text-white font-bold mb-8">{error}</p>
+                            <button onClick={onCancel} className="bg-white text-black px-10 py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl active:scale-95">Sair</button>
                         </div>
                     )}
                 </div>
 
-                {error && (
-                    <div className="absolute inset-0 bg-black flex flex-col items-center justify-center p-8 text-center">
-                        <span className="material-symbols-outlined !text-5xl text-red-500 mb-4">error</span>
-                        <p className="text-white font-bold">{error}</p>
-                        <button onClick={onCancel} className="mt-6 bg-white text-black px-8 py-3 rounded-xl font-black uppercase tracking-widest text-xs">Voltar</button>
+                {/* Capture Controls - Right below the video */}
+                <div className="flex flex-col items-center gap-8 w-full">
+                    <div className="flex flex-col items-center gap-3">
+                        <button
+                            onClick={captureImage}
+                            disabled={!!error}
+                            className="size-24 bg-white rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.2)] active:scale-90 transition-all group disabled:opacity-50 disabled:scale-100"
+                        >
+                            <div className="size-20 border-2 border-black/5 rounded-full flex items-center justify-center">
+                                <div className="size-16 bg-black rounded-full group-hover:scale-105 transition-transform flex items-center justify-center">
+                                    <span className="material-symbols-outlined text-white text-3xl">photo_camera</span>
+                                </div>
+                            </div>
+                        </button>
+                        <p className="text-primary font-black uppercase tracking-[0.3em] text-[8px] animate-pulse">Capturar {type === 'document' ? 'Documento' : 'Selfie'}</p>
                     </div>
-                )}
-            </div>
 
-            <div className="absolute bottom-0 inset-x-0 p-12 flex flex-col items-center gap-8 z-20">
-                <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest text-center max-w-[250px]">
-                    Garanta uma boa iluminação para uma verificação rápida
-                </p>
-                <button
-                    onClick={captureImage}
-                    disabled={!!error}
-                    className="size-20 bg-white rounded-full flex items-center justify-center shadow-2xl active:scale-95 transition-all group disabled:opacity-50"
-                >
-                    <div className="size-16 border-4 border-black/10 rounded-full flex items-center justify-center">
-                        <div className="size-12 bg-black rounded-full group-hover:scale-110 transition-transform"></div>
-                    </div>
-                </button>
+                    <p className="text-white/30 text-[9px] font-bold uppercase tracking-[0.2em] text-center max-w-[280px] leading-relaxed">
+                        {type === 'document'
+                            ? "Posicione o seu BI ou Carta de Condução dentro da moldura para captura automática de alta definição"
+                            : "Mantenha o rosto centralizado e evite acessórios para garantir uma verificação facial rápida"
+                        }
+                    </p>
+                </div>
             </div>
 
             <canvas ref={canvasRef} className="hidden" />
