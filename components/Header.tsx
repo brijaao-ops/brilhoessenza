@@ -114,8 +114,8 @@ const Header: React.FC<HeaderProps> = ({
         <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-2 flex items-center justify-between gap-4 sm:gap-12 relative z-10">
           {/* Boutique Branding */}
           <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-4 group shrink-0 py-1">
-            <div className="bg-white text-[#060e1e] w-[6cm] h-[4cm] flex items-center justify-center font-black group-hover:scale-105 transition-all overflow-hidden shadow-inner">
-              {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain object-left mix-blend-multiply" /> : <span className="text-4xl tracking-tighter">BRILHO <span className="text-[#060e1e] opacity-80 italic">ESSENZA</span></span>}
+            <div className="w-[6cm] h-[4cm] flex items-center justify-center font-black group-hover:scale-105 transition-all overflow-hidden bg-transparent">
+              {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain object-left" /> : <span className="text-4xl tracking-tighter">BRILHO <span className="text-[#060e1e] opacity-80 italic">ESSENZA</span></span>}
             </div>
           </Link>
 
