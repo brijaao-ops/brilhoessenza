@@ -153,27 +153,41 @@ const AppContent: React.FC = () => {
     loadAllData();
   }, [isAuthenticated, userProfile?.id]);
 
-  // Logo URL from settings (synced from Supabase via localStorage)
-  const getLogoUrl = () => {
+  // Logo URL & Settings State
+  const [logoUrl, setLogoUrl] = useState<string | null>(() => {
     try {
       const s = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
       return s.logoUrl || null;
     } catch { return null; }
-  };
-  const [logoUrl, setLogoUrl] = useState<string | null>(getLogoUrl);
+  });
+  const [appSettings, setAppSettings] = useState<any>(() => {
+    try {
+      return JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
+    } catch { return {}; }
+  });
 
   // Re-read logo whenever settings are saved by AdminSettings
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (e.key === 'brilho_essenza_settings' || e.key === 'brilho_essenza_settings_updated') {
-        setLogoUrl(getLogoUrl());
+        try {
+          const s = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
+          setLogoUrl(s.logoUrl || null);
+          setAppSettings(s);
+        } catch { }
       }
     };
     window.addEventListener('storage', onStorage);
-    // Also poll every 2s so changes within the same tab are picked up immediately
-    const interval = setInterval(() => setLogoUrl(getLogoUrl()), 2000);
+    // Also poll every 2s
+    const interval = setInterval(() => {
+      try {
+        const s = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
+        if (s.logoUrl !== logoUrl) setLogoUrl(s.logoUrl || null);
+        setAppSettings(s);
+      } catch { }
+    }, 2000);
     return () => { window.removeEventListener('storage', onStorage); clearInterval(interval); };
-  }, []);
+  }, [logoUrl]);
 
   // Optimized Settings Fetching (Batched)
   useEffect(() => {
@@ -206,11 +220,11 @@ const AppContent: React.FC = () => {
         if (allSettings.enable_iban) dbSettings.enableIBAN = allSettings.enable_iban === 'true';
 
         if (Object.keys(dbSettings).length > 0) {
-          console.log("Sincronizando configurações do sistema (Batched)...");
           const current = JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
           const merged = { ...current, ...dbSettings };
           localStorage.setItem('brilho_essenza_settings', JSON.stringify(merged));
-          // Apply logo immediately to state (don't wait for polling)
+          // Apply to state immediately
+          setAppSettings(merged);
           if (dbSettings.logoUrl) setLogoUrl(dbSettings.logoUrl);
         }
       } catch (e) {
@@ -782,6 +796,8 @@ const AppContent: React.FC = () => {
             onClose={() => setIsCheckoutOpen(false)}
             onConfirm={handleCheckoutConfirm}
             total={totalCart}
+            enableMCX={appSettings.enableMCX !== false}
+            enableIBAN={appSettings.enableIBAN !== false}
           />
 
           <OrderSuccessModal

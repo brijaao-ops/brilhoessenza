@@ -87,11 +87,18 @@ const AdminSettings: React.FC = () => {
         if (settings.shipping_policy) setShippingPolicy(settings.shipping_policy);
         if (settings.return_policy) setReturnPolicy(settings.return_policy);
         if (settings.brand_color) setBrandColor(settings.brand_color);
-        if (settings.logo_url) setLogoUrl(settings.logo_url); // CRITICAL FIX: Load logo from DB
+        if (settings.logo_url) setLogoUrl(settings.logo_url);
         if (settings.tax_rate) setTaxRate(settings.tax_rate);
         if (settings.shipping_luanda) setShippingLuanda(settings.shipping_luanda);
         if (settings.shipping_provinces) setShippingProvinces(settings.shipping_provinces);
         if (settings.free_shipping_threshold) setFreeShippingThreshold(settings.free_shipping_threshold);
+
+        // Settings missing in previous logic
+        if (settings.enable_mcx !== undefined) setEnableMCX(settings.enable_mcx === 'true');
+        if (settings.mcx_phone) setMcxPhone(settings.mcx_phone);
+        if (settings.enable_iban !== undefined) setEnableIBAN(settings.enable_iban === 'true');
+        if (settings.bank_name) setBankName(settings.bank_name);
+        if (settings.bank_iban) setBankIBAN(settings.bank_iban);
       } catch (e) {
         console.error("Error syncing settings from DB:", e);
       }
@@ -117,18 +124,20 @@ const AdminSettings: React.FC = () => {
     return currentUser.permissions?.[t.perm];
   });
 
-  const handleSave = () => {
+  const handleSave = async () => {
     setIsSaving(true);
-    setTimeout(() => {
-      setIsSaving(false);
+    try {
       const settings = {
         companyName, companyPhone, companyAddress, heritage, shippingPolicy, returnPolicy,
         brandColor, logoUrl, taxRate, enableMCX, mcxPhone, enableIBAN, bankName, bankIBAN,
         shippingLuanda, shippingProvinces, freeShippingThreshold
       };
+
+      // Update LocalStorage
       localStorage.setItem('brilho_essenza_settings', JSON.stringify(settings));
       localStorage.setItem('brilho_essenza_settings_updated', Date.now().toString());
 
+      // Sync to Database
       const dbSyncs = [
         updateAppSetting('company_name', companyName),
         updateAppSetting('company_phone', companyPhone),
@@ -149,14 +158,19 @@ const AdminSettings: React.FC = () => {
         updateAppSetting('free_shipping_threshold', freeShippingThreshold)
       ];
 
-      Promise.all(dbSyncs).catch(err => console.error("DB Sync Error:", err));
+      await Promise.all(dbSyncs);
 
       const toast = document.createElement('div');
       toast.className = "fixed bottom-8 right-8 bg-black text-white px-8 py-4 rounded-2xl font-black uppercase text-[10px] tracking-widest z-[200] shadow-2xl border border-primary/20 animate-slide-in";
       toast.innerText = "Configurações do Atelier Atualizadas";
       document.body.appendChild(toast);
       setTimeout(() => toast.remove(), 3000);
-    }, 800);
+    } catch (err: any) {
+      console.error("DB Sync Error:", err);
+      alert("Erro ao salvar no banco de dados. Verifique sua conexão ou se a imagem do logo é muito grande.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {

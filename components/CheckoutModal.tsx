@@ -6,9 +6,11 @@ interface CheckoutModalProps {
     onClose: () => void;
     onConfirm: (data: { name: string; phone: string; address: string; neighborhood: string; municipality: string; province: string; paymentMethod: 'multicaixa' | 'cash' | 'transfer' | 'express' }) => void;
     total: number;
+    enableMCX?: boolean;
+    enableIBAN?: boolean;
 }
 
-const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfirm, total }) => {
+const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfirm, total, enableMCX = true, enableIBAN = true }) => {
     const [formData, setFormData] = useState({
         name: '',
         phone: '',
@@ -148,14 +150,16 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                         <div className="flex flex-col gap-2">
                             <label className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Forma de Pagamento</label>
                             <div className="grid grid-cols-4 gap-2">
-                                <button
-                                    type="button"
-                                    onClick={() => setFormData({ ...formData, paymentMethod: 'multicaixa' })}
-                                    className={`flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-xl border transition-all ${formData.paymentMethod === 'multicaixa' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
-                                >
-                                    <span className="material-symbols-outlined !text-lg">credit_card</span>
-                                    <span className="text-[8px] font-black uppercase">Multicaixa</span>
-                                </button>
+                                {enableMCX && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, paymentMethod: 'multicaixa' })}
+                                        className={`flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-xl border transition-all ${formData.paymentMethod === 'multicaixa' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
+                                    >
+                                        <span className="material-symbols-outlined !text-lg">credit_card</span>
+                                        <span className="text-[8px] font-black uppercase">Multicaixa</span>
+                                    </button>
+                                )}
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, paymentMethod: 'cash' })}
@@ -164,14 +168,16 @@ const CheckoutModal: React.FC<CheckoutModalProps> = ({ isOpen, onClose, onConfir
                                     <span className="material-symbols-outlined !text-lg">payments</span>
                                     <span className="text-[8px] font-black uppercase">Cash</span>
                                 </button>
-                                <button
-                                    type="button"
-                                    onClick={() => setFormData({ ...formData, paymentMethod: 'transfer' })}
-                                    className={`flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-xl border transition-all ${formData.paymentMethod === 'transfer' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
-                                >
-                                    <span className="material-symbols-outlined !text-lg">account_balance</span>
-                                    <span className="text-[8px] font-black uppercase">IBAN</span>
-                                </button>
+                                {enableIBAN && (
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, paymentMethod: 'transfer' })}
+                                        className={`flex flex-col items-center justify-center gap-1.5 py-3 px-1 rounded-xl border transition-all ${formData.paymentMethod === 'transfer' ? 'bg-primary text-black border-primary' : 'bg-gray-50 dark:bg-white/5 border-transparent text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10'}`}
+                                    >
+                                        <span className="material-symbols-outlined !text-lg">account_balance</span>
+                                        <span className="text-[8px] font-black uppercase">IBAN</span>
+                                    </button>
+                                )}
                                 <button
                                     type="button"
                                     onClick={() => setFormData({ ...formData, paymentMethod: 'express' })}
