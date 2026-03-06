@@ -14,7 +14,7 @@ const DriverEditModal: React.FC<DriverEditModalProps> = ({ driver, isOpen, onClo
     const [address, setAddress] = useState('');
     const [transport, setTransport] = useState('');
     const [vehicleType, setVehicleType] = useState('');
-    const [licensePlate, setLicensePlate] = useState('');
+    const [email, setEmail] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
@@ -24,7 +24,7 @@ const DriverEditModal: React.FC<DriverEditModalProps> = ({ driver, isOpen, onClo
             setAddress(driver.address || '');
             setTransport(driver.transport_type || '');
             setVehicleType(driver.vehicle_type || '');
-            setLicensePlate(driver.license_plate || '');
+            setEmail(driver.email || '');
         }
     }, [driver, isOpen]);
 
@@ -40,7 +40,7 @@ const DriverEditModal: React.FC<DriverEditModalProps> = ({ driver, isOpen, onClo
                 address,
                 transport_type: transport,
                 vehicle_type: vehicleType,
-                license_plate: licensePlate
+                email: email
             });
             onClose();
         } catch (error) {
@@ -116,12 +116,13 @@ const DriverEditModal: React.FC<DriverEditModalProps> = ({ driver, isOpen, onClo
                             />
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Chapa de Matrícula</label>
+                            <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Email Corporativo</label>
                             <input
-                                value={licensePlate}
-                                onChange={e => setLicensePlate(e.target.value)}
+                                type="email"
+                                value={email}
+                                onChange={e => setEmail(e.target.value)}
                                 className="bg-gray-50 dark:bg-white/5 border border-transparent focus:border-primary/30 p-4 rounded-xl text-sm font-black outline-none transition-all"
-                                placeholder="Ex: LD-12-34-EF"
+                                placeholder="exemplo@brilho.com"
                             />
                         </div>
                     </div>

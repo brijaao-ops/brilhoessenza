@@ -21,7 +21,7 @@ const DriverDashboard: React.FC = () => {
     const [editPhone, setEditPhone] = useState('');
     const [editAddress, setEditAddress] = useState('');
     const [editVehicle, setEditVehicle] = useState('');
-    const [editLicense, setEditLicense] = useState('');
+    const [editEmail, setEditEmail] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [isSavingProfile, setIsSavingProfile] = useState(false);
     const [profileSuccess, setProfileSuccess] = useState<string | null>(null);
@@ -58,7 +58,7 @@ const DriverDashboard: React.FC = () => {
                 setEditPhone(driverData.whatsapp || driverData.phone || '');
                 setEditAddress(driverData.address || '');
                 setEditVehicle(driverData.vehicle_type || '');
-                setEditLicense(driverData.license_plate || '');
+                setEditEmail(driverData.email || '');
 
                 loadOrders(driverData.id);
             } catch (err) {
@@ -72,13 +72,37 @@ const DriverDashboard: React.FC = () => {
 
     const loadOrders = async (driverId: string) => {
         try {
-            const [myOrders, allProducts] = await Promise.all([fetchOrdersByDriver(driverId), fetchProducts()]);
-            const pMap: Record<string, Product> = {};
-            allProducts.forEach((p: Product) => { pMap[p.id] = p; });
-            setProductsMap(pMap);
-
+            const myOrders = await fetchOrdersByDriver(driverId);
             setActiveOrders(myOrders.filter(o => o.status !== 'DELIVERED' && o.status !== 'CANCELLED'));
             setDeliveredOrders(myOrders.filter(o => o.status === 'DELIVERED'));
+
+            // Performance: Only fetch products that appear in the orders
+            const productIds = new Set<string>();
+            myOrders.forEach(order => {
+                order.items?.forEach((item: any) => {
+                    const id = item.product?.id || item.id || item.productId;
+                    if (id) productIds.add(id);
+                });
+            });
+
+            if (productIds.size > 0) {
+                const { data: products } = await supabase
+                    .from('products')
+                    .select('*')
+                    .in('id', Array.from(productIds));
+
+                if (products) {
+                    const pMap: Record<string, Product> = {};
+                    products.forEach((p: any) => {
+                        pMap[p.id] = {
+                            ...p,
+                            deliveryCommission: Number(p.delivery_commission || 0),
+                            salePrice: p.sale_price ? Number(p.sale_price) : Number(p.price || 0)
+                        };
+                    });
+                    setProductsMap(pMap);
+                }
+            }
         } catch (err) {
             console.error("Error loading orders", err);
         } finally {
@@ -87,8 +111,15 @@ const DriverDashboard: React.FC = () => {
     };
 
     const handleLogout = async () => {
-        await signOut();
-        navigate('/driver/login');
+        try {
+            await signOut();
+            localStorage.removeItem('user_profile');
+            navigate('/driver/login');
+        } catch (err) {
+            console.error("Logout error:", err);
+            // Fallback redirect even if signOut fails
+            navigate('/driver/login');
+        }
     };
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
@@ -103,7 +134,7 @@ const DriverDashboard: React.FC = () => {
                     whatsapp: editPhone,
                     address: editAddress,
                     vehicle_type: editVehicle,
-                    license_plate: editLicense
+                    email: editEmail
                 })
                 .eq('id', driverProfile.id);
 
@@ -121,7 +152,7 @@ const DriverDashboard: React.FC = () => {
                 whatsapp: editPhone,
                 address: editAddress,
                 vehicle_type: editVehicle,
-                license_plate: editLicense
+                email: editEmail
             });
         } catch (err: any) {
             alert("Erro ao atualizar perfil: " + (err.message || "Tente novamente mais tarde."));
@@ -452,11 +483,12 @@ const DriverDashboard: React.FC = () => {
                                                 />
                                             </div>
                                             <div className="flex flex-col gap-3">
-                                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Chapa de Matrícula</label>
+                                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-2">Email Corporativo</label>
                                                 <input
-                                                    type="text"
-                                                    value={editLicense}
-                                                    onChange={e => setEditLicense(e.target.value)}
+                                                    type="email"
+                                                    value={editEmail}
+                                                    onChange={e => setEditEmail(e.target.value)}
+                                                    placeholder="exemplo@brilho.com"
                                                     className="bg-gray-50 dark:bg-white/5 border border-transparent focus:border-primary/50 p-5 rounded-2xl text-sm font-black outline-none transition-all"
                                                 />
                                             </div>

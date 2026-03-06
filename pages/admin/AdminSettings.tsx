@@ -534,6 +534,14 @@ const AdminSettings: React.FC = () => {
           </div>
         );
       case 6:
+        if (!currentUser && activeTab === 6) {
+          return (
+            <div className="flex flex-col items-center justify-center p-20 gap-4">
+              <div className="size-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Carregando Perfil de Segurança...</p>
+            </div>
+          );
+        }
         return (
           <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
             {/* Perfil Atual */}
@@ -634,8 +642,13 @@ const AdminSettings: React.FC = () => {
             <div className="flex justify-start">
               <button onClick={async () => {
                 const { signOut } = await import('../../services/supabase');
-                await signOut();
-                window.location.reload();
+                try {
+                  await signOut();
+                  localStorage.removeItem('user_profile');
+                  window.location.href = '/';
+                } catch (err) {
+                  window.location.href = '/';
+                }
               }} className="text-gray-400 hover:text-red-500 flex items-center gap-2 font-black uppercase text-[9px] tracking-widest transition-colors">
                 <span className="material-symbols-outlined !text-sm">logout</span>
                 Terminar Sessão de Segurança

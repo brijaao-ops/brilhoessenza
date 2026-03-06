@@ -422,6 +422,7 @@ const AppContent: React.FC = () => {
     }
     setIsAuthenticated(false);
     setUserProfile(null);
+    localStorage.removeItem('user_profile');
     // Clear all caches so next load is always fresh from DB
     localStorage.removeItem('brilho_products_v4');
     localStorage.removeItem('brilho_categories_v4');
