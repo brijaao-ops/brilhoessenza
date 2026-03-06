@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { supabase, UserProfile, fetchProfile, updateAppSetting } from '../../services/supabase';
+import { supabase, UserProfile, fetchProfile, updateAppSetting, updateUserPassword } from '../../services/supabase';
 import { removeImageBackground, blobToBase64, resizeImage } from '../../services/imageProcessing';
 
 const AdminSettings: React.FC = () => {
@@ -42,11 +42,23 @@ const AdminSettings: React.FC = () => {
   const [shippingProvinces, setShippingProvinces] = useState('5000');
   const [freeShippingThreshold, setFreeShippingThreshold] = useState('100000');
 
+  // Estados de Segurança
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState<string | null>(null);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
+  const [userName, setUserName] = useState('');
+  const [isUpdatingName, setIsUpdatingName] = useState(false);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [nameSuccess, setNameSuccess] = useState<string | null>(null);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         fetchProfile(session.user.id).then(p => {
           setCurrentUser(p);
+          if (p?.full_name) setUserName(p.full_name);
         });
       } else {
         const savedProfile = localStorage.getItem('user_profile');
@@ -123,6 +135,59 @@ const AdminSettings: React.FC = () => {
     // @ts-ignore
     return currentUser.permissions?.[t.perm];
   });
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
+    setPasswordSuccess(null);
+
+    if (newPassword.length < 6) {
+      setPasswordError("A senha deve ter pelo menos 6 caracteres.");
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setPasswordError("As senhas não coincidem.");
+      return;
+    }
+
+    setIsUpdatingPassword(true);
+    try {
+      await updateUserPassword(newPassword);
+      setPasswordSuccess("Senha atualizada com sucesso!");
+      setNewPassword('');
+      setConfirmPassword('');
+    } catch (err: any) {
+      setPasswordError(err.message || "Erro ao atualizar senha.");
+    } finally {
+      setIsUpdatingPassword(false);
+    }
+  };
+
+  const handleUpdateName = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setNameError(null);
+    setNameSuccess(null);
+
+    if (!userName.trim()) {
+      setNameError("O nome não pode estar vazio.");
+      return;
+    }
+
+    if (!currentUser) return;
+
+    setIsUpdatingName(true);
+    try {
+      const { updateEmployeeProfile } = await import('../../services/supabase');
+      await updateEmployeeProfile(currentUser.id, { full_name: userName });
+      setNameSuccess("Nome atualizado com sucesso!");
+      setCurrentUser({ ...currentUser, full_name: userName });
+    } catch (err: any) {
+      setNameError(err.message || "Erro ao atualizar nome.");
+    } finally {
+      setIsUpdatingName(false);
+    }
+  };
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -288,58 +353,91 @@ const AdminSettings: React.FC = () => {
       case 1:
         return (
           <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
+            {/* Seção de Logo */}
             <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Identidade Visual</h4>
-              <div className="flex flex-col gap-8">
-                <div className="flex items-center gap-10">
-                  <div className="w-[6cm] h-32 bg-gray-100 dark:bg-white/5 rounded-3xl border-2 border-dashed border-gray-200 dark:border-[#222115] flex items-center justify-center relative group cursor-pointer overflow-hidden">
-                    {logoUrl ? <img src={logoUrl} className={`w-full h-full object-contain ${isProcessingLogo ? 'opacity-30 blur-sm' : ''}`} /> : <span className="material-symbols-outlined !text-4xl text-gray-300">image</span>}
-                    <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-wait" onChange={handleLogoUpload} disabled={isProcessingLogo} />
-                    {isProcessingLogo && (
-                      <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 dark:bg-black/40 backdrop-blur-[2px] z-50">
-                        <div className="size-8 border-2 border-primary/20 border-t-primary rounded-full animate-spin mb-2"></div>
-                        <p className="text-[8px] font-black uppercase tracking-widest text-primary">{logoProgress}%</p>
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-black text-gray-400 uppercase mb-2">Logotipo do Atelier</p>
-                    <label className="bg-black dark:bg-white text-white dark:text-black px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest cursor-pointer hover:bg-primary hover:text-black transition-colors">
-                      Mudar Logo
-                      <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
-                    </label>
-                  </div>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary !text-2xl">branding_watermark</span>
+                </div>
+                <div>
+                  <h4 className="text-lg font-black uppercase tracking-tight">Logotipo do Atelier</h4>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase">A face da sua marca em todos os dispositivos</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col md:flex-row items-center gap-10">
+                <div className="w-full md:w-[8cm] h-40 bg-gray-100 dark:bg-white/5 rounded-3xl border-2 border-dashed border-gray-200 dark:border-[#222115] flex items-center justify-center relative group cursor-pointer overflow-hidden shadow-inner">
+                  {logoUrl ? <img src={logoUrl} className={`w-full h-full object-contain p-4 ${isProcessingLogo ? 'opacity-30 blur-sm' : ''}`} /> : <span className="material-symbols-outlined !text-4xl text-gray-300">image</span>}
+                  <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-wait" onChange={handleLogoUpload} disabled={isProcessingLogo} />
+                  {isProcessingLogo && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 dark:bg-black/60 backdrop-blur-[2px] z-50">
+                      <div className="size-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-3"></div>
+                      <p className="text-[10px] font-black uppercase tracking-widest text-primary">{logoProgress}%</p>
+                    </div>
+                  )}
                 </div>
                 <div className="flex flex-col gap-4">
-                  <label className="text-[10px] font-black text-gray-400 uppercase">Cor de Destaque</label>
-                  <div className="flex gap-4 items-center">
-                    {['#f2d00d', '#1c1a0d', '#d4af37', '#e5e5e5'].map(c => (
-                      <button key={c} onClick={() => setBrandColor(c)} className={`size-10 rounded-full border-4 ${brandColor === c ? 'border-primary' : 'border-transparent'}`} style={{ backgroundColor: c }} />
-                    ))}
-                    <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} className="size-10 rounded-full cursor-pointer bg-transparent border-none" />
-                  </div>
+                  <p className="text-xs text-gray-500 font-medium max-w-xs leading-relaxed">Carregue uma imagem em alta resolução. A nossa IA irá processar e otimizar para o melhor desempenho.</p>
+                  <label className="bg-black dark:bg-white text-white dark:text-black px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest cursor-pointer hover:bg-primary hover:text-black transition-all shadow-xl hover:scale-105 active:scale-95 text-center">
+                    Selecionar Nova Logo
+                    <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
+                  </label>
                 </div>
               </div>
             </div>
 
-            {/* AI Shortcut within Appearance Tab */}
+            {/* Seção de Cores */}
             <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary !text-2xl">palette</span>
+                </div>
+                <div>
+                  <h4 className="text-lg font-black uppercase tracking-tight">Paleta de Cores</h4>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase">Defina a cor que personifica o luxo da sua marca</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-wrap gap-4 items-center">
+                  {['#f2d00d', '#1c1a0d', '#d4af37', '#e5e5e5', '#ff4d4d', '#4d79ff'].map(c => (
+                    <button
+                      key={c}
+                      onClick={() => setBrandColor(c)}
+                      className={`size-12 rounded-full border-4 shadow-lg transition-transform hover:scale-110 ${brandColor === c ? 'border-primary ring-4 ring-primary/20 scale-110' : 'border-white dark:border-[#222115]'}`}
+                      style={{ backgroundColor: c }}
+                    />
+                  ))}
+                  <div className="size-12 rounded-full border-4 border-dashed border-gray-300 flex items-center justify-center relative bg-gray-50 dark:bg-white/5 overflow-hidden group">
+                    <span className="material-symbols-outlined text-gray-400 !text-xl group-hover:text-primary transition-colors">colorize</span>
+                    <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} className="absolute inset-0 opacity-0 cursor-pointer scale-150" />
+                  </div>
+                </div>
+                <div className="p-4 bg-gray-50 dark:bg-[#08112e] rounded-xl border border-gray-100 dark:border-[#222115] flex items-center gap-4 w-fit">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Código Hex:</p>
+                  <p className="text-sm font-black text-primary font-mono lowercase">{brandColor}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Atalho IA */}
+            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm opacity-80 hover:opacity-100 transition-opacity">
               <div className="flex items-center gap-4 mb-8">
                 <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center">
                   <span className="material-symbols-outlined text-primary !text-3xl">psychology</span>
                 </div>
                 <div>
-                  <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight text-primary">Ferramentas de IA</h4>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase">Melhorias Visuais Inteligentes</p>
+                  <h4 className="text-lg font-black uppercase tracking-tight text-primary">Ferramentas de IA</h4>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase">Otimização visual automatizada</p>
                 </div>
               </div>
               <div className="p-6 bg-primary/5 rounded-2xl border-2 border-dashed border-primary/20 flex flex-col md:flex-row items-center gap-6 justify-between">
                 <div>
                   <h5 className="font-black uppercase text-xs tracking-tight">Otimizador de Catálogo IA</h5>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase">Vetorizar todas as imagens de produtos agora</p>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase">Vetorizar todas as imagens de produtos para um visual HD</p>
                 </div>
-                <button onClick={() => setActiveTab(2)} className="bg-primary text-black font-black px-6 py-3 rounded-xl uppercase tracking-widest text-[9px] shadow-lg hover:scale-105 transition-all">
-                  Abrir Painel IA
+                <button onClick={() => setActiveTab(2)} className="bg-primary text-black font-black px-8 py-4 rounded-2xl uppercase tracking-widest text-[9px] shadow-xl hover:scale-105 transition-all">
+                  Gerir Inteligência
                 </button>
               </div>
             </div>
@@ -437,13 +535,110 @@ const AdminSettings: React.FC = () => {
       case 6:
         return (
           <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
+            {/* Perfil Atual */}
             <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Segurança</h4>
+              <div className="flex items-center gap-4 mb-8">
+                <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary !text-2xl">account_circle</span>
+                </div>
+                <div>
+                  <h4 className="text-lg font-black uppercase tracking-tight">O Meu Perfil</h4>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase">Dados de identificação no Atelier</p>
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="p-5 bg-gray-50 dark:bg-[#08112e] rounded-2xl border border-gray-100 dark:border-[#222115]">
+                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Email de Acesso</p>
+                    <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{currentUser?.email || 'N/A'}</p>
+                  </div>
+                  <div className="p-5 bg-gray-50 dark:bg-[#08112e] rounded-2xl border border-gray-100 dark:border-[#222115]">
+                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Função / Role</p>
+                    <p className="text-sm font-bold text-primary uppercase">{currentUser?.role || 'N/A'}</p>
+                  </div>
+                </div>
+
+                <form onSubmit={handleUpdateName} className="flex flex-col gap-4 max-w-md">
+                  <div className="flex flex-col gap-2">
+                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Nome Completo</label>
+                    <input
+                      type="text"
+                      value={userName}
+                      onChange={e => setUserName(e.target.value)}
+                      className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none"
+                    />
+                  </div>
+                  {nameError && <p className="text-red-500 text-[10px] font-bold uppercase">{nameError}</p>}
+                  {nameSuccess && <p className="text-green-500 text-[10px] font-bold uppercase">{nameSuccess}</p>}
+                  <button
+                    type="submit"
+                    disabled={isUpdatingName}
+                    className="bg-black dark:bg-white text-white dark:text-black font-black py-4 rounded-xl uppercase tracking-widest text-[10px] shadow-lg hover:scale-[1.02] active:scale-95 transition-all w-fit px-8"
+                  >
+                    {isUpdatingName ? 'Gravando...' : 'Atualizar Nome'}
+                  </button>
+                </form>
+              </div>
+            </div>
+
+            {/* Alterar Senha */}
+            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
+              <div className="flex items-center gap-4 mb-8">
+                <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center">
+                  <span className="material-symbols-outlined text-primary !text-2xl">lock_reset</span>
+                </div>
+                <div>
+                  <h4 className="text-lg font-black uppercase tracking-tight">Alterar Senha</h4>
+                  <p className="text-[10px] text-gray-500 font-bold uppercase">Mantenha a sua conta protegida</p>
+                </div>
+              </div>
+
+              <form onSubmit={handleUpdatePassword} className="flex flex-col gap-6 max-w-md">
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nova Senha</label>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none"
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Confirmar Nova Senha</label>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none"
+                  />
+                </div>
+
+                {passwordError && <p className="text-red-500 text-[10px] font-bold uppercase">{passwordError}</p>}
+                {passwordSuccess && <p className="text-green-500 text-[10px] font-bold uppercase">{passwordSuccess}</p>}
+
+                <button
+                  type="submit"
+                  disabled={isUpdatingPassword}
+                  className="bg-primary text-black font-black py-4 rounded-xl uppercase tracking-widest text-[10px] shadow-lg hover:scale-[1.02] active:scale-95 transition-all mt-2"
+                >
+                  {isUpdatingPassword ? 'A Processar...' : 'Atualizar Dados de Acesso'}
+                </button>
+              </form>
+            </div>
+
+            {/* Logout Secundário */}
+            <div className="flex justify-start">
               <button onClick={async () => {
                 const { signOut } = await import('../../services/supabase');
                 await signOut();
                 window.location.reload();
-              }} className="bg-black text-white px-8 py-4 rounded-xl font-black uppercase text-[10px]">Sair da Conta</button>
+              }} className="text-gray-400 hover:text-red-500 flex items-center gap-2 font-black uppercase text-[9px] tracking-widest transition-colors">
+                <span className="material-symbols-outlined !text-sm">logout</span>
+                Terminar Sessão de Segurança
+              </button>
             </div>
           </div>
         );
