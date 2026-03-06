@@ -142,7 +142,7 @@ const AppContent: React.FC = () => {
     }
 
     // PHASE 2: Admin Data (Contextual)
-    if (isAuthenticated && userProfile) {
+    if (isAuthenticated && userProfile && userProfile.role !== 'driver') {
       try {
         const [dbTeam, dbDrivers, dbOrders] = await Promise.all([
           fetchTeam().catch(e => { console.error("Team err:", e); return []; }),

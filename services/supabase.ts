@@ -288,6 +288,26 @@ export const fetchOrders = async (): Promise<Order[]> => {
     }));
 };
 
+export const fetchOrdersByDriver = async (driverId: string): Promise<Order[]> => {
+    const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('driver_id', driverId)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching driver orders:', error);
+        throw error;
+    }
+
+    return (data || []).map((o: any) => ({
+        ...o,
+        customer: o.customer || o.customer_name,
+        amount: Number(o.amount || o.total || 0),
+        productId: o.product_id || o.productId,
+    }));
+};
+
 export const createOrder = async (order: Order) => {
     // Generate a proper UUID for the DB - the DB id column has no default
     const dbId = crypto.randomUUID();

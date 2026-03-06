@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase, signOut, getCurrentUser, fetchOrders, fetchProducts } from '../../services/supabase';
+import { supabase, signOut, getCurrentUser, fetchOrders, fetchProducts, fetchOrdersByDriver } from '../../services/supabase';
 import { Order, DeliveryDriver, Product } from '../../types';
 import QRCode from 'react-qr-code';
 
@@ -59,13 +59,12 @@ const DriverDashboard: React.FC = () => {
 
     const loadOrders = async (driverId: string) => {
         try {
-            const [allOrders, allProducts] = await Promise.all([fetchOrders(), fetchProducts()]);
+            const [myOrders, allProducts] = await Promise.all([fetchOrdersByDriver(driverId), fetchProducts()]);
             // Build a map of product ID -> product for commission lookup
             const pMap: Record<string, Product> = {};
             allProducts.forEach((p: Product) => { pMap[p.id] = p; });
             setProductsMap(pMap);
 
-            const myOrders = allOrders.filter(o => o.driver_id === driverId);
             setActiveOrders(myOrders.filter(o => o.status !== 'DELIVERED' && o.status !== 'CANCELLED'));
             setDeliveredOrders(myOrders.filter(o => o.status === 'DELIVERED'));
         } catch (err) {
