@@ -1,9 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { createDriver, uploadImage } from '../services/supabase';
-import { verifyIdentity } from '../services/gemini';
 import { useNavigate } from 'react-router-dom';
 import IdentityCamera from '../components/IdentityCamera';
-
 import { useToast } from '../contexts/ToastContext';
 
 const DriverRegistration: React.FC = () => {
@@ -38,19 +36,10 @@ const DriverRegistration: React.FC = () => {
     });
 
     const [loading, setLoading] = useState(false);
-    const [aiProcessing, setAiProcessing] = useState(false);
-    const [aiResult, setAiResult] = useState<{ nameMatches: boolean; faceMatches: boolean; explanation: string } | null>(null);
     const [cameraState, setCameraState] = useState<{ isOpen: boolean; type: 'document' | 'face'; currentField: keyof typeof images | null }>({
         isOpen: false,
         type: 'document',
         currentField: null
-    });
-    const [base64Images, setBase64Images] = useState<{
-        id_front: string | null;
-        selfie: string | null;
-    }>({
-        id_front: null,
-        selfie: null
     });
     const [success, setSuccess] = useState(false);
     const [step, setStep] = useState(1); // 1: Info, 2: Documents
@@ -90,40 +79,10 @@ const DriverRegistration: React.FC = () => {
 
         setImages((prev: any) => ({ ...prev, [field]: file }));
         setPreviews((prev: any) => ({ ...prev, [field]: base64 }));
-
-        if (field === 'id_front') {
-            setBase64Images((prev: any) => ({ ...prev, id_front: base64 }));
-        } else if (field === 'selfie') {
-            setBase64Images((prev: any) => ({ ...prev, selfie: base64 }));
-        }
-
         setCameraState({ ...cameraState, isOpen: false });
     };
 
-    const performAIVerification = async () => {
-        if (!base64Images.id_front || !base64Images.selfie) {
-            showToast('Capture o BI Frente e a Selfie antes de verificar.', 'info');
-            return;
-        }
 
-        setAiProcessing(true);
-        setAiResult(null);
-
-        try {
-            const result = await verifyIdentity(formData.name, base64Images.id_front, base64Images.selfie);
-            setAiResult(result);
-
-            if (result.nameMatches && result.faceMatches) {
-                showToast('Identidade verificada com sucesso pela IA!', 'success');
-            } else {
-                showToast('A IA detectou inconsistências nos documentos.', 'info');
-            }
-        } catch (error) {
-            showToast('Erro ao processar verificação por IA.', 'error');
-        } finally {
-            setAiProcessing(false);
-        }
-    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -166,7 +125,6 @@ const DriverRegistration: React.FC = () => {
                 id_front_url,
                 id_back_url,
                 selfie_url,
-                ai_verification_result: aiResult ? JSON.stringify(aiResult) : undefined,
                 active: true
             });
 
@@ -385,53 +343,7 @@ const DriverRegistration: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Verification Button & Results */}
-                            <div className="pt-8">
-                                <button
-                                    type="button"
-                                    onClick={performAIVerification}
-                                    disabled={aiProcessing || !previews.id_front || !previews.selfie}
-                                    className={`w-full py-5 rounded-2xl font-black uppercase tracking-widest text-[10px] flex items-center justify-center gap-3 transition-all ${aiProcessing ? 'bg-gray-200 text-gray-400' : 'bg-navy dark:bg-white text-white dark:text-black shadow-2xl'
-                                        }`}
-                                >
-                                    {aiProcessing ? (
-                                        <div className="size-4 border-2 border-gray-400 border-t-transparent animate-spin rounded-full"></div>
-                                    ) : (
-                                        <span className="material-symbols-outlined text-sm">psychology</span>
-                                    )}
-                                    {aiProcessing ? 'Processando Biometria...' : 'Verificar Autenticidade (IA)'}
-                                </button>
 
-                                {aiResult && (
-                                    <div className={`mt-6 p-6 rounded-3xl space-y-4 border ${aiResult.nameMatches && aiResult.faceMatches ? 'bg-green-500/5 border-green-500/20' : 'bg-red-500/5 border-red-500/20'}`}>
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Status da Verificação</span>
-                                            <div className={`px-2 py-1 rounded-full text-[8px] font-black uppercase ${aiResult.nameMatches && aiResult.faceMatches ? 'bg-green-500 text-white' : 'bg-red-500 text-white'}`}>
-                                                {aiResult.nameMatches && aiResult.faceMatches ? 'Aprovado' : 'Revisão Necessária'}
-                                            </div>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div className="flex items-center gap-2">
-                                                <span className={`material-symbols-outlined text-sm ${aiResult.nameMatches ? 'text-green-500' : 'text-red-500'}`}>
-                                                    {aiResult.nameMatches ? 'check_circle' : 'cancel'}
-                                                </span>
-                                                <span className="text-[9px] font-bold text-gray-500">Nome s/ BI</span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <span className={`material-symbols-outlined text-sm ${aiResult.faceMatches ? 'text-green-500' : 'text-red-500'}`}>
-                                                    {aiResult.faceMatches ? 'check_circle' : 'cancel'}
-                                                </span>
-                                                <span className="text-[9px] font-bold text-gray-500">Facial/BI</span>
-                                            </div>
-                                        </div>
-
-                                        <p className="text-[10px] font-medium text-gray-400 leading-relaxed italic">
-                                            "{aiResult.explanation}"
-                                        </p>
-                                    </div>
-                                )}
-                            </div>
                         </div>
 
                         <div className="flex gap-4">
