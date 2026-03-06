@@ -107,7 +107,7 @@ export interface UserProfile {
   id: string;
   email: string;
   full_name?: string;
-  role: 'admin' | 'employee';
+  role: 'admin' | 'employee' | 'driver';
   permissions: UserPermissions;
   is_first_login: boolean;
   is_active?: boolean;

@@ -303,7 +303,28 @@ const AppContent: React.FC = () => {
         return;
       }
 
-      // 2. Normal Employees
+      // 2. Check if this user is a registered DRIVER (delivery_drivers table)
+      const { data: driverData } = await supabase
+        .from('delivery_drivers')
+        .select('id, name, email')
+        .eq('user_id', user.id)
+        .maybeSingle();
+
+      if (driverData) {
+        console.log("🚗 Driver detected:", driverData.name);
+        const driverProfile: UserProfile = {
+          id: user.id,
+          email: user.email!,
+          full_name: driverData.name,
+          role: 'driver',
+          permissions: {},
+          is_first_login: false,
+        };
+        setUserProfile(driverProfile);
+        return;
+      }
+
+      // 3. Normal Employees
       fetchProfile(user.id).then(async (p) => {
         if (!p) {
           console.log("Profile MISSING. Attempting Self-Repair...");
@@ -376,6 +397,7 @@ const AppContent: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const isAdminPath = location.pathname === '/admin' || location.pathname.startsWith('/admin/');
+  const isDriverPath = location.pathname.startsWith('/driver') || location.pathname.startsWith('/entregador');
 
   useEffect(() => {
     if (location.pathname.includes('/admin/produtos') || location.pathname.includes('/admin/categorias') || location.pathname.includes('/admin/estoque')) {
@@ -625,7 +647,8 @@ const AppContent: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#fcfbf8] dark:bg-[#08112e] overflow-x-hidden">
       {isAdminPath ? (
-        isAuthenticated ? (
+        // ── ADMIN AREA ──────────────────────────────────────────────────────────
+        isAuthenticated && userProfile && userProfile.role !== 'driver' ? (
           <div className="flex flex-col md:flex-row h-screen overflow-hidden">
             <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-gray-100 dark:border-[#222115] bg-white dark:bg-[#0d1840] p-4 md:p-6 flex flex-col gap-4 md:gap-8 shrink-0 max-h-[40vh] md:max-h-screen overflow-y-auto">
               <Link to="/" onClick={resetFilters} className="flex items-center gap-2 mb-2 md:mb-4">
@@ -747,6 +770,23 @@ const AppContent: React.FC = () => {
               </Routes>
             </main>
           </div>
+        ) : isAuthenticated && userProfile?.role === 'driver' ? (
+          // Driver trying to access /admin — redirect them to their dashboard
+          <div className="flex-1 flex items-center justify-center p-8 flex-col gap-6">
+            <div className="size-16 bg-red-500/10 rounded-full flex items-center justify-center">
+              <span className="material-symbols-outlined text-red-500 text-3xl">block</span>
+            </div>
+            <div className="text-center">
+              <h2 className="font-black uppercase tracking-widest text-navy dark:text-white mb-2">Acesso Negado</h2>
+              <p className="text-gray-400 text-sm mb-6">Esta área é exclusiva da administração.</p>
+              <button
+                onClick={() => navigate('/driver/dashboard')}
+                className="bg-primary text-black font-black px-8 py-4 rounded-2xl uppercase tracking-widest text-[10px] hover:scale-105 transition-all"
+              >
+                Ir para Minha Área
+              </button>
+            </div>
+          </div>
         ) : (
           <div className="flex-1 flex items-center justify-center p-4">
             {isAuthLoading ? (
@@ -759,7 +799,19 @@ const AppContent: React.FC = () => {
             )}
           </div>
         )
+      ) : isDriverPath ? (
+        // ── DRIVER AREA — completely isolated, no public Header/Footer/MobileNav ──
+        <main className="flex-1">
+          <Routes>
+            <Route path="/driver/login" element={<DriverLogin />} />
+            <Route path="/driver/dashboard" element={<DriverDashboard />} />
+            <Route path="/driver/perfil" element={<DriverProfile />} />
+            <Route path="/entregador/cadastro" element={<DriverRegistration />} />
+            <Route path="*" element={<DriverDashboard />} />
+          </Routes>
+        </main>
       ) : (
+        // ── PUBLIC SITE ─────────────────────────────────────────────────────────
         <>
           <Header
             cartCount={cartItems.reduce((a, b) => a + b.quantity, 0)}
@@ -796,10 +848,6 @@ const AppContent: React.FC = () => {
               <Route path="/admin/login" element={<AdminLogin onLogin={handleLogin} />} />
               <Route path="/checkout/confirmacao/:token" element={<OrderConfirmation />} />
               <Route path="/driver/registrar" element={<DriverRegistration />} />
-              <Route path="/entregador/cadastro" element={<DriverRegistration />} />
-              <Route path="/driver/login" element={<DriverLogin />} />
-              <Route path="/driver/dashboard" element={<DriverDashboard />} />
-              <Route path="/driver/perfil" element={<DriverProfile />} />
             </Routes>
           </main>
           <Footer />
