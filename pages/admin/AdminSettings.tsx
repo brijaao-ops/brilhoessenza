@@ -667,7 +667,7 @@ const AdminSettings: React.FC = () => {
         <p className="text-[11px] lg:text-sm text-gray-500 font-medium">Controle total sobre o Atelier.</p>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-        <nav className="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-4 lg:pb-0 scrollbar-hide shrink-0">
+        <nav className="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-4 lg:pb-0 shrink-0 border-b lg:border-b-0 border-gray-100 dark:border-white/5 mb-4 lg:mb-0">
           {visibleTabs.map((tab) => (
             <button key={tab.originalIndex} onClick={() => setActiveTab(tab.originalIndex)} className={`text-left px-5 lg:px-6 py-3.5 lg:py-5 rounded-xl lg:rounded-2xl font-bold flex items-center gap-3 lg:gap-4 transition-all whitespace-nowrap lg:whitespace-normal ${activeTab === tab.originalIndex ? 'bg-primary text-black shadow-lg shadow-primary/10' : 'text-gray-500 hover:bg-primary/5'}`}>
               <span className="material-symbols-outlined !text-xl lg:!text-base">{tab.icon}</span>

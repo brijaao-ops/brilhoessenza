@@ -633,7 +633,7 @@ const AppContent: React.FC = () => {
                           location.pathname.includes('/admin/categorias') ? 'Categorias' :
                             location.pathname.includes('/admin/estoque') ? 'Estoque' :
                               location.pathname.includes('/admin/equipe') ? 'Equipe' :
-                                location.pathname.includes('/admin/configuracoes') ? 'Definições' : 'Gestão'}
+                                location.pathname.includes('/admin/configuracoes') ? 'Configurações' : 'Gestão'}
                 </p>
               </div>
             </header>
@@ -648,7 +648,7 @@ const AppContent: React.FC = () => {
 
             <aside className={`
               w-full md:w-80 border-b md:border-b-0 md:border-r border-gray-100 dark:border-white/5 bg-white dark:bg-[#0d1840] p-8
-              flex flex-col gap-10 shrink-0 h-screen md:h-full overflow-y-auto
+              flex flex-col gap-10 shrink-0 h-screen md:h-full
               fixed md:relative inset-0 z-50 transition-transform duration-300 ease-in-out
               ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
             `}>
@@ -688,7 +688,7 @@ const AppContent: React.FC = () => {
                 </div>
               </Link>
 
-              <nav className="flex flex-col gap-1.5 md:gap-2 overflow-y-auto pb-4 md:pb-0 scrollbar-hide flex-1 min-w-0 pr-1">
+              <nav className="flex flex-col gap-1.5 md:gap-2 overflow-y-auto pb-4 md:pb-0 flex-1 min-w-0 pr-1">
                 {visibleTabs.map((tab) => {
                   const isActive = location.pathname === tab.path || (tab.subItems && location.pathname.startsWith(tab.path));
 
@@ -742,7 +742,7 @@ const AppContent: React.FC = () => {
               <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-gray-100 dark:border-white/5 pb-safe">
                 <Link to="/admin/configuracoes" onClick={() => setIsSidebarOpen(false)} className={`flex items-center gap-4 px-5 py-3.5 font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all group ${location.pathname === '/admin/configuracoes' ? 'bg-navy dark:bg-white text-white dark:text-black shadow-xl shadow-navy/20' : 'text-gray-400 hover:text-primary hover:bg-primary/5'}`}>
                   <span className="material-symbols-outlined !text-xl transition-transform group-hover:rotate-45">settings</span>
-                  <span>Definições</span>
+                  <span>Configurações</span>
                   {userProfile?.is_first_login && <span className="size-2 bg-red-500 rounded-full animate-pulse ml-auto"></span>}
                 </Link>
                 <button onClick={handleLogout} className="flex items-center gap-4 px-5 py-3.5 text-red-500/70 hover:text-red-500 font-black uppercase tracking-widest text-[10px] hover:bg-red-500/5 rounded-2xl transition-all text-left group">
