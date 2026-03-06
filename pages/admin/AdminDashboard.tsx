@@ -211,7 +211,7 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ userProfile, orders, pr
                   dataKey="name"
                   axisLine={false}
                   tickLine={false}
-                  tick={{ fontSize: 10, fontWeight: 900, fill: '#9ca3af', textTransform: 'uppercase' }}
+                  tick={{ fontSize: 10, fontWeight: 900, fill: '#9ca3af' }}
                   dy={15}
                 />
                 <YAxis hide />

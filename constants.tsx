@@ -14,6 +14,7 @@ export const MOCK_PRODUCTS: Product[] = [
     description: 'Uma jornada profunda e misteriosa pelas noites árabes, centrada no mais raro Oud e açafrão dourado.',
     stock: 24,
     bestSeller: true,
+    gender: 'unissexo',
     notes: {
       top: 'Açafrão, Bergamota e Pimenta Rosa',
       heart: 'Rosa Damascena, Madeira de Oud e Cedro',
@@ -30,6 +31,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBBuSxtXMnll-y8cwqQ6CAf_YE5GGR5JC26-Dr3swm216aeGvlDbmpOdgaBu0wwfYwkYP6hQMhK3jEm5MRNuTio4Olx0seEr5rwJwn8sYS-6slh3NdxStYBhizJKZCJp-YDQ7Xwz9vyYb7thtbLelYubljEKE5Xae9BgaUgKCiyW3n95MAlDnuLpR7JoNvrn7lzEN53YFagbLQ4_GwCVO2mVk1C-W80rSpxoDxJw8ZTdnvNzsu1gb7um6VJZ4f-9cDDadcIv_gl8ME',
     description: 'Creme restaurador premium projetado para nutrir e proteger a pele com um acabamento suave como veludo.',
     stock: 50,
+    gender: 'unissexo',
   },
   {
     id: '3',
@@ -41,6 +43,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBQpslU35_ia7w97UF54jWDg73q7wt2ws3iVrXRZ4ulsUlHLnGp8Hv-w8CQtKzr9ZbDNxk7kBzcEt3XRTAnjV86srIKpjWAlz2T8Rr0RjizO1bQRQH1WA76piFx4hzxGp5lwoTpl1KyercyfMIhduV13_9k-tce35PQg7n8OqlHIeIBUmwBz4HgucNWL6f7PjO42lCD-cRGzCs-n1iC7zhwB32MZyQ4ycziK7_bQNE7J3NWHVXC6ELzPUykHFV9HU3Uobn8Pm-I_5g',
     description: 'A essência de rosas florescendo capturada em um frasco. Graciosa, atemporal e assombrosamente bela.',
     stock: 5,
+    gender: 'feminino',
     notes: {
       top: 'Rosa Damascena, Lichia',
       heart: 'Mel, Cedro',
@@ -57,6 +60,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuB4cv1kdsCdUlbO1P3MzpBMWtmUvt0GGIkZCGDgSYLP4Y36qLaHV5wR2M4FigH2B9e7PQP9QwNLShrv-1A7w1ihpJFuBPnNntT6tvXWt2LxQV-Vs2xvFKEuhM2mz7ruJDLpLnw-X4O8HejRQryIs-f2x4RZzqajGQkckbSL3rbwyCOz3Q4r1h2Plo5nehriZP74Swil4ww_CGz58wzxHOPw0PT5VM9P4tn5Y_iQbHxT4oa79stq13xBZuV40rdemyiokvgsWqawzxg',
     description: 'Tons curados de minerais altamente pigmentados para a melhor definição e arte dos olhos.',
     stock: 102,
+    gender: 'feminino',
   },
   {
     id: '5',
@@ -68,6 +72,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://picsum.photos/seed/amber/600/600',
     description: 'Quente e sedutor, o Âmbar da Meia-Noite é o companheiro perfeito para ocasiões noturnas.',
     stock: 12,
+    gender: 'unissexo',
   },
   {
     id: '6',
@@ -79,6 +84,7 @@ export const MOCK_PRODUCTS: Product[] = [
     image: 'https://picsum.photos/seed/citrus/600/600',
     description: 'Uma explosão refrescante de frutas cítricas do Mediterrâneo e brisa marinha salgada.',
     stock: 28,
+    gender: 'unissexo',
   }
 ];
 

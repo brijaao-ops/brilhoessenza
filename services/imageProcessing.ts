@@ -11,7 +11,9 @@ export const removeImageBackground = async (
     onProgress?: (progress: number) => void
 ): Promise<Blob> => {
     try {
-        const { default: removeBackground } = await import('@imgly/background-removal');
+        const removeBackgroundModule = (await import('@imgly/background-removal')) as any;
+        const removeBackground = removeBackgroundModule.default || removeBackgroundModule;
+
         const config: any = { // Using any to avoid complex type export issues with dynamic import
             progress: (percent: number) => {
                 if (onProgress) onProgress(percent);
