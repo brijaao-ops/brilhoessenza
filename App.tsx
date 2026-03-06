@@ -213,6 +213,7 @@ const AppContent: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
   const [isCheckoutOpen, setIsCheckoutOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Check Auth Session & Profile
   useEffect(() => {
@@ -608,9 +609,58 @@ const AppContent: React.FC = () => {
       {isAdminPath ? (
         // ── ADMIN AREA ──────────────────────────────────────────────────────────
         isAuthenticated && userProfile && userProfile.role !== 'driver' ? (
-          <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-white dark:bg-[#060e1e]">
-            <aside className="w-full md:w-80 border-b md:border-b-0 md:border-r border-gray-100 dark:border-white/5 bg-white/80 dark:bg-[#0d1840]/80 backdrop-blur-xl p-4 md:p-8 flex flex-col gap-6 md:gap-10 shrink-0 max-h-[40vh] md:max-h-screen overflow-y-auto relative z-20">
-              <Link to="/" onClick={resetFilters} className="flex flex-col gap-4 mb-2">
+          <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-white dark:bg-[#060e1e] relative">
+            {/* Mobile Admin Header */}
+            <header className="md:hidden flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-white/5 bg-white/80 dark:bg-[#0d1840]/80 backdrop-blur-xl sticky top-0 z-30">
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setIsSidebarOpen(true)}
+                  className="size-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary"
+                >
+                  <span className="material-symbols-outlined">menu</span>
+                </button>
+                <div className="h-8 w-auto">
+                  {logoUrl ? <img src={logoUrl} alt="Logo" className="h-full w-auto object-contain" /> : <span className="text-xl font-black text-primary uppercase">BE.</span>}
+                </div>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Workspace</p>
+                <p className="text-xs font-black uppercase text-primary italic truncate max-w-[120px]">
+                  {location.pathname === '/admin' ? 'Dashboard' :
+                    location.pathname.includes('/admin/pedidos') ? 'Pedidos' :
+                      location.pathname.includes('/admin/vendas') ? 'Vendas' :
+                        location.pathname.includes('/admin/produtos') ? 'Catálogo' :
+                          location.pathname.includes('/admin/categorias') ? 'Categorias' :
+                            location.pathname.includes('/admin/estoque') ? 'Estoque' :
+                              location.pathname.includes('/admin/equipe') ? 'Equipe' :
+                                location.pathname.includes('/admin/configuracoes') ? 'Definições' : 'Gestão'}
+                </p>
+              </div>
+            </header>
+
+            {/* Sidebar Overlay for Mobile */}
+            {isSidebarOpen && (
+              <div
+                className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-fade-in"
+                onClick={() => setIsSidebarOpen(false)}
+              ></div>
+            )}
+
+            <aside className={`
+              w-full md:w-80 border-b md:border-b-0 md:border-r border-gray-100 dark:border-white/5 bg-white dark:bg-[#0d1840] p-8
+              flex flex-col gap-10 shrink-0 h-screen md:h-full overflow-y-auto
+              fixed md:relative inset-0 z-50 transition-transform duration-300 ease-in-out
+              ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+            `}>
+              {/* Mobile Close Button */}
+              <button
+                onClick={() => setIsSidebarOpen(false)}
+                className="md:hidden absolute top-8 right-8 size-10 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center text-gray-500"
+              >
+                <span className="material-symbols-outlined">close</span>
+              </button>
+
+              <Link to="/" onClick={() => { resetFilters(); setIsSidebarOpen(false); }} className="flex flex-col gap-4 mb-2">
                 <div className="h-12 w-fit bg-transparent flex items-center justify-start text-primary font-black overflow-hidden relative">
                   {logoUrl ? <img src={logoUrl} alt="Logo" className="h-full w-auto object-contain" /> : <span className="text-2xl tracking-tighter">BE.</span>}
                 </div>
@@ -646,7 +696,9 @@ const AppContent: React.FC = () => {
                     return (
                       <div key={tab.name} className="flex flex-col shrink-0 md:shrink">
                         <button
-                          onClick={() => setExpandedMenu(expandedMenu === tab.name.toLowerCase() ? null : tab.name.toLowerCase())}
+                          onClick={() => {
+                            setExpandedMenu(expandedMenu === tab.name.toLowerCase() ? null : tab.name.toLowerCase());
+                          }}
                           className={`flex items-center justify-between px-5 py-3.5 rounded-2xl font-black transition-all group ${isActive ? 'bg-primary/5 text-primary' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
                         >
                           <div className="flex items-center gap-4">
@@ -662,6 +714,7 @@ const AppContent: React.FC = () => {
                                 key={sub.path}
                                 to={sub.path}
                                 className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider transition-all border-l-2 -ml-[2px] ${location.pathname === sub.path ? 'text-primary border-primary' : 'text-gray-400 border-transparent hover:text-gray-600 dark:hover:text-gray-200'}`}
+                                onClick={() => setIsSidebarOpen(false)}
                               >
                                 {sub.name}
                               </Link>
@@ -675,6 +728,7 @@ const AppContent: React.FC = () => {
                     <Link
                       key={tab.path}
                       to={tab.path}
+                      onClick={() => setIsSidebarOpen(false)}
                       className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl font-black transition-all group relative overflow-hidden ${location.pathname === tab.path ? 'bg-primary text-black shadow-xl shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5'}`}
                     >
                       <span className={`material-symbols-outlined !text-xl transition-transform group-hover:scale-110 ${location.pathname === tab.path ? 'text-black' : 'text-gray-400'}`}>{tab.icon}</span>
@@ -686,7 +740,7 @@ const AppContent: React.FC = () => {
               </nav>
 
               <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-gray-100 dark:border-white/5 pb-safe">
-                <Link to="/admin/configuracoes" className={`flex items-center gap-4 px-5 py-3.5 font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all group ${location.pathname === '/admin/configuracoes' ? 'bg-navy dark:bg-white text-white dark:text-black shadow-xl shadow-navy/20' : 'text-gray-400 hover:text-primary hover:bg-primary/5'}`}>
+                <Link to="/admin/configuracoes" onClick={() => setIsSidebarOpen(false)} className={`flex items-center gap-4 px-5 py-3.5 font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all group ${location.pathname === '/admin/configuracoes' ? 'bg-navy dark:bg-white text-white dark:text-black shadow-xl shadow-navy/20' : 'text-gray-400 hover:text-primary hover:bg-primary/5'}`}>
                   <span className="material-symbols-outlined !text-xl transition-transform group-hover:rotate-45">settings</span>
                   <span>Definições</span>
                   {userProfile?.is_first_login && <span className="size-2 bg-red-500 rounded-full animate-pulse ml-auto"></span>}

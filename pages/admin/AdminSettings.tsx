@@ -662,7 +662,7 @@ const AdminSettings: React.FC = () => {
 
   return (
     <div className="p-4 md:p-8 lg:p-12">
-      <div className="mb-8 lg:mb-12">
+      <div className="hidden md:block mb-8 lg:mb-12">
         <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tighter">Mestre de <span className="text-primary italic">Configurações</span></h2>
         <p className="text-[11px] lg:text-sm text-gray-500 font-medium">Controle total sobre o Atelier.</p>
       </div>

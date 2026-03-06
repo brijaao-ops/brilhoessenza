@@ -74,9 +74,9 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, onDelete, userP
   const canDelete = userProfile?.role === 'admin' || userProfile?.permissions?.products?.delete;
 
   return (
-    <div className="p-6 lg:p-10 flex flex-col">
+    <div className="p-4 md:p-10 flex flex-col">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+      <div className="hidden md:flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h2 className="text-3xl font-black uppercase tracking-tighter">Lista de <span className="text-primary italic">Produtos</span></h2>
           <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.3em] mt-1">Catálogo completo do inventário</p>
