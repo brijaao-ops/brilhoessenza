@@ -278,8 +278,8 @@ const Home: React.FC<HomeProps> = ({
 
               {/* Products on the right or full width if no video */}
               <div className="flex-1">
-                <div className={`grid grid-cols-1 sm:grid-cols-2 ${videoSlides && videoSlides.length > 0 && videoSlides.some(s => s.active) ? 'lg:grid-cols-2' : 'lg:grid-cols-4'} gap-x-10 gap-y-24`}>
-                  {(videoSlides && videoSlides.length > 0 && videoSlides.some(s => s.active) ? filteredProducts.slice(0, 2) : filteredProducts.slice(0, 4)).map((p) => (
+                <div className={`grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-24`}>
+                  {(videoSlides && videoSlides.length > 0 && videoSlides.some(s => s.active) ? filteredProducts.slice(0, 4) : filteredProducts.slice(0, 4)).map((p) => (
                     <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} />
                   ))}
                 </div>
@@ -287,9 +287,9 @@ const Home: React.FC<HomeProps> = ({
             </div>
 
             {/* Remaining Products below */}
-            {filteredProducts.length > (videoSlides && videoSlides.length > 0 && videoSlides.some(s => s.active) ? 2 : 4) && (
+            {filteredProducts.length > 4 && (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
-                {filteredProducts.slice(videoSlides && videoSlides.length > 0 && videoSlides.some(s => s.active) ? 2 : 4).map((p) => (
+                {filteredProducts.slice(4).map((p) => (
                   <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} />
                 ))}
               </div>
