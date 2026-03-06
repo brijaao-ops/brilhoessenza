@@ -1,10 +1,22 @@
 /* Luxury High-Definition Global Styles - Brilho Essenza */
 :root {
+    --primary: #f2d00d;
+    --navy: #0d1b5e;
+    --navy-light: #162a8c;
+    --gold-gradient: linear-gradient(135deg, #f2d00d 0%, #d4af37 100%);
+    --navy-gradient: linear-gradient(135deg, #0d1b5e 0%, #162a8c 100%);
+    --glass-bg: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(255, 255, 255, 0.3);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     image-rendering: -webkit-optimize-contrast;
     -webkit-tap-highlight-color: transparent;
+}
+
+.dark {
+    --glass-bg: rgba(13, 27, 94, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 /* Force GPU acceleration & Pixel-Perfect Rendering */
@@ -145,26 +157,41 @@ body {
     background: linear-gradient(160deg, #060e1e 0%, #0d1b5e 50%, #060e1e 100%);
 }
 
-/* Glassmorphism Classes */
-.glass-effect {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+/* Glassmorphism & Luxury Cards */
+.luxury-glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px 0 rgba(13, 27, 94, 0.05);
 }
 
-.dark .glass-effect {
-    background: rgba(0, 0, 0, 0.4);
+.luxury-card {
+    background: white;
+    border-radius: 2.5rem;
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    box-shadow: 0 20px 50px -20px rgba(13, 27, 94, 0.1);
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dark .luxury-card {
+    background: #0d1840;
     border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 25px 60px -25px rgba(0, 0, 0, 0.5);
 }
 
-/* Luxury Card Shadows - Navy Tone */
-.luxury-shadow {
-    box-shadow: 0 20px 40px -15px rgba(13, 27, 94, 0.10);
+.luxury-card:hover {
+    transform: translateY(-5px) scale(1.01);
+    box-shadow: 0 30px 70px -15px rgba(13, 27, 94, 0.15);
+    border-color: rgba(242, 208, 13, 0.3);
 }
 
-.dark .luxury-shadow {
-    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.6);
+.gold-gradient-text {
+    background: var(--gold-gradient);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 900;
 }
 
 /* Mobile Utilities */

@@ -649,41 +649,37 @@ const AppContent: React.FC = () => {
       {isAdminPath ? (
         // ── ADMIN AREA ──────────────────────────────────────────────────────────
         isAuthenticated && userProfile && userProfile.role !== 'driver' ? (
-          <div className="flex flex-col md:flex-row h-screen overflow-hidden">
-            <aside className="w-full md:w-72 border-b md:border-b-0 md:border-r border-gray-100 dark:border-[#222115] bg-white dark:bg-[#0d1840] p-4 md:p-6 flex flex-col gap-4 md:gap-8 shrink-0 max-h-[40vh] md:max-h-screen overflow-y-auto">
-              <Link to="/" onClick={resetFilters} className="flex items-center gap-2 mb-2 md:mb-4">
-                <div className="w-[6cm] h-10 bg-transparent flex items-center justify-center text-primary font-black overflow-hidden relative">
-                  {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain" /> : 'BE'}
+          <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-white dark:bg-[#060e1e]">
+            <aside className="w-full md:w-80 border-b md:border-b-0 md:border-r border-gray-100 dark:border-white/5 bg-white/80 dark:bg-[#0d1840]/80 backdrop-blur-xl p-4 md:p-8 flex flex-col gap-6 md:gap-10 shrink-0 max-h-[40vh] md:max-h-screen overflow-y-auto relative z-20">
+              <Link to="/" onClick={resetFilters} className="flex flex-col gap-4 mb-2">
+                <div className="h-12 w-fit bg-transparent flex items-center justify-start text-primary font-black overflow-hidden relative">
+                  {logoUrl ? <img src={logoUrl} alt="Logo" className="h-full w-auto object-contain" /> : <span className="text-2xl tracking-tighter">BE.</span>}
                 </div>
-                <div>
-                  <h1 className="font-black uppercase tracking-tighter text-sm">Brilho <span className="text-primary">Essenza</span></h1>
-                  <span className="text-[10px] text-gray-400 font-bold uppercase">Gestão Luxo</span>
-                  <div className="mt-1 bg-gray-50 dark:bg-white/5 rounded px-2 py-1 relative group">
+                <div className="pl-1">
+                  <h1 className="font-black uppercase tracking-tighter text-sm leading-none">Brilho <span className="text-primary italic">Essenza</span></h1>
+                  <span className="text-[10px] text-gray-400 font-extrabold uppercase tracking-[0.2em]">Management</span>
+
+                  <div className="mt-6 p-4 bg-gray-50/50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/5 transition-all hover:bg-white dark:hover:bg-white/[0.08] group relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
                     {userProfile ? (
-                      <>
-                        <p className="text-[10px] font-bold text-primary truncate max-w-[150px]">{userProfile.full_name}</p>
-                        <p className="text-[9px] text-gray-400 font-medium uppercase tracking-wider">{userProfile.role === 'admin' ? 'Administrador' : 'Equipe'}</p>
-                      </>
+                      <div className="relative z-10">
+                        <p className="text-[11px] font-black text-gray-800 dark:text-gray-100 truncate mb-0.5">{userProfile.full_name}</p>
+                        <div className="flex items-center gap-1.5">
+                          <div className="size-1.5 bg-green-500 rounded-full animate-pulse"></div>
+                          <p className="text-[9px] text-primary font-black uppercase tracking-wider">{userProfile.role === 'admin' ? 'Executive Admin' : 'Staff Member'}</p>
+                        </div>
+                      </div>
                     ) : (
                       <div className="text-[10px] font-bold text-gray-400 leading-tight flex items-center gap-2">
                         <div className="size-2 bg-primary rounded-full animate-pulse"></div>
-                        Autenticando...
+                        Connecting...
                       </div>
                     )}
                   </div>
-                  {hasLoadError && (
-                    <button
-                      onClick={() => loadAllData(true)}
-                      className="mt-2 w-full bg-red-500/10 hover:bg-red-500/20 text-red-500 text-[9px] font-black py-2 rounded-lg transition-all flex items-center justify-center gap-1 uppercase tracking-wider border border-red-500/20"
-                    >
-                      <span className="material-symbols-outlined !text-xs">sync</span>
-                      Tentar Novamente
-                    </button>
-                  )}
                 </div>
               </Link>
 
-              <nav className="flex flex-col gap-2 md:gap-1 overflow-y-auto pb-2 md:pb-0 scrollbar-hide flex-1 min-w-0">
+              <nav className="flex flex-col gap-1.5 md:gap-2 overflow-y-auto pb-4 md:pb-0 scrollbar-hide flex-1 min-w-0 pr-1">
                 {visibleTabs.map((tab) => {
                   const isActive = location.pathname === tab.path || (tab.subItems && location.pathname.startsWith(tab.path));
 
@@ -692,21 +688,21 @@ const AppContent: React.FC = () => {
                       <div key={tab.name} className="flex flex-col shrink-0 md:shrink">
                         <button
                           onClick={() => setExpandedMenu(expandedMenu === tab.name.toLowerCase() ? null : tab.name.toLowerCase())}
-                          className={`flex items-center justify-between px-4 py-2.5 md:py-3 font-bold transition-colors whitespace-nowrap md:whitespace-normal ${isActive ? 'text-primary' : 'text-gray-500'}`}
+                          className={`flex items-center justify-between px-5 py-3.5 rounded-2xl font-black transition-all group ${isActive ? 'bg-primary/5 text-primary' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
                         >
-                          <div className="flex items-center gap-2 md:gap-3">
-                            <span className="material-symbols-outlined !text-xl md:!text-base">{tab.icon}</span>
-                            <span className="text-xs md:text-sm">{tab.name}</span>
+                          <div className="flex items-center gap-4">
+                            <span className={`material-symbols-outlined !text-xl transition-transform group-hover:scale-110 ${isActive ? 'text-primary' : 'text-gray-400'}`}>{tab.icon}</span>
+                            <span className="text-[11px] uppercase tracking-widest">{tab.name}</span>
                           </div>
-                          <span className="material-symbols-outlined text-sm hidden md:block">{expandedMenu === tab.name.toLowerCase() ? 'expand_less' : 'expand_more'}</span>
+                          <span className="material-symbols-outlined !text-base transition-transform" style={{ transform: expandedMenu === tab.name.toLowerCase() ? 'rotate(180deg)' : 'rotate(0)' }}>expand_more</span>
                         </button>
                         {expandedMenu === tab.name.toLowerCase() && (
-                          <div className="flex flex-col md:ml-8 md:border-l border-gray-100 dark:border-[#222115] bg-gray-50/50 dark:bg-white/5 md:bg-transparent rounded-xl md:rounded-none mt-1 md:mt-0 p-1 md:p-0">
+                          <div className="flex flex-col ml-12 border-l-2 border-primary/10 mt-1 gap-1 py-1">
                             {tab.subItems.map(sub => (
                               <Link
                                 key={sub.path}
                                 to={sub.path}
-                                className={`px-4 py-2 text-[10px] md:text-sm font-bold transition-colors whitespace-nowrap md:whitespace-normal ${location.pathname === sub.path ? 'text-primary' : 'text-gray-400 hover:text-primary'}`}
+                                className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider transition-all border-l-2 -ml-[2px] ${location.pathname === sub.path ? 'text-primary border-primary' : 'text-gray-400 border-transparent hover:text-gray-600 dark:hover:text-gray-200'}`}
                               >
                                 {sub.name}
                               </Link>
@@ -720,24 +716,25 @@ const AppContent: React.FC = () => {
                     <Link
                       key={tab.path}
                       to={tab.path}
-                      className={`flex items-center gap-2 md:gap-3 px-4 py-2.5 md:py-3 rounded-xl font-bold transition-all shrink-0 md:shrink whitespace-nowrap md:whitespace-normal ${location.pathname === tab.path ? 'bg-primary text-black shadow-lg shadow-primary/20' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5'}`}
+                      className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl font-black transition-all group relative overflow-hidden ${location.pathname === tab.path ? 'bg-primary text-black shadow-xl shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5'}`}
                     >
-                      <span className="material-symbols-outlined !text-xl md:!text-base">{tab.icon}</span>
-                      <span className="text-xs md:text-sm">{tab.name}</span>
+                      <span className={`material-symbols-outlined !text-xl transition-transform group-hover:scale-110 ${location.pathname === tab.path ? 'text-black' : 'text-gray-400'}`}>{tab.icon}</span>
+                      <span className="text-[11px] uppercase tracking-widest">{tab.name}</span>
+                      {location.pathname === tab.path && <div className="absolute right-0 top-0 h-full w-1 bg-black/10"></div>}
                     </Link>
                   );
                 })}
               </nav>
 
-              <div className="mt-auto flex flex-col gap-2 pt-4 border-t border-gray-100 dark:border-[#222115] pb-safe">
-                <Link to="/admin/configuracoes" className={`flex items-center gap-3 px-4 py-3 font-bold rounded-xl transition-all ${location.pathname === '/admin/configuracoes' ? 'bg-primary text-black' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-white/5'}`}>
-                  <span className="material-symbols-outlined">settings</span>
-                  <span className="text-sm">Configurações</span>
+              <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-gray-100 dark:border-white/5 pb-safe">
+                <Link to="/admin/configuracoes" className={`flex items-center gap-4 px-5 py-3.5 font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all group ${location.pathname === '/admin/configuracoes' ? 'bg-navy dark:bg-white text-white dark:text-black shadow-xl shadow-navy/20' : 'text-gray-400 hover:text-primary hover:bg-primary/5'}`}>
+                  <span className="material-symbols-outlined !text-xl transition-transform group-hover:rotate-45">settings</span>
+                  <span>Definições</span>
                   {userProfile?.is_first_login && <span className="size-2 bg-red-500 rounded-full animate-pulse ml-auto"></span>}
                 </Link>
-                <button onClick={handleLogout} className="flex items-center gap-3 px-4 py-3 text-red-500 font-bold hover:bg-red-50 dark:hover:bg-red-500/5 rounded-xl transition-all text-left">
-                  <span className="material-symbols-outlined">logout</span>
-                  <span className="text-sm">Sair</span>
+                <button onClick={handleLogout} className="flex items-center gap-4 px-5 py-3.5 text-red-500/70 hover:text-red-500 font-black uppercase tracking-widest text-[10px] hover:bg-red-500/5 rounded-2xl transition-all text-left group">
+                  <span className="material-symbols-outlined !text-xl transition-transform group-hover:-translate-x-1">logout</span>
+                  <span>Encerrar Atelier</span>
                 </button>
               </div>
             </aside>
