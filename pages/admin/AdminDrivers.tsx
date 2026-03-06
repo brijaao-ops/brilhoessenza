@@ -7,6 +7,7 @@ import { useToast } from '../../contexts/ToastContext';
 import DriverCardModal from '../../components/admin/DriverCardModal';
 import DriverCredentialsModal from '../../components/admin/DriverCredentialsModal';
 import DriverCommissionModal from '../../components/admin/DriverCommissionModal';
+import DriverEditModal from '../../components/admin/DriverEditModal';
 
 interface AdminDriversProps {
     userProfile: UserProfile | null;
@@ -22,6 +23,10 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile, drivers, setDr
     // Modal State
     const [selectedDriver, setSelectedDriver] = useState<DeliveryDriver | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Edit Modal
+    const [editingDriver, setEditingDriver] = useState<DeliveryDriver | null>(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     // Commission Modal
     const [isCommissionOpen, setIsCommissionOpen] = useState(false);
@@ -63,6 +68,11 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile, drivers, setDr
     const handleEditCredentials = (driver: DeliveryDriver) => {
         setCredDriver(driver);
         setIsCredModalOpen(true);
+    };
+
+    const handleEditProfile = (driver: DeliveryDriver) => {
+        setEditingDriver(driver);
+        setIsEditModalOpen(true);
     };
 
     const handleSaveCredentials = async (id: string, email: string, pass: string) => {
@@ -123,6 +133,7 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile, drivers, setDr
                     onDelete={handleDelete}
                     onViewCard={handleViewCard}
                     onEditCredentials={handleEditCredentials}
+                    onEditProfile={handleEditProfile}
                     userProfile={userProfile}
                 />
             )}
@@ -131,6 +142,13 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile, drivers, setDr
                 driver={selectedDriver}
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
+            />
+
+            <DriverEditModal
+                driver={editingDriver}
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                onSave={handleUpdate}
             />
 
             <DriverCredentialsModal

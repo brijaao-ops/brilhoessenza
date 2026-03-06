@@ -7,10 +7,11 @@ interface DriverTableProps {
     onDelete: (id: string) => void;
     onViewCard: (driver: DeliveryDriver) => void;
     onEditCredentials: (driver: DeliveryDriver) => void;
+    onEditProfile: (driver: DeliveryDriver) => void;
     userProfile?: UserProfile | null;
 }
 
-const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, onViewCard, onEditCredentials, userProfile }) => {
+const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, onViewCard, onEditCredentials, onEditProfile, userProfile }) => {
     const canManage = userProfile?.role === 'admin' || userProfile?.permissions?.drivers?.manage || userProfile?.permissions?.team?.manage;
 
     return (
@@ -90,6 +91,13 @@ const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, 
                                                     <span className="material-symbols-outlined text-sm">badge</span>
                                                 </button>
                                             )}
+                                            <button
+                                                onClick={() => onEditProfile(d)}
+                                                className="size-8 flex items-center justify-center text-primary hover:bg-primary/10 rounded-lg transition-all"
+                                                title="Editar Perfil"
+                                            >
+                                                <span className="material-symbols-outlined text-lg">edit</span>
+                                            </button>
                                             {!d.verified && (
                                                 <button
                                                     onClick={() => onUpdate(d.id, { verified: true })}
@@ -186,6 +194,7 @@ const DriverTable: React.FC<DriverTableProps> = ({ drivers, onUpdate, onDelete, 
                                     {d.verified && (
                                         <button onClick={() => onViewCard(d)} className="size-9 bg-gray-100 dark:bg-white/10 rounded-xl flex items-center justify-center text-gray-500"><span className="material-symbols-outlined text-base">badge</span></button>
                                     )}
+                                    <button onClick={() => onEditProfile(d)} className="size-9 bg-primary/10 text-primary rounded-xl flex items-center justify-center"><span className="material-symbols-outlined text-base">edit</span></button>
                                     {!d.verified && (
                                         <button onClick={() => onUpdate(d.id, { verified: true })} className="size-9 bg-green-500/10 text-green-500 rounded-xl flex items-center justify-center"><span className="material-symbols-outlined text-base">how_to_reg</span></button>
                                     )}

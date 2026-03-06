@@ -65,6 +65,7 @@ const AdminSettings: React.FC = () => {
         if (savedProfile) {
           const p = JSON.parse(savedProfile);
           setCurrentUser(p);
+          if (p?.full_name) setUserName(p.full_name);
         }
       }
     });
