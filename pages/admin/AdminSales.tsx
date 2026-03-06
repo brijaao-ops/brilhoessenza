@@ -1,24 +1,17 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { Order, UserProfile, DeliveryDriver } from '../../types';
+import { Order, Product, UserProfile, DeliveryDriver } from '../../types';
 import { updateOrder, fetchDrivers, assignDriverToOrder } from '../../services/supabase';
 
 interface AdminSalesProps {
     orders: Order[];
     setOrders: React.Dispatch<React.SetStateAction<Order[]>>;
+    products: Product[];
+    drivers: DeliveryDriver[];
     userProfile: UserProfile | null;
 }
 
-const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, userProfile }) => {
-    const [drivers, setDrivers] = React.useState<DeliveryDriver[]>([]);
+const AdminSales: React.FC<AdminSalesProps> = ({ orders, setOrders, products, drivers, userProfile }) => {
     const sales = orders.filter(o => o.status !== 'PEDIDO');
-
-    React.useEffect(() => {
-        const loadDrivers = async () => {
-            const data = await fetchDrivers();
-            setDrivers(data.filter(d => d.verified && d.active));
-        };
-        loadDrivers();
-    }, []);
 
     const handleAssignDriver = async (orderId: string, driverId: string) => {
         try {

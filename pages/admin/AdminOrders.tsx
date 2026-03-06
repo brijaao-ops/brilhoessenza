@@ -6,29 +6,17 @@ import { useToast } from '../../contexts/ToastContext';
 interface AdminOrdersProps {
   orders: Order[];
   setOrders: React.Dispatch<React.SetStateAction<Order[]>>;
+  products: Product[];
+  drivers: DeliveryDriver[];
   userProfile: UserProfile | null;
 }
 
-const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, userProfile }) => {
+const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, products, drivers, userProfile }) => {
   const { showToast } = useToast();
-  const [products, setProducts] = useState<Product[]>([]);
-  const [drivers, setDrivers] = useState<DeliveryDriver[]>([]);
   const [activeTab, setActiveTab] = useState<'requests' | 'processing'>('requests');
 
   const pendingRequests = orders.filter(o => o.status === 'PEDIDO');
   const processingOrders = orders.filter(o => ['PENDENTE', 'ENVIADO', 'PAGO'].includes(o.status));
-
-  useEffect(() => {
-    const loadData = async () => {
-      const [productsData, driversData] = await Promise.all([
-        fetchProducts(),
-        fetchDrivers()
-      ]);
-      setProducts(productsData);
-      setDrivers(driversData);
-    };
-    loadData();
-  }, []);
 
   const convertToSale = async (orderId: string) => {
     try {

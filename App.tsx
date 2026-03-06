@@ -55,120 +55,74 @@ const AppContent: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [hasLoadError, setHasLoadError] = useState(false);
 
-  // Simple, reliable public data loader — no seeding, no mock injection
-  const loadAllData = async (isRetry = false) => {
-    // Prevent fetching admin data before profile is ready (RLS race condition)
-    if (isAuthenticated && !userProfile && !isRetry) {
-      console.log("Waiting for user profile before loading admin data...");
-      setLoading(true);
-      return;
-    }
+  // PHASE 1: Public Data (Decoupled & Cached)
+  const loadPublicData = async (isRetry = false) => {
+    if (!isRetry && products.length > 0) return; // Already have data (cached or initial)
 
     setLoading(!isRetry);
     setHasLoadError(false);
 
-    // Initial cache load for performance
     try {
-      const cp = localStorage.getItem('brilho_products_v4');
-      const cc = localStorage.getItem('brilho_categories_v4');
-      const cs = localStorage.getItem('brilho_slides_v4');
-      const cvs = localStorage.getItem('brilho_video_slides_v1');
-      if (cp) { try { const p = JSON.parse(cp); if (p.length > 0) setProducts(p); } catch (e) { } }
-      if (cc) { try { const c = JSON.parse(cc); if (c.length > 0) setCategories(c); } catch (e) { } }
-      if (cs) { try { const s = JSON.parse(cs); if (s.length > 0) setSlides(s); } catch (e) { } }
-      if (cvs) { try { const vs = JSON.parse(cvs); if (vs.length > 0) setVideoSlides(vs); } catch (e) { } }
+      const productPromise = fetchProducts(100) // Limit to 100 for initial view
+        .then(dbProducts => {
+          if (dbProducts.length > 0) {
+            setProducts(dbProducts);
+            localStorage.setItem('brilho_products_v4', JSON.stringify(dbProducts));
+          }
+          return true;
+        })
+        .catch(() => false);
+
+      const categoryPromise = fetchCategories().catch(() => true);
+      const slidePromise = fetchSlides().catch(() => true);
+      const videoSlidePromise = fetchVideoSlides().catch(() => true);
+
+      const [pSuccess, cDb, sDb, vsDb] = await Promise.all([productPromise, categoryPromise, slidePromise, videoSlidePromise]);
+
+      if (Array.isArray(cDb)) setCategories(cDb);
+      if (Array.isArray(sDb)) setSlides(sDb);
+      if (Array.isArray(vsDb)) setVideoSlides(vsDb);
+
+      if (!pSuccess && products.length === 0) setHasLoadError(true);
     } catch (e) {
-      console.warn("Cache load failed", e);
+      console.error("Public load error", e);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    // PHASE 1: Public Data (Decoupled)
-    const productPromise = fetchProducts()
-      .then(dbProducts => {
-        if (dbProducts.length > 0) {
-          setProducts(dbProducts);
-          localStorage.setItem('brilho_products_v4', JSON.stringify(dbProducts));
-        }
-        return true;
-      })
-      .catch(e => {
-        console.error('Product Fetch Error:', e);
-        return false;
-      });
+  // PHASE 2: Admin Data (On-Demand)
+  const loadAdminData = async () => {
+    if (!isAuthenticated || !userProfile || userProfile.role === 'driver') return;
 
-    const categoryPromise = fetchCategories()
-      .then(dbCategories => {
-        if (dbCategories.length > 0) {
-          setCategories(dbCategories);
-          localStorage.setItem('brilho_categories_v4', JSON.stringify(dbCategories));
-        }
-        return true;
-      })
-      .catch(e => {
-        console.error('Category Fetch Error:', e);
-        return true; // Categories failing isn't "fatal"
-      });
+    // Check if we already have sufficient data to avoid re-fetching on every mount
+    if (orders.length > 0 && team.length > 0 && drivers.length > 0) return;
 
-    const slidePromise = fetchSlides()
-      .then(dbSlides => {
-        if (dbSlides.length > 0) {
-          setSlides(dbSlides);
-          localStorage.setItem('brilho_slides_v4', JSON.stringify(dbSlides));
-        }
-        return true;
-      })
-      .catch(e => {
-        console.error('Slide Fetch Error:', e);
-        return true; // Slides failing isn't "fatal"
-      });
+    try {
+      const [dbTeam, dbDrivers, dbOrders] = await Promise.all([
+        fetchTeam().catch(() => []),
+        fetchDrivers(50).catch(() => []), // Limit initial drivers list
+        fetchOrders(50, 90).catch(() => []) // Default to last 50 orders or 90 days
+      ]);
 
-    const videoSlidePromise = fetchVideoSlides()
-      .then(dbVideoSlides => {
-        if (dbVideoSlides.length > 0) {
-          setVideoSlides(dbVideoSlides);
-          localStorage.setItem('brilho_video_slides_v1', JSON.stringify(dbVideoSlides));
-        }
-        return true;
-      })
-      .catch(e => {
-        console.error('Video Slide Fetch Error:', e);
-        return true;
-      });
-
-    const [productSuccess] = await Promise.all([productPromise, categoryPromise, slidePromise, videoSlidePromise]);
-
-    // Only set error if products failed AND no cached products exist
-    if (!productSuccess && products.length === 0) {
-      setHasLoadError(true);
+      if (dbTeam.length > 0) setTeam(dbTeam);
+      if (dbDrivers.length > 0) setDrivers(dbDrivers);
+      if (dbOrders.length > 0) setOrders(dbOrders);
+    } catch (e) {
+      console.error('Admin Fetch Error:', e);
     }
-
-    // PHASE 2: Admin Data (Contextual)
-    if (isAuthenticated && userProfile && userProfile.role !== 'driver') {
-      try {
-        const [dbTeam, dbDrivers, dbOrders] = await Promise.all([
-          fetchTeam().catch(e => { console.error("Team err:", e); return []; }),
-          fetchDrivers().catch(e => { console.error("Drivers err:", e); return []; }),
-          fetchOrders().catch(e => { console.error("Orders err:", e); return []; })
-        ]);
-
-        if (dbTeam.length > 0) setTeam(dbTeam);
-        if (dbDrivers.length > 0) setDrivers(dbDrivers);
-        if (dbOrders.length > 0) setOrders(dbOrders);
-      } catch (e) {
-        console.error('Admin Fetch Error:', e);
-        // Correct route detection for HashRouter
-        const isAdminRoute = location.pathname.startsWith('/admin');
-        if (isAdminRoute) {
-          setHasLoadError(true);
-        }
-      }
-    }
-
-    setLoading(false);
   };
 
   // Initial load on mount
   useEffect(() => {
-    loadAllData();
+    loadPublicData();
+  }, []);
+
+  // Admin data load when context changes to admin
+  useEffect(() => {
+    if (isAuthenticated && userProfile && userProfile.role !== 'driver') {
+      loadAdminData();
+    }
   }, [isAuthenticated, userProfile?.id]);
 
   // Logo URL & Settings State
@@ -429,7 +383,11 @@ const AppContent: React.FC = () => {
     localStorage.removeItem('brilho_slides_v4');
     // Navigate home and re-fetch as anonymous user
     navigate('/');
-    setTimeout(() => loadAllData(), 100);
+    setTimeout(() => {
+      setProducts([]);
+      setOrders([]);
+      loadPublicData(true);
+    }, 100);
   };
 
   // Data synchronization is now handled in the main useEffect with loadAllData logic
@@ -749,8 +707,8 @@ const AppContent: React.FC = () => {
                 <Route path="/admin/categorias/nova" element={<AdminCategoryForm />} />
                 <Route path="/admin/categorias/editar/:id" element={<AdminCategoryForm />} />
                 <Route path="/admin/estoque" element={<AdminStock products={products} />} />
-                <Route path="/admin/pedidos" element={<AdminOrders orders={orders} setOrders={setOrders} userProfile={userProfile} />} />
-                <Route path="/admin/vendas" element={<AdminSales orders={orders} setOrders={setOrders} userProfile={userProfile} />} />
+                <Route path="/admin/pedidos" element={<AdminOrders orders={orders} setOrders={setOrders} products={products} drivers={drivers} userProfile={userProfile} />} />
+                <Route path="/admin/vendas" element={<AdminSales orders={orders} setOrders={setOrders} products={products} drivers={drivers} userProfile={userProfile} />} />
                 <Route path="/admin/pagamentos" element={<AdminPayments orders={orders} />} />
                 <Route path="/admin/logistica" element={<AdminLogistics />} />
                 <Route path="/admin/entregadores" element={<AdminDrivers drivers={drivers} setDrivers={setDrivers} userProfile={userProfile} />} />
@@ -836,7 +794,7 @@ const AppContent: React.FC = () => {
                   onCategorySelect={setSelectedCategory}
                   slides={slides}
                   videoSlides={videoSlides}
-                  onRetry={() => loadAllData(true)}
+                  onRetry={() => loadPublicData(true)}
                   isLoading={loading}
                   hasError={hasLoadError}
                 />

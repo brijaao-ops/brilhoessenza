@@ -170,11 +170,15 @@ export const updateUserPassword = async (password: string) => {
 
 // --- Products ---
 
-export const fetchProducts = async (): Promise<Product[]> => {
-    const { data, error } = await supabase
+export const fetchProducts = async (limit?: number): Promise<Product[]> => {
+    let query = supabase
         .from('products')
         .select('id, name, description, price, sale_price, image, category, sub_category, gender, stock, best_seller, notes, reviews_count, created_at, created_by_name, cost_price, delivery_commission, last_edited_by')
         .order('created_at', { ascending: false });
+
+    if (limit) query = query.limit(limit);
+
+    const { data, error } = await query;
 
     if (error) {
         console.error('Error fetching products:', error);
@@ -269,11 +273,21 @@ export const deleteProduct = async (id: string) => {
 
 // --- Orders ---
 
-export const fetchOrders = async (): Promise<Order[]> => {
-    const { data, error } = await supabase
+export const fetchOrders = async (limit?: number, days?: number): Promise<Order[]> => {
+    let query = supabase
         .from('orders')
         .select('*, driver:delivery_drivers(*)')
         .order('created_at', { ascending: false });
+
+    if (days) {
+        const date = new Date();
+        date.setDate(date.getDate() - days);
+        query = query.gte('created_at', date.toISOString());
+    }
+
+    if (limit) query = query.limit(limit);
+
+    const { data, error } = await query;
 
     if (error) {
         console.error('Error fetching orders:', error);
@@ -505,11 +519,15 @@ export const deleteVideoSlide = async (id: string) => {
 
 // --- Delivery Drivers ---
 
-export const fetchDrivers = async (): Promise<DeliveryDriver[]> => {
-    const { data, error } = await supabase
+export const fetchDrivers = async (limit?: number): Promise<DeliveryDriver[]> => {
+    let query = supabase
         .from('delivery_drivers')
         .select('*')
         .order('created_at', { ascending: false });
+
+    if (limit) query = query.limit(limit);
+
+    const { data, error } = await query;
 
     if (error) throw error;
     return data;
