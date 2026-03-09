@@ -208,7 +208,6 @@ const AppContent: React.FC = () => {
 
   const [cartItems, setCartItems] = useState<{ product: Product, quantity: number }[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [cartCoords, setCartCoords] = useState<{ x: number, y: number } | null>(null);
   const [cartPosition, setCartPosition] = useState<'top' | 'bottom'>('top');
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -424,7 +423,7 @@ const AppContent: React.FC = () => {
     }
   };
 
-  const handleAddToCart = (product: Product, quantity: number = 1, coords?: { x: number, y: number }) => {
+  const handleAddToCart = (product: Product, quantity: number = 1) => {
     const currentProd = products.find(p => String(p.id) === String(product.id));
     if (!currentProd || currentProd.stock <= 0) {
       alert("Desculpe, este tesouro está temporariamente esgotado.");
@@ -443,13 +442,10 @@ const AppContent: React.FC = () => {
       return [...prev, { product, quantity }];
     });
 
-    if (coords) {
-      setCartCoords(coords);
-    } else {
-      setCartCoords(null);
-      setCartPosition('bottom');
-    }
+    setCartPosition('top'); // Change to top to ensure it's visible with scroll
     setIsCartOpen(true);
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const updateCartQuantity = (id: string, delta: number) => {
@@ -877,7 +873,6 @@ const AppContent: React.FC = () => {
             onRemove={removeFromCart}
             onCheckout={finalizeBooking}
             position={cartPosition}
-            coords={cartCoords}
           />
 
           <CheckoutModal

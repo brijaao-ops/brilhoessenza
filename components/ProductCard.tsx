@@ -4,7 +4,7 @@ import { Product } from '../types';
 
 interface ProductCardProps {
     product: Product;
-    onAddToCart: (product: Product, quantity?: number, coords?: { x: number, y: number }) => void;
+    onAddToCart: (product: Product) => void;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
@@ -61,7 +61,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
         e.stopPropagation();
         if (product.stock <= 0) return;
 
-        onAddToCart(product, 1, { x: e.clientX, y: e.clientY });
+        onAddToCart(product);
         setAddedToCart(true);
         setTimeout(() => setAddedToCart(false), 1800);
     };
