@@ -9,6 +9,7 @@ interface CartDrawerProps {
     onRemove: (id: string) => void;
     onCheckout: () => void;
     position?: 'top' | 'bottom';
+    pulse?: boolean;
 }
 
 const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -18,7 +19,8 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
     onUpdateQuantity,
     onRemove,
     onCheckout,
-    position = 'top'
+    position = 'top',
+    pulse = false
 }) => {
     const total = items.reduce((acc, curr) => acc + ((curr.product?.price || 0) * (curr.quantity || 0)), 0);
 
@@ -38,7 +40,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
 
             {/* Drawer */}
             <div
-                className={`w-full max-w-[calc(100%-2rem)] sm:max-w-md bg-white dark:bg-[#08112e] h-fit max-h-[80vh] rounded-[2rem] sm:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden border border-gray-100 dark:border-white/5 z-[110] pointer-events-auto ${positionClasses}`}
+                className={`w-full max-w-[calc(100%-2rem)] sm:max-w-md bg-white dark:bg-[#08112e] h-fit max-h-[80vh] rounded-[2rem] sm:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden border border-primary dark:border-primary/30 z-[110] pointer-events-auto ${positionClasses} ${pulse ? 'ring-4 ring-primary/50 animate-pulse' : ''}`}
             >
                 {/* Header */}
                 <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">

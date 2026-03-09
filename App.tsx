@@ -208,6 +208,7 @@ const AppContent: React.FC = () => {
 
   const [cartItems, setCartItems] = useState<{ product: Product, quantity: number }[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [cartPulse, setCartPulse] = useState(false);
   const [cartPosition, setCartPosition] = useState<'top' | 'bottom'>('top');
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -442,10 +443,17 @@ const AppContent: React.FC = () => {
       return [...prev, { product, quantity }];
     });
 
-    setCartPosition('top'); // Change to top to ensure it's visible with scroll
+    setCartPosition('top');
     setIsCartOpen(true);
+    setCartPulse(true);
+    setTimeout(() => setCartPulse(false), 2000);
 
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Robust scroll-to-top with slight delay
+    setTimeout(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      // Fallback for some browsers or layout engines
+      document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
+    }, 100);
   };
 
   const updateCartQuantity = (id: string, delta: number) => {
@@ -873,6 +881,7 @@ const AppContent: React.FC = () => {
             onRemove={removeFromCart}
             onCheckout={finalizeBooking}
             position={cartPosition}
+            pulse={cartPulse}
           />
 
           <CheckoutModal
