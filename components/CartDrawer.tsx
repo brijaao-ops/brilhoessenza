@@ -9,6 +9,7 @@ interface CartDrawerProps {
     onRemove: (id: string) => void;
     onCheckout: () => void;
     position?: 'top' | 'bottom';
+    coords?: { x: number; y: number } | null;
 }
 
 const CartDrawer: React.FC<CartDrawerProps> = ({
@@ -18,15 +19,48 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
     onUpdateQuantity,
     onRemove,
     onCheckout,
-    position = 'top'
+    position = 'top',
+    coords
 }) => {
     const total = items.reduce((acc, curr) => acc + ((curr.product?.price || 0) * (curr.quantity || 0)), 0);
 
+    // Dynamic positioning logic
+    const getStyles = () => {
+        if (!coords || window.innerWidth < 640) return {};
+
+        const drawerWidth = 448; // max-w-md (approx)
+        const drawerHeight = 500; // estimated max height
+
+        let left = coords.x;
+        let top = coords.y;
+
+        // Adjust to keep within viewport
+        if (left + drawerWidth > window.innerWidth) {
+            left = window.innerWidth - drawerWidth - 20;
+        }
+        if (top + drawerHeight > window.innerHeight) {
+            top = window.innerHeight - drawerHeight - 20;
+        }
+
+        return {
+            position: 'fixed' as const,
+            left: `${left}px`,
+            top: `${top}px`,
+            margin: 0,
+            transform: 'none'
+        };
+    };
+
     if (!isOpen) return null;
 
-    const positionClasses = position === 'top'
-        ? "fixed top-4 right-4 sm:top-24 sm:right-8 animate-drawer-in"
-        : "fixed bottom-52 right-4 sm:top-24 sm:right-8 animate-fade-up";
+    const dynamicStyles = getStyles();
+    const isRelative = Object.keys(dynamicStyles).length > 0;
+
+    const positionClasses = isRelative
+        ? "animate-fade-in scale-100" // Use fade when precisely positioned
+        : position === 'top'
+            ? "fixed top-4 right-4 sm:top-24 sm:right-8 animate-drawer-in"
+            : "fixed bottom-52 right-4 sm:top-24 sm:right-8 animate-fade-up";
 
     return (
         <div className="fixed inset-0 z-[200] pointer-events-none flex items-center justify-center">
@@ -37,7 +71,10 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
             ></div>
 
             {/* Drawer */}
-            <div className={`w-full max-w-[calc(100%-2rem)] sm:max-w-md bg-white dark:bg-[#08112e] h-fit max-h-[80vh] rounded-[2rem] sm:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden border border-gray-100 dark:border-white/5 z-[110] pointer-events-auto ${positionClasses}`}>
+            <div
+                style={dynamicStyles}
+                className={`w-full max-w-[calc(100%-2rem)] sm:max-w-md bg-white dark:bg-[#08112e] h-fit max-h-[80vh] rounded-[2rem] sm:rounded-[3rem] shadow-2xl flex flex-col overflow-hidden border border-gray-100 dark:border-white/5 z-[110] pointer-events-auto ${positionClasses}`}
+            >
                 {/* Header */}
                 <div className="p-4 sm:p-6 border-b border-gray-100 dark:border-white/5 flex items-center justify-between">
                     <div>

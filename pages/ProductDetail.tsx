@@ -6,7 +6,7 @@ import { ProductDetailsSkeleton } from '../components/Skeletons';
 import { Product } from '../types';
 
 interface ProductDetailProps {
-  onAddToCart: (product: Product, quantity?: number) => void;
+  onAddToCart: (product: Product, quantity?: number, coords?: { x: number, y: number }) => void;
   products: Product[];
 }
 
@@ -16,9 +16,9 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
   const [isAdded, setIsAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent) => {
     if (product && product.stock > 0) {
-      onAddToCart(product, quantity);
+      onAddToCart(product, quantity, { x: e.clientX, y: e.clientY });
       setIsAdded(true);
       setTimeout(() => setIsAdded(false), 1500);
     }
