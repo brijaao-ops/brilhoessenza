@@ -108,7 +108,7 @@ const DriverRegistration: React.FC = () => {
                 try {
                     // Basic client-side compression before upload
                     const compressed = await compressImage(task.file);
-                    return await uploadImage(compressed, 'drivers');
+                    return await uploadImage(compressed, 'slides'); // 'slides' bucket exists and is public
                 } catch (err: any) {
                     throw new Error(`Erro ao enviar ${task.field}: ${err.message || err}`);
                 }
