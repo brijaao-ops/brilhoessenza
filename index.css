@@ -113,16 +113,7 @@
     font-weight: 600;
 }
 
-/* Force GPU acceleration & Pixel-Perfect Rendering */
-* {
-    -webkit-backface-visibility: hidden;
-    backface-visibility: hidden;
-    -webkit-perspective: 1000px;
-    perspective: 1000px;
-    -webkit-transform-style: preserve-3d;
-    transform-style: preserve-3d;
-}
-
+/* GPU acceleration only where animation is used, not globally */
 html,
 body {
     text-size-adjust: 100%;
@@ -130,6 +121,9 @@ body {
     font-synthesis: none;
     -webkit-font-variant-ligatures: common-ligatures;
     font-variant-ligatures: common-ligatures;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 /* Luxury Animations & Global Styles */
@@ -436,7 +430,14 @@ body {
         inset 0 0 0 0.5px rgba(201, 164, 32, 0.08);
     font-weight: 800;
     letter-spacing: -0.03em;
-    text-shadow: 0 0 1px rgba(0, 0, 0, 0.2);
+    /* HD text rendering - no blur */
+    text-shadow: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: geometricPrecision;
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
 }
 
 .dark .boutique-price-badge {
@@ -444,6 +445,9 @@ body {
     color: #060e1e;
     border: 0.5px solid rgba(201, 164, 32, 0.3);
     text-shadow: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: geometricPrecision;
 }
 
 .organic-image-clip {
