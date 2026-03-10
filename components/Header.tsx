@@ -246,18 +246,32 @@ const Header: React.FC<HeaderProps> = ({
               />
             </div>
 
-            {menuItems.map((item) => (
-              <button
-                key={item.value}
-                onClick={() => {
-                  ensureHomeAndAction(() => onCategoryChange(item.value));
-                  setIsMenuOpen(false);
-                }}
-                className="text-sm font-black uppercase tracking-widest text-left py-4 border-b border-white/5 text-gray-300"
-              >
-                {item.label}
-              </button>
-            ))}
+            {menuItems.map((item) => {
+              const iconMap: Record<string, string> = {
+                'Fragrâncias': 'water_drop',
+                'Cuidados com a Pele': 'face',
+                'Maquiagem': 'palette',
+                'Acessórios': 'watch',
+              };
+              const icon = iconMap[item.value] || 'category';
+              const isActive = selectedCategory === item.value;
+              return (
+                <button
+                  key={item.value}
+                  onClick={() => {
+                    ensureHomeAndAction(() => onCategoryChange(item.value));
+                    setIsMenuOpen(false);
+                  }}
+                  className={`flex items-center gap-4 py-4 border-b border-white/5 transition-colors w-full text-left ${isActive ? 'text-primary' : 'text-gray-300 hover:text-white'}`}
+                >
+                  <div className={`size-10 rounded-2xl flex items-center justify-center shrink-0 ${isActive ? 'bg-primary/10 border border-primary/30' : 'bg-white/5 border border-white/10'}`}>
+                    <span className="material-symbols-outlined !text-lg">{icon}</span>
+                  </div>
+                  <span className="text-sm font-black uppercase tracking-widest">{item.label}</span>
+                  {isActive && <span className="ml-auto material-symbols-outlined !text-sm text-primary">check_circle</span>}
+                </button>
+              );
+            })}
 
             {!isAuthenticated && (
               <button
