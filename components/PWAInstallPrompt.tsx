@@ -6,6 +6,9 @@ const PWAInstallPrompt: React.FC = () => {
 
     useEffect(() => {
         const handler = (e: any) => {
+            // Only show on mobile/tablet (using the same breakpoint as lg:hidden)
+            if (window.innerWidth > 1024) return;
+
             // Prevent Chrome 67 and earlier from automatically showing the prompt
             e.preventDefault();
             // Stash the event so it can be triggered later.
