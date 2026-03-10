@@ -67,7 +67,7 @@ const AppContent: React.FC = () => {
         .then(dbProducts => {
           if (dbProducts.length > 0) {
             setProducts(dbProducts);
-            localStorage.setItem('brilho_products_v4', JSON.stringify(dbProducts));
+            localStorage.setItem('brilho_products_v5', JSON.stringify(dbProducts));
           }
           return true;
         })
@@ -380,7 +380,7 @@ const AppContent: React.FC = () => {
     setUserProfile(null);
     localStorage.removeItem('user_profile');
     // Clear all caches so next load is always fresh from DB
-    localStorage.removeItem('brilho_products_v4');
+    localStorage.removeItem('brilho_products_v5');
     localStorage.removeItem('brilho_categories_v4');
     localStorage.removeItem('brilho_slides_v4');
     // Navigate home and re-fetch as anonymous user

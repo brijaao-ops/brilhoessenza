@@ -57,6 +57,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
         if (isEditing && id) {
           // First try to find in loaded products prop (fast path)
           let product = products.find(p => p.id === id);
+          let productImages: any[] = product?.images || [];
 
           // If not found (e.g. navigated directly or products not loaded yet), fetch from DB
           if (!product) {
@@ -77,6 +78,16 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
             }
           }
 
+          // Always re-fetch images directly from product_images table to get fresh data
+          const { data: imgData } = await supabase
+            .from('product_images')
+            .select('*')
+            .eq('product_id', id)
+            .order('order_index', { ascending: true });
+          if (imgData && imgData.length > 0) {
+            productImages = imgData;
+          }
+
           if (product) {
             setFormData({
               name: product.name,
@@ -94,7 +105,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
               lastEditedBy: product.lastEditedBy,
               notes: product.notes || { top: '', heart: '', base: '' },
               deliveryCommission: product.deliveryCommission || 0,
-              images: product.images || []
+              images: productImages
             });
           }
         }
