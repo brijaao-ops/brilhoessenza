@@ -174,16 +174,19 @@ export const fetchProducts = async (limit?: number): Promise<Product[]> => {
     // Attempt with join first
     let query = supabase
         .from('products')
-        .select('*, images:product_images(*)')
+        .select(`
+            *,
+            product_images (*)
+        `)
         .order('created_at', { ascending: false });
 
     if (limit) query = query.limit(limit);
 
     let { data, error } = await query;
 
-    // Fallback if the join fails (e.g. table doesn't exist yet or column naming error)
+    // Fallback if the join fails
     if (error) {
-        console.warn('Fallback: Joining product_images failed, fetching products only.', error);
+        console.warn('Fallback triggered for products fetch:', error.message);
         let fallbackQuery = supabase
             .from('products')
             .select('*')
@@ -193,7 +196,7 @@ export const fetchProducts = async (limit?: number): Promise<Product[]> => {
         const { data: fallbackData, error: fallbackError } = await fallbackQuery;
 
         if (fallbackError) {
-            console.error('Critical: Error fetching products even in fallback:', fallbackError);
+            console.error('Critical fetch error:', fallbackError);
             throw fallbackError;
         }
         data = fallbackData;
@@ -202,24 +205,37 @@ export const fetchProducts = async (limit?: number): Promise<Product[]> => {
     if (!data) return [];
 
     // Map database fields to application interface (handling both snake_case and camelCase for safety)
-    return data.map((p: any) => ({
-        ...p,
-        price: Number(p.price || 0),
-        costPrice: Number(p.cost_price || p.costPrice || 0),
-        reviewsCount: Number(p.reviews_count || p.reviewsCount || 0),
-        subCategory: p.sub_category || p.subCategory,
-        bestSeller: typeof p.best_seller !== 'undefined' ? p.best_seller : p.bestSeller,
-        createdAt: p.created_at || p.createdAt,
-        salePrice: (p.sale_price !== undefined || p.salePrice !== undefined)
-            ? Number(p.sale_price ?? p.salePrice)
-            : undefined,
-        deliveryCommission: Number(p.delivery_commission || p.deliveryCommission || 0),
-        createdByName: p.created_by_name || p.createdByName,
-        lastEditedBy: p.last_edited_by || p.lastEditedBy,
-        stock: Number(p.stock || 0),
-        rating: Number(p.rating || 5),
-        images: (p.images || []).sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
-    }));
+    return data.map((p: any) => {
+        // Handle potential naming variations for the joined images
+        // Supabase/PostgREST might return it as 'product_images' or 'images' depending on the query/aliasing
+        let rawImages = p.product_images || p.images || [];
+
+        // Debugging: if you see this in console, it helps identify the structure
+        if (Array.isArray(rawImages) && rawImages.length > 0) {
+            console.log(`Product ${p.name} has ${rawImages.length} images.`);
+        }
+
+        return {
+            ...p,
+            price: Number(p.price || 0),
+            costPrice: Number(p.cost_price || p.costPrice || 0),
+            reviewsCount: Number(p.reviews_count || p.reviewsCount || 0),
+            subCategory: p.sub_category || p.subCategory,
+            bestSeller: typeof p.best_seller !== 'undefined' ? p.best_seller : p.bestSeller,
+            createdAt: p.created_at || p.createdAt,
+            salePrice: (p.sale_price !== undefined || p.salePrice !== undefined)
+                ? Number(p.sale_price ?? p.salePrice)
+                : undefined,
+            deliveryCommission: Number(p.delivery_commission || p.deliveryCommission || 0),
+            createdByName: p.created_by_name || p.createdByName,
+            lastEditedBy: p.last_edited_by || p.lastEditedBy,
+            stock: Number(p.stock || 0),
+            rating: Number(p.rating || 5),
+            images: Array.isArray(rawImages)
+                ? [...rawImages].sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
+                : []
+        };
+    });
 };
 
 export const addProduct = async (product: Omit<Product, 'id'>) => {
@@ -267,11 +283,15 @@ export const addProduct = async (product: Omit<Product, 'id'>) => {
 
         if (imgError) {
             console.error('Error adding product images:', imgError);
-            // We don't throw here to avoid failing the whole product creation if only images fail
         }
     }
 
-    return data;
+    // Return the "re-mapped" product including images
+    return {
+        ...product,
+        id: data.id,
+        createdAt: data.created_at
+    };
 };
 
 export const updateProduct = async (id: string, product: Partial<Product>) => {
@@ -325,6 +345,8 @@ export const updateProduct = async (id: string, product: Partial<Product>) => {
             }
         }
     }
+
+    return product;
 };
 
 export const deleteProduct = async (id: string) => {

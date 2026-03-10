@@ -117,8 +117,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
 
           {/* Thumbnails */}
           {product.images && product.images.length > 0 && (
-            <div className="flex gap-4 justify-center flex-wrap">
-              {product.images.map((img, idx) => (
+            <div className="flex gap-4 justify-center flex-wrap pt-4">
+              {product.images.filter(img => img.url).map((img, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(img.url)}
