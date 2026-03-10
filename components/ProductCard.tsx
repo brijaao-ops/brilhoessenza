@@ -274,3 +274,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                             </span>
                         )}
                     </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default ProductCard;
