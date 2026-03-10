@@ -262,11 +262,38 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
               )}
             </div>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+              {/* SKU / Reference */}
+              <div className="flex flex-col gap-2 p-4 rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10">
+                <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Referência / SKU</label>
+                <input
+                  type="text"
+                  value={formData.sku || ''}
+                  onChange={e => setFormData({ ...formData, sku: e.target.value })}
+                  className="bg-gray-50 dark:bg-[#08112e] px-4 py-3.5 rounded-xl font-bold text-sm outline-none border-2 border-transparent focus:border-primary/30 transition-all w-full"
+                  placeholder="Ex: 6931548317906"
+                />
+              </div>
+
+              {/* Gender */}
+              <div className="flex flex-col gap-2 p-4 rounded-2xl border-2 border-dashed border-gray-200 dark:border-white/10">
+                <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Gênero</label>
+                <select
+                  value={formData.gender}
+                  onChange={e => setFormData({ ...formData, gender: e.target.value as any })}
+                  className="bg-gray-50 dark:bg-[#08112e] px-4 py-3.5 rounded-xl font-bold text-sm outline-none border-2 border-transparent focus:border-primary/30 transition-all w-full appearance-none"
+                >
+                  <option value="unissexo">Unissexo</option>
+                  <option value="masculino">Masculino</option>
+                  <option value="feminino">Feminino</option>
+                </select>
+              </div>
+            </div>
+
             {/* Category */}
             <CategorySelect
               category={formData.category}
               subCategory={formData.subCategory || ''}
-              gender={formData.gender}
               categories={categories}
               onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
             />

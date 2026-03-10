@@ -99,26 +99,22 @@ const DriverRegistration: React.FC = () => {
         setLoading(true);
 
         try {
-            // Upload images sequentially to avoid race conditions
-            let id_front_url = '';
-            let id_back_url = '';
-            let selfie_url = '';
+            // Compress and Upload images in parallel for maximum speed
+            const uploadTasks = [
+                { file: images.id_front, field: 'id_front' },
+                { file: images.id_back, field: 'id_back' },
+                { file: images.selfie, field: 'selfie' }
+            ].map(async (task) => {
+                try {
+                    // Basic client-side compression before upload
+                    const compressed = await compressImage(task.file);
+                    return await uploadImage(compressed, 'drivers');
+                } catch (err: any) {
+                    throw new Error(`Erro ao enviar ${task.field}: ${err.message || err}`);
+                }
+            });
 
-            try {
-                id_front_url = await uploadImage(images.id_front, 'drivers');
-            } catch (err: any) {
-                throw new Error('Falha ao enviar foto do BI Frente: ' + (err.message || err));
-            }
-            try {
-                id_back_url = await uploadImage(images.id_back, 'drivers');
-            } catch (err: any) {
-                throw new Error('Falha ao enviar foto do BI Verso: ' + (err.message || err));
-            }
-            try {
-                selfie_url = await uploadImage(images.selfie, 'drivers');
-            } catch (err: any) {
-                throw new Error('Falha ao enviar Selfie: ' + (err.message || err));
-            }
+            const [id_front_url, id_back_url, selfie_url] = await Promise.all(uploadTasks);
 
             await createDriver({
                 ...formData,
@@ -132,10 +128,56 @@ const DriverRegistration: React.FC = () => {
             setTimeout(() => navigate('/'), 5000);
         } catch (error: any) {
             console.error('Error registering driver:', error);
-            showToast('Erro ao realizar cadastro: ' + (error.message || 'Tente novamente.'), 'error');
+            showToast(error.message || 'Erro ao realizar cadastro.', 'error');
         } finally {
             setLoading(false);
         }
+    };
+
+    // Helper for basic compression
+    const compressImage = (file: File): Promise<File> => {
+        return new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = (event) => {
+                const img = new Image();
+                img.src = event.target?.result as string;
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+
+                    // Cap at 1200px
+                    const MAX_WIDTH = 1200;
+                    const MAX_HEIGHT = 1200;
+                    let width = img.width;
+                    let height = img.height;
+
+                    if (width > height) {
+                        if (width > MAX_WIDTH) {
+                            height *= MAX_WIDTH / width;
+                            width = MAX_WIDTH;
+                        }
+                    } else {
+                        if (height > MAX_HEIGHT) {
+                            width *= MAX_HEIGHT / height;
+                            height = MAX_HEIGHT;
+                        }
+                    }
+
+                    canvas.width = width;
+                    canvas.height = height;
+                    ctx?.drawImage(img, 0, 0, width, height);
+
+                    canvas.toBlob((blob) => {
+                        if (blob) {
+                            resolve(new File([blob], file.name, { type: 'image/jpeg' }));
+                        } else {
+                            resolve(file); // Fallback
+                        }
+                    }, 'image/jpeg', 0.8);
+                };
+            };
+        });
     };
 
     if (success) {

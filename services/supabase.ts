@@ -226,6 +226,7 @@ export const fetchProducts = async (limit?: number): Promise<Product[]> => {
             salePrice: (p.sale_price !== undefined || p.salePrice !== undefined)
                 ? Number(p.sale_price ?? p.salePrice)
                 : undefined,
+            sku: p.sku || p.reference || '',
             deliveryCommission: Number(p.delivery_commission || p.deliveryCommission || 0),
             createdByName: p.created_by_name || p.createdByName,
             lastEditedBy: p.last_edited_by || p.lastEditedBy,
@@ -243,6 +244,7 @@ export const addProduct = async (product: Omit<Product, 'id'>) => {
     const dbProduct = {
         name: product.name,
         price: product.price,
+        sku: product.sku,
         cost_price: product.costPrice,
         rating: product.rating,
         reviews_count: product.reviewsCount,
@@ -299,6 +301,7 @@ export const updateProduct = async (id: string, product: Partial<Product>) => {
     const dbProduct: any = {};
     if (product.name !== undefined) dbProduct.name = product.name;
     if (product.price !== undefined) dbProduct.price = product.price;
+    if (product.sku !== undefined) dbProduct.sku = product.sku;
     if (product.salePrice !== undefined) dbProduct.sale_price = product.salePrice;
     if (product.costPrice !== undefined) dbProduct.cost_price = product.costPrice;
     if (product.category !== undefined) dbProduct.category = product.category;

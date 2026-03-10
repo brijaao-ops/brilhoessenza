@@ -11,6 +11,7 @@ export interface Product {
   id: string;
   name: string;
   price: number;
+  sku?: string; // Reference code
   costPrice?: number;
   rating: number;
   reviewsCount: number;

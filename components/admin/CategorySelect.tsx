@@ -5,12 +5,11 @@ import { Category } from '../../types';
 interface CategorySelectProps {
     category: string;
     subCategory: string;
-    gender: string;
     categories: Category[];
     onChange: (field: string, value: string) => void;
 }
 
-export const CategorySelect: React.FC<CategorySelectProps> = ({ category, subCategory, gender, categories, onChange }) => {
+export const CategorySelect: React.FC<CategorySelectProps> = ({ category, subCategory, categories, onChange }) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="flex flex-col gap-2">
@@ -25,22 +24,6 @@ export const CategorySelect: React.FC<CategorySelectProps> = ({ category, subCat
             </div>
 
             <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase">Gênero</label>
-                <div className="flex gap-4">
-                    {['masculino', 'feminino', 'unissexo'].map(g => (
-                        <button
-                            key={g}
-                            type="button"
-                            onClick={() => onChange('gender', g)}
-                            className={`flex-1 py-4 rounded-xl text-[10px] font-black uppercase transition-all border ${gender === g ? 'bg-navy text-white border-navy dark:bg-white dark:text-black' : 'border-gray-200 text-gray-400'}`}
-                        >
-                            {g}
-                        </button>
-                    ))}
-                </div>
-            </div>
-
-            <div className="flex flex-col gap-2 md:col-span-2">
                 <label className="text-[10px] font-black text-gray-400 uppercase">Subcategoria / Coleção</label>
                 <input
                     type="text"
