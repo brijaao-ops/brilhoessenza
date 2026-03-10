@@ -16,10 +16,22 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
   const [isAdded, setIsAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
   const product = products.find(p => String(p.id) === String(id));
-  const [selectedImage, setSelectedImage] = useState(product?.image || '');
+
+  // Initialize with the main image if available in the images array, fallback to legacy image field
+  const getInitialImage = () => {
+    if (product?.images && product.images.length > 0) {
+      const mainImg = product.images.find(img => img.is_main);
+      return mainImg ? mainImg.url : product.images[0].url;
+    }
+    return product?.image || '';
+  };
+
+  const [selectedImage, setSelectedImage] = useState(getInitialImage());
 
   useEffect(() => {
-    if (product) setSelectedImage(product.image);
+    if (product) {
+      setSelectedImage(getInitialImage());
+    }
   }, [product]);
 
   const handleAddToCart = () => {
@@ -104,8 +116,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
           </div>
 
           {/* Thumbnails */}
-          {product.images && product.images.length > 1 && (
-            <div className="flex gap-4 justify-center">
+          {product.images && product.images.length > 0 && (
+            <div className="flex gap-4 justify-center flex-wrap">
               {product.images.map((img, idx) => (
                 <button
                   key={idx}
