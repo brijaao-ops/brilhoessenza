@@ -80,7 +80,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                                 <div className="flex-1 flex flex-col justify-between py-0.5">
                                     <div>
                                         <div className="flex justify-between items-start gap-2">
-                                            <h3 className="text-[11px] sm:text-xs font-black uppercase tracking-tight text-navy dark:text-white line-clamp-1">
+                                            <h3 className="text-xs sm:text-sm font-black uppercase tracking-tight text-navy dark:text-white line-clamp-1">
                                                 {item.product?.name || 'Produto'}
                                             </h3>
                                             <button
@@ -111,7 +111,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
                                                 <span className="material-symbols-outlined !text-[10px]">add</span>
                                             </button>
                                         </div>
-                                        <p className="font-black text-[13px] text-primary">
+                                        <p className="font-black text-sm text-primary">
                                             {((item.product?.price || 0) * (item.quantity || 0)).toLocaleString()} Kz
                                         </p>
                                     </div>
