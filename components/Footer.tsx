@@ -157,7 +157,7 @@ const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
               </li>
               <li>
                 <Link
-                  to="/entregador/cadastro"
+                  to="/driver/registrar"
                   onClick={() => window.scrollTo({ top: 0 })}
                   className="flex items-center gap-1.5 text-primary hover:brightness-125 transition-colors"
                 >

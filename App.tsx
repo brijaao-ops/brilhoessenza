@@ -854,7 +854,7 @@ const AppContent: React.FC = () => {
               <Route path="/driver/registrar" element={<DriverRegistration />} />
             </Routes>
           </main>
-          <Footer />
+          <Footer onCategorySelect={setSelectedCategory} />
 
           <CartDrawer
             isOpen={isCartOpen}
