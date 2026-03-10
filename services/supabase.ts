@@ -171,40 +171,53 @@ export const updateUserPassword = async (password: string) => {
 // --- Products ---
 
 export const fetchProducts = async (limit?: number): Promise<Product[]> => {
+    // Attempt with join first
     let query = supabase
         .from('products')
-        .select(`
-            id, name, description, price, sale_price, image, category, sub_category, 
-            gender, stock, best_seller, notes, reviews_count, created_at, 
-            created_by_name, cost_price, delivery_commission, last_edited_by,
-            images:product_images(*)
-        `)
+        .select('*, images:product_images(*)')
         .order('created_at', { ascending: false });
 
     if (limit) query = query.limit(limit);
 
-    const { data, error } = await query;
+    let { data, error } = await query;
 
+    // Fallback if the join fails (e.g. table doesn't exist yet or column naming error)
     if (error) {
-        console.error('Error fetching products:', error);
-        throw error;
+        console.warn('Fallback: Joining product_images failed, fetching products only.', error);
+        let fallbackQuery = supabase
+            .from('products')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        if (limit) fallbackQuery = fallbackQuery.limit(limit);
+        const { data: fallbackData, error: fallbackError } = await fallbackQuery;
+
+        if (fallbackError) {
+            console.error('Critical: Error fetching products even in fallback:', fallbackError);
+            throw fallbackError;
+        }
+        data = fallbackData;
     }
 
-    // Map snake_case database fields to camelCase application interface if needed.
-    // Assuming 1:1 mapping for now based on the migration, except specific fields.
+    if (!data) return [];
+
+    // Map database fields to application interface (handling both snake_case and camelCase for safety)
     return data.map((p: any) => ({
         ...p,
         price: Number(p.price || 0),
-        costPrice: Number(p.cost_price || 0),
-        reviewsCount: Number(p.reviews_count || 0),
-        subCategory: p.sub_category,
-        bestSeller: p.best_seller,
-        createdAt: p.created_at,
-        salePrice: p.sale_price ? Number(p.sale_price) : undefined,
-        deliveryCommission: Number(p.delivery_commission || 0),
-        createdByName: p.created_by_name,
-        lastEditedBy: p.last_edited_by,
+        costPrice: Number(p.cost_price || p.costPrice || 0),
+        reviewsCount: Number(p.reviews_count || p.reviewsCount || 0),
+        subCategory: p.sub_category || p.subCategory,
+        bestSeller: typeof p.best_seller !== 'undefined' ? p.best_seller : p.bestSeller,
+        createdAt: p.created_at || p.createdAt,
+        salePrice: (p.sale_price !== undefined || p.salePrice !== undefined)
+            ? Number(p.sale_price ?? p.salePrice)
+            : undefined,
+        deliveryCommission: Number(p.delivery_commission || p.deliveryCommission || 0),
+        createdByName: p.created_by_name || p.createdByName,
+        lastEditedBy: p.last_edited_by || p.lastEditedBy,
         stock: Number(p.stock || 0),
+        rating: Number(p.rating || 5),
         images: (p.images || []).sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
     }));
 };
