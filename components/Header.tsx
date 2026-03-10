@@ -120,10 +120,10 @@ const Header: React.FC<HeaderProps> = ({
           ></div>
         </div>
 
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-2 flex items-center justify-between gap-4 sm:gap-12 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-0 flex items-center justify-between gap-4 sm:gap-12 relative z-10">
           {/* Boutique Branding */}
-          <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-4 group shrink-0 py-1">
-            <div className="w-[6cm] h-[4cm] flex items-center justify-center font-black group-hover:scale-105 transition-all overflow-hidden bg-transparent">
+          <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-4 group shrink-0">
+            <div className="w-28 h-14 flex items-center justify-center font-black group-hover:scale-105 transition-all overflow-hidden bg-transparent">
               {logoUrl ? <img src={logoUrl} alt="Logo" className="w-full h-full object-contain object-left" /> : <span className="text-4xl tracking-tighter">BRILHO <span className="text-[#060e1e] opacity-80 italic">ESSENZA</span></span>}
             </div>
           </Link>
@@ -161,7 +161,7 @@ const Header: React.FC<HeaderProps> = ({
               <input
                 value={searchTerm}
                 onChange={(e) => handleSearchChange(e.target.value)}
-                className="w-full pl-12 pr-4 py-4 bg-white/5 border border-primary/10 rounded-[1.5rem] focus:ring-1 focus:ring-primary/40 text-xs font-bold outline-none transition-all placeholder:text-gray-500 text-white"
+                className="w-full pl-12 pr-4 py-2.5 bg-white/5 border border-primary/10 rounded-[1.5rem] focus:ring-1 focus:ring-primary/40 text-xs font-bold outline-none transition-all placeholder:text-gray-500 text-white"
                 placeholder="Encontrar sua essência..."
                 type="text"
               />
