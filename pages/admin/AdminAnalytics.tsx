@@ -98,10 +98,10 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ products, orders }) => 
         <div className="h-[350px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={revenueData}>
-              <XAxis dataKey="name" tick={{ fontFamily: 'Antic', fontSize: 10 }} />
+              <XAxis dataKey="name" tick={{ fontFamily: 'Barlow', fontSize: 10 }} />
               <YAxis hide />
               <Tooltip
-                contentStyle={{ fontFamily: 'Antic', fontSize: '11px', borderRadius: '8px' }}
+                contentStyle={{ fontFamily: 'Barlow', fontSize: '11px', borderRadius: '8px' }}
                 formatter={(value: any) => `${value.toLocaleString()} Kz`}
               />
               <Area type="monotone" dataKey="receita" stroke="#f2d00d" fill="#f2d00d33" strokeWidth={4} />
