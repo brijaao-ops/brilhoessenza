@@ -94,37 +94,37 @@ const AdminDrivers: React.FC<AdminDriversProps> = ({ userProfile, drivers, setDr
     });
 
     return (
-        <div className="p-4 md:p-8 lg:p-12 animate-fade-up">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 lg:gap-8 mb-8 lg:mb-12">
+        <div className="flex flex-col gap-6 animate-fade-in">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl lg:text-4xl font-black uppercase tracking-tighter mb-1 lg:mb-2">Equipa de <span className="text-primary italic">Entrega</span></h1>
-                    <p className="text-gray-400 font-bold uppercase tracking-[0.3em] text-[10px]">Gestão de parceiros logísticos</p>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Rede de Parceria (Logística)</h2>
+                    <p className="text-xs text-gray-500 mt-1">Gestão de entregadores, verificação biométrica e operacional</p>
                 </div>
 
                 <div className="flex items-center gap-3">
                     <button
                         onClick={() => setIsCommissionOpen(true)}
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-primary/10 to-primary/5 border border-primary/20 hover:from-primary/20 hover:to-primary/10 transition-all group"
+                        className="flex items-center gap-2 px-3 py-1.5 rounded bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 text-blue-600 transition-colors"
                     >
-                        <span className="material-symbols-outlined text-primary text-lg">payments</span>
-                        <span className="text-[10px] font-black uppercase tracking-widest text-primary">Comissões</span>
+                        <span className="material-symbols-outlined text-sm">payments</span>
+                        <span className="text-[11px] font-bold uppercase">Comissões</span>
                     </button>
-                    <div className="flex gap-2 bg-gray-50 dark:bg-white/5 p-1.5 rounded-2xl border border-gray-100 dark:border-white/5">
-                        <button onClick={() => setFilter('all')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'all' ? 'bg-white dark:bg-navy text-primary shadow-sm' : 'text-gray-400'}`}>Todos</button>
-                        <button onClick={() => setFilter('verified')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'verified' ? 'bg-white dark:bg-navy text-primary shadow-sm' : 'text-gray-400'}`}>Verificados</button>
-                        <button onClick={() => setFilter('pending')} className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all ${filter === 'pending' ? 'bg-white dark:bg-navy text-primary shadow-sm' : 'text-gray-400'}`}>Pendentes</button>
+
+                    <div className="flex p-1 bg-gray-100 dark:bg-white/5 rounded">
+                        <button onClick={() => setFilter('all')} className={`px-4 py-1.5 rounded text-[11px] font-bold uppercase transition-all ${filter === 'all' ? 'bg-white dark:bg-[#161b22] text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>Todos</button>
+                        <button onClick={() => setFilter('verified')} className={`px-4 py-1.5 rounded text-[11px] font-bold uppercase transition-all ${filter === 'verified' ? 'bg-white dark:bg-[#161b22] text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>Verificados</button>
+                        <button onClick={() => setFilter('pending')} className={`px-4 py-1.5 rounded text-[11px] font-bold uppercase transition-all ${filter === 'pending' ? 'bg-white dark:bg-[#161b22] text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}>Pendentes</button>
                     </div>
                 </div>
             </div>
 
             {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {[1, 2, 3].map(i => <div key={i} className="h-64 bg-gray-100 dark:bg-white/5 animate-pulse rounded-[2.5rem]"></div>)}
-                </div>
+                <div className="p-10 text-center text-gray-400 text-xs font-medium">Sincronizando base de entregadores...</div>
             ) : filteredDrivers.length === 0 ? (
-                <div className="text-center py-32 border-2 border-dashed border-gray-100 dark:border-white/5 rounded-[4rem]">
-                    <span className="material-symbols-outlined !text-6xl text-gray-200 mb-4">person_search</span>
-                    <p className="font-black uppercase tracking-widest text-xs text-gray-400">Nenhum entregador encontrado</p>
+                <div className="p-20 text-center border border-dashed border-gray-200 dark:border-white/10 rounded">
+                    <span className="material-symbols-outlined text-4xl text-gray-300 mb-2">person_search</span>
+                    <p className="text-xs text-gray-400 font-bold uppercase tracking-widest">Nenhum parceiro encontrado</p>
                 </div>
             ) : (
                 <DriverTable

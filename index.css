@@ -7,6 +7,16 @@
     --navy-gradient: linear-gradient(135deg, #0d1b5e 0%, #162a8c 100%);
     --glass-bg: rgba(255, 255, 255, 0.7);
     --glass-border: rgba(255, 255, 255, 0.3);
+
+    /* Meta-style Admin Tokens */
+    --admin-bg: #f0f2f5;
+    --admin-sidebar-bg: #ffffff;
+    --admin-primary: #0080ff;
+    --admin-border: rgba(0, 0, 0, 0.08);
+    --admin-text-main: #1c1e21;
+    --admin-text-sub: #65676b;
+    --admin-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -17,6 +27,88 @@
 .dark {
     --glass-bg: rgba(13, 27, 94, 0.4);
     --glass-border: rgba(255, 255, 255, 0.08);
+
+    --admin-bg: #0d1117;
+    --admin-sidebar-bg: #161b22;
+    --admin-primary: #58a6ff;
+    --admin-border: rgba(255, 255, 255, 0.1);
+    --admin-text-main: #c9d1d9;
+    --admin-text-sub: #8b949e;
+    --admin-card-shadow: 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+/* Professional Admin Utilities */
+.admin-font {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 13px;
+    letter-spacing: -0.01em;
+}
+
+.admin-header-font {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--admin-text-sub);
+}
+
+.admin-table-container {
+    background: var(--admin-sidebar-bg);
+    border: 1px solid var(--admin-border);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+}
+
+.admin-table th {
+    background: #f5f6f7;
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--admin-border);
+    font-weight: 600;
+    color: var(--admin-text-sub);
+    white-space: nowrap;
+}
+
+.dark .admin-table th {
+    background: #21262d;
+}
+
+.admin-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--admin-border);
+    color: var(--admin-text-main);
+    vertical-align: middle;
+}
+
+.admin-table tr:hover {
+    background: rgba(0, 128, 255, 0.02);
+}
+
+.admin-btn-primary {
+    background: var(--admin-primary);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 13px;
+    transition: filter 0.2s;
+}
+
+.admin-btn-primary:hover {
+    filter: brightness(1.1);
+}
+
+.admin-badge {
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
 }
 
 /* Force GPU acceleration & Pixel-Perfect Rendering */

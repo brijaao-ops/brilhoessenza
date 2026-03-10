@@ -615,116 +615,64 @@ const AppContent: React.FC = () => {
     return Object.values(areaPerms).some(v => v === true);
   });
 
+  const getBreadcrumbs = () => {
+    const segments = location.pathname.split('/').filter(Boolean);
+    return segments.map((seg, i) => {
+      const path = '/' + segments.slice(0, i + 1).join('/');
+      const label = seg.charAt(0).toUpperCase() + seg.slice(1);
+      return { label, path };
+    });
+  };
+
+  const breadcrumbs = getBreadcrumbs();
+
   return (
-    <div className="min-h-screen flex flex-col bg-[#fcfbf8] dark:bg-[#08112e] overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-[#f0f2f5] dark:bg-[#0d1117] overflow-hidden admin-font font-sans">
       {isAdminPath ? (
         // ── ADMIN AREA ──────────────────────────────────────────────────────────
         isAuthenticated && userProfile && userProfile.role !== 'driver' ? (
-          <div className="flex flex-col md:flex-row h-screen overflow-hidden bg-white dark:bg-[#060e1e] relative">
-            {/* Mobile Admin Header */}
-            <header className="md:hidden flex items-center justify-between px-6 py-4 border-b border-gray-100 dark:border-white/5 bg-white/80 dark:bg-[#0d1840]/80 backdrop-blur-xl sticky top-0 z-30">
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setIsSidebarOpen(true)}
-                  className="size-10 bg-primary/10 rounded-xl flex items-center justify-center text-primary"
-                >
-                  <span className="material-symbols-outlined">menu</span>
-                </button>
-                <div className="h-8 w-auto">
-                  {logoUrl ? <img src={logoUrl} alt="Logo" className="h-full w-auto object-contain" /> : <span className="text-xl font-black text-primary uppercase">BE.</span>}
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest leading-none mb-1">Workspace</p>
-                <p className="text-xs font-black uppercase text-primary italic truncate max-w-[120px]">
-                  {location.pathname === '/admin' ? 'Dashboard' :
-                    location.pathname.includes('/admin/pedidos') ? 'Pedidos' :
-                      location.pathname.includes('/admin/vendas') ? 'Vendas' :
-                        location.pathname.includes('/admin/produtos') ? 'Catálogo' :
-                          location.pathname.includes('/admin/categorias') ? 'Categorias' :
-                            location.pathname.includes('/admin/estoque') ? 'Estoque' :
-                              location.pathname.includes('/admin/equipe') ? 'Equipe' :
-                                location.pathname.includes('/admin/configuracoes') ? 'Configurações' : 'Gestão'}
-                </p>
-              </div>
-            </header>
-
-            {/* Sidebar Overlay for Mobile */}
-            {isSidebarOpen && (
-              <div
-                className="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 animate-fade-in"
-                onClick={() => setIsSidebarOpen(false)}
-              ></div>
-            )}
-
+          <div className="flex h-screen overflow-hidden bg-[#f0f2f5] dark:bg-[#0d1117] relative">
+            {/* Sidebar */}
             <aside className={`
-              w-full md:w-80 border-b md:border-b-0 md:border-r border-gray-100 dark:border-white/5 bg-white dark:bg-[#0d1840] p-8
-              flex flex-col gap-10 shrink-0 h-screen md:h-full
-              fixed md:relative inset-0 z-50 transition-transform duration-300 ease-in-out
-              ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+              w-64 border-r border-gray-200 dark:border-white/5 bg-white dark:bg-[#161b22] px-4 py-6
+              flex flex-col gap-1.5 shrink-0 h-full z-50 transition-transform duration-300 ease-in-out
+              fixed md:relative ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
             `}>
-              {/* Mobile Close Button */}
-              <button
-                onClick={() => setIsSidebarOpen(false)}
-                className="md:hidden absolute top-8 right-8 size-10 bg-gray-100 dark:bg-white/5 rounded-full flex items-center justify-center text-gray-500"
-              >
-                <span className="material-symbols-outlined">close</span>
-              </button>
-
-              <Link to="/" onClick={() => { resetFilters(); setIsSidebarOpen(false); }} className="flex flex-col gap-4 mb-2">
-                <div className="h-12 w-fit bg-transparent flex items-center justify-start text-primary font-black overflow-hidden relative">
-                  {logoUrl ? <img src={logoUrl} alt="Logo" className="h-full w-auto object-contain" /> : <span className="text-2xl tracking-tighter">BE.</span>}
+              <div className="flex items-center gap-3 px-2 mb-6">
+                <div className="size-8 bg-black dark:bg-white rounded flex items-center justify-center text-white dark:text-black">
+                  <span className="material-symbols-outlined text-lg">dashboard_customize</span>
                 </div>
-                <div className="pl-1">
-                  <h1 className="font-black uppercase tracking-tighter text-sm leading-none">Brilho <span className="text-primary italic">Essenza</span></h1>
-                  <span className="text-[10px] text-gray-400 font-extrabold uppercase tracking-[0.2em]">Management</span>
-
-                  <div className="mt-6 p-4 bg-gray-50/50 dark:bg-white/5 rounded-2xl border border-gray-100 dark:border-white/5 transition-all hover:bg-white dark:hover:bg-white/[0.08] group relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-20 h-20 bg-primary/5 rounded-full -mr-10 -mt-10 blur-xl"></div>
-                    {userProfile ? (
-                      <div className="relative z-10">
-                        <p className="text-[11px] font-black text-gray-800 dark:text-gray-100 truncate mb-0.5">{userProfile.full_name}</p>
-                        <div className="flex items-center gap-1.5">
-                          <div className="size-1.5 bg-green-500 rounded-full animate-pulse"></div>
-                          <p className="text-[9px] text-primary font-black uppercase tracking-wider">{userProfile.role === 'admin' ? 'Executive Admin' : 'Staff Member'}</p>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-[10px] font-bold text-gray-400 leading-tight flex items-center gap-2">
-                        <div className="size-2 bg-primary rounded-full animate-pulse"></div>
-                        Connecting...
-                      </div>
-                    )}
-                  </div>
+                <div>
+                  <h1 className="text-sm font-bold tracking-tight text-gray-900 dark:text-white leading-none">Management</h1>
+                  <span className="text-[10px] text-gray-500 font-medium">Brilho Essenza</span>
                 </div>
-              </Link>
+              </div>
 
-              <nav className="flex flex-col gap-1.5 md:gap-2 overflow-y-auto pb-4 md:pb-0 flex-1 min-w-0 pr-1">
+              <nav className="flex flex-col gap-0.5 overflow-y-auto pr-1 flex-1">
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-widest px-3 mb-2">Menu Principal</div>
                 {visibleTabs.map((tab) => {
                   const isActive = location.pathname === tab.path || (tab.subItems && location.pathname.startsWith(tab.path));
 
                   if (tab.subItems) {
                     return (
-                      <div key={tab.name} className="flex flex-col shrink-0 md:shrink">
+                      <div key={tab.name} className="flex flex-col">
                         <button
-                          onClick={() => {
-                            setExpandedMenu(expandedMenu === tab.name.toLowerCase() ? null : tab.name.toLowerCase());
-                          }}
-                          className={`flex items-center justify-between px-5 py-3.5 rounded-2xl font-black transition-all group ${isActive ? 'bg-primary/5 text-primary' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
+                          onClick={() => setExpandedMenu(expandedMenu === tab.name.toLowerCase() ? null : tab.name.toLowerCase())}
+                          className={`flex items-center justify-between px-3 py-2 rounded-md transition-all group ${isActive ? 'bg-blue-50 text-blue-600 dark:bg-blue-500/10 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'}`}
                         >
-                          <div className="flex items-center gap-4">
-                            <span className={`material-symbols-outlined !text-xl transition-transform group-hover:scale-110 ${isActive ? 'text-primary' : 'text-gray-400'}`}>{tab.icon}</span>
-                            <span className="text-[11px] uppercase tracking-widest">{tab.name}</span>
+                          <div className="flex items-center gap-3">
+                            <span className="material-symbols-outlined text-xl">{tab.icon}</span>
+                            <span className="text-xs font-semibold">{tab.name}</span>
                           </div>
-                          <span className="material-symbols-outlined !text-base transition-transform" style={{ transform: expandedMenu === tab.name.toLowerCase() ? 'rotate(180deg)' : 'rotate(0)' }}>expand_more</span>
+                          <span className="material-symbols-outlined text-sm transition-transform" style={{ transform: expandedMenu === tab.name.toLowerCase() ? 'rotate(180deg)' : 'rotate(0)' }}>expand_more</span>
                         </button>
                         {expandedMenu === tab.name.toLowerCase() && (
-                          <div className="flex flex-col ml-12 border-l-2 border-primary/10 mt-1 gap-1 py-1">
+                          <div className="flex flex-col ml-9 mt-1 gap-0.5 border-l border-gray-100 dark:border-white/5">
                             {tab.subItems.map(sub => (
                               <Link
                                 key={sub.path}
                                 to={sub.path}
-                                className={`px-4 py-2 text-[10px] font-black uppercase tracking-wider transition-all border-l-2 -ml-[2px] ${location.pathname === sub.path ? 'text-primary border-primary' : 'text-gray-400 border-transparent hover:text-gray-600 dark:hover:text-gray-200'}`}
+                                className={`px-3 py-1.5 text-xs rounded-r-md transition-all border-l-2 -ml-[1px] ${location.pathname === sub.path ? 'text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-500/5 font-semibold border-blue-600' : 'text-gray-500 hover:text-gray-900 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5 border-transparent'}`}
                                 onClick={() => setIsSidebarOpen(false)}
                               >
                                 {sub.name}
@@ -740,56 +688,91 @@ const AppContent: React.FC = () => {
                       key={tab.path}
                       to={tab.path}
                       onClick={() => setIsSidebarOpen(false)}
-                      className={`flex items-center gap-4 px-5 py-3.5 rounded-2xl font-black transition-all group relative overflow-hidden ${location.pathname === tab.path ? 'bg-primary text-black shadow-xl shadow-primary/20' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-50 dark:hover:bg-white/5'}`}
+                      className={`flex items-center gap-3 px-3 py-2 rounded-md transition-all group ${location.pathname === tab.path ? 'bg-blue-600 text-white shadow-sm' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'}`}
                     >
-                      <span className={`material-symbols-outlined !text-xl transition-transform group-hover:scale-110 ${location.pathname === tab.path ? 'text-black' : 'text-gray-400'}`}>{tab.icon}</span>
-                      <span className="text-[11px] uppercase tracking-widest">{tab.name}</span>
-                      {location.pathname === tab.path && <div className="absolute right-0 top-0 h-full w-1 bg-black/10"></div>}
+                      <span className="material-symbols-outlined text-xl">{tab.icon}</span>
+                      <span className="text-xs font-semibold">{tab.name}</span>
                     </Link>
                   );
                 })}
               </nav>
 
-              <div className="mt-auto flex flex-col gap-3 pt-6 border-t border-gray-100 dark:border-white/5 pb-safe">
-                <Link to="/admin/configuracoes" onClick={() => setIsSidebarOpen(false)} className={`flex items-center gap-4 px-5 py-3.5 font-black uppercase tracking-widest text-[10px] rounded-2xl transition-all group ${location.pathname === '/admin/configuracoes' ? 'bg-navy dark:bg-white text-white dark:text-black shadow-xl shadow-navy/20' : 'text-gray-400 hover:text-primary hover:bg-primary/5'}`}>
-                  <span className="material-symbols-outlined !text-xl transition-transform group-hover:rotate-45">settings</span>
+              <div className="mt-auto flex flex-col gap-1 pt-4 border-t border-gray-100 dark:border-white/5">
+                <Link to="/admin/configuracoes" className={`flex items-center gap-3 px-3 py-2 rounded-md text-xs font-semibold transition-all ${location.pathname === '/admin/configuracoes' ? 'bg-gray-900 text-white dark:bg-white dark:text-black' : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5'}`}>
+                  <span className="material-symbols-outlined text-xl">settings</span>
                   <span>Configurações</span>
-                  {userProfile?.is_first_login && <span className="size-2 bg-red-500 rounded-full animate-pulse ml-auto"></span>}
                 </Link>
-                <button onClick={handleLogout} className="flex items-center gap-4 px-5 py-3.5 text-red-500/70 hover:text-red-500 font-black uppercase tracking-widest text-[10px] hover:bg-red-500/5 rounded-2xl transition-all text-left group">
-                  <span className="material-symbols-outlined !text-xl transition-transform group-hover:-translate-x-1">logout</span>
-                  <span>Encerrar Atelier</span>
+                <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 rounded-md text-xs font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/5 transition-all text-left">
+                  <span className="material-symbols-outlined text-xl">logout</span>
+                  <span>Sair do Atelier</span>
                 </button>
               </div>
             </aside>
-            <main className="flex-1 overflow-y-auto min-h-0">
-              <Routes>
-                <Route path="/admin" element={<AdminDashboard orders={orders} products={products} userProfile={userProfile} />} />
-                <Route path="/admin/produtos" element={<AdminProducts products={products} onDelete={deleteProduct} userProfile={userProfile} />} />
-                <Route path="/admin/produtos/novo" element={<AdminProductForm onSave={saveProduct} userProfile={userProfile} />} />
-                <Route path="/admin/produtos/editar/:id" element={<AdminProductForm onSave={saveProduct} products={products} userProfile={userProfile} />} />
-                <Route path="/admin/categorias" element={<AdminCategories userProfile={userProfile} />} />
-                <Route path="/admin/categorias/nova" element={<AdminCategoryForm />} />
-                <Route path="/admin/categorias/editar/:id" element={<AdminCategoryForm />} />
-                <Route path="/admin/estoque" element={<AdminStock products={products} />} />
-                <Route path="/admin/pedidos" element={<AdminOrders orders={orders} setOrders={setOrders} products={products} drivers={drivers} userProfile={userProfile} />} />
-                <Route path="/admin/vendas" element={<AdminSales orders={orders} setOrders={setOrders} products={products} drivers={drivers} userProfile={userProfile} />} />
-                <Route path="/admin/pagamentos" element={<AdminPayments orders={orders} />} />
-                <Route path="/admin/logistica" element={<AdminLogistics />} />
-                <Route path="/admin/entregadores" element={<AdminDrivers drivers={drivers} setDrivers={setDrivers} userProfile={userProfile} />} />
-                <Route path="/admin/clientes" element={<AdminCustomers orders={orders} />} />
-                <Route path="/admin/analytics" element={<AdminAnalytics orders={orders} products={products} />} />
-                <Route path="/admin/configuracoes" element={<AdminSettings />} />
-                <Route path="/admin/equipe" element={<AdminTeam team={team} setTeam={setTeam} userProfile={userProfile} />} />
-                <Route path="/admin/slides" element={<AdminSlides />} />
-                <Route path="/admin/slides/novo" element={<AdminSlideForm />} />
-                <Route path="/admin/slides/editar/:id" element={<AdminSlideForm />} />
-                <Route path="/admin/video-slides" element={<AdminVideoSlides />} />
-                <Route path="/admin/video-slides/novo" element={<AdminVideoSlideForm />} />
-                <Route path="/admin/video-slides/editar/:id" element={<AdminVideoSlideForm />} />
-                <Route path="*" element={<div className="p-12 text-center font-black uppercase tracking-widest text-gray-400">Página de Gestão não encontrada</div>} />
-              </Routes>
-            </main>
+
+            <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+              {/* Top Header */}
+              <header className="h-12 border-b border-gray-200 dark:border-white/5 bg-white dark:bg-[#161b22] flex items-center justify-between px-4 shrink-0 z-40">
+                <div className="flex items-center gap-4">
+                  <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="md:hidden text-gray-500">
+                    <span className="material-symbols-outlined">menu</span>
+                  </button>
+                  <div className="flex items-center gap-2 text-[11px] font-medium text-gray-400">
+                    <span className="material-symbols-outlined text-sm">home</span>
+                    {breadcrumbs.map((b, i) => (
+                      <React.Fragment key={i}>
+                        <span className="material-symbols-outlined text-[10px]">chevron_right</span>
+                        <Link to={b.path} className={`hover:text-blue-600 ${i === breadcrumbs.length - 1 ? 'text-gray-900 dark:text-white font-bold text-xs' : ''}`}>
+                          {b.label}
+                        </Link>
+                      </React.Fragment>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-2 border-r border-gray-100 dark:border-white/5 pr-3">
+                    <div className="size-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400">
+                      <span className="material-symbols-outlined text-lg">notifications</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 px-2 py-1 bg-gray-50 dark:bg-white/5 rounded-md border border-gray-100 dark:border-white/5">
+                    <div className="size-6 bg-primary rounded-md flex items-center justify-center text-[10px] font-bold text-black shadow-sm">
+                      {userProfile.full_name?.charAt(0) || 'A'}
+                    </div>
+                    <span className="text-[11px] font-bold text-gray-700 dark:text-gray-200 truncate max-w-[120px]">{userProfile.full_name}</span>
+                  </div>
+                </div>
+              </header>
+
+              <main className="flex-1 overflow-y-auto bg-[#f0f2f5] dark:bg-[#0d1117] p-4 md:p-6">
+                <Routes>
+                  <Route path="/admin" element={<AdminDashboard orders={orders} products={products} userProfile={userProfile} />} />
+                  <Route path="/admin/produtos" element={<AdminProducts products={products} onDelete={deleteProduct} userProfile={userProfile} />} />
+                  <Route path="/admin/produtos/novo" element={<AdminProductForm onSave={saveProduct} userProfile={userProfile} />} />
+                  <Route path="/admin/produtos/editar/:id" element={<AdminProductForm onSave={saveProduct} products={products} userProfile={userProfile} />} />
+                  <Route path="/admin/categorias" element={<AdminCategories userProfile={userProfile} />} />
+                  <Route path="/admin/categorias/nova" element={<AdminCategoryForm />} />
+                  <Route path="/admin/categorias/editar/:id" element={<AdminCategoryForm />} />
+                  <Route path="/admin/estoque" element={<AdminStock products={products} />} />
+                  <Route path="/admin/pedidos" element={<AdminOrders orders={orders} setOrders={setOrders} products={products} drivers={drivers} userProfile={userProfile} />} />
+                  <Route path="/admin/vendas" element={<AdminSales orders={orders} setOrders={setOrders} products={products} drivers={drivers} userProfile={userProfile} />} />
+                  <Route path="/admin/pagamentos" element={<AdminPayments orders={orders} />} />
+                  <Route path="/admin/logistica" element={<AdminLogistics />} />
+                  <Route path="/admin/entregadores" element={<AdminDrivers drivers={drivers} setDrivers={setDrivers} userProfile={userProfile} />} />
+                  <Route path="/admin/clientes" element={<AdminCustomers orders={orders} />} />
+                  <Route path="/admin/analytics" element={<AdminAnalytics orders={orders} products={products} />} />
+                  <Route path="/admin/configuracoes" element={<AdminSettings />} />
+                  <Route path="/admin/equipe" element={<AdminTeam team={team} setTeam={setTeam} userProfile={userProfile} />} />
+                  <Route path="/admin/slides" element={<AdminSlides />} />
+                  <Route path="/admin/slides/novo" element={<AdminSlideForm />} />
+                  <Route path="/admin/slides/editar/:id" element={<AdminSlideForm />} />
+                  <Route path="/admin/video-slides" element={<AdminVideoSlides />} />
+                  <Route path="/admin/video-slides/novo" element={<AdminVideoSlideForm />} />
+                  <Route path="/admin/video-slides/editar/:id" element={<AdminVideoSlideForm />} />
+                  <Route path="*" element={<div className="p-12 text-center font-black uppercase tracking-widest text-gray-400">Página de Gestão não encontrada</div>} />
+                </Routes>
+              </main>
+            </div>
           </div>
         ) : isAuthenticated && userProfile?.role === 'driver' ? (
           // Driver trying to access /admin — redirect them to their dashboard

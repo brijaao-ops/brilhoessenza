@@ -199,157 +199,148 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
     };
 
     return (
-        <div className="p-4 md:p-8 lg:p-12 animate-slide-in pb-20 md:pb-12">
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 lg:mb-12 gap-6">
+        <div className="flex flex-col gap-6 animate-fade-in">
+            {/* Header Section */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tighter text-navy dark:text-white">Gestão de <span className="text-primary italic">Equipe</span></h2>
-                    <p className="text-[10px] lg:text-sm text-gray-400 font-bold uppercase tracking-widest mt-1">Controle de acesso e colaboradores.</p>
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white">Equipe de Gestão</h2>
+                    <p className="text-xs text-gray-500 mt-1">Controle de acessos, funções e permissões de sistema</p>
                 </div>
+
                 {(userProfile?.role === 'admin' || userProfile?.permissions?.team?.edit || userProfile?.permissions?.team?.manage) && (
                     <button
                         onClick={() => setShowModal(true)}
-                        className="bg-primary text-black font-black px-6 md:px-8 py-3.5 md:py-4 rounded-xl md:rounded-2xl uppercase tracking-widest text-[10px] hover:brightness-110 shadow-xl shadow-primary/20 transition-all active:scale-95 flex items-center justify-center gap-2 w-full md:w-auto"
+                        className="admin-btn-primary py-2 px-4 text-xs flex items-center gap-2"
                     >
-                        <span className="material-symbols-outlined !text-base">person_add</span>
-                        Novo Funcionário
+                        <span className="material-symbols-outlined text-sm">person_add</span>
+                        Adicionar Colaborador
                     </button>
                 )}
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <div className="admin-table-container">
                 {loading ? (
-                    <div className="col-span-full p-12 text-center">
-                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary mx-auto mb-4"></div>
-                        <p className="text-gray-500 font-bold">Carregando equipe...</p>
-                    </div>
-                ) : team.map(member => (
-                    <div key={member.id} className={`bg-white dark:bg-[#0d1840] p-6 md:p-8 rounded-2xl md:rounded-[2rem] border ${member.is_active === false ? 'border-red-500/30' : 'border-gray-100 dark:border-[#222115]'} shadow-sm relative group overflow-hidden transition-all ${member.is_active === false ? 'opacity-70 bg-gray-50 dark:bg-black/20' : ''}`}>
-
-                        {(userProfile?.role === 'admin' || userProfile?.permissions?.team?.edit || userProfile?.permissions?.team?.manage) && (
-                            <div className="absolute top-6 right-6 flex gap-2 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                                <button onClick={() => startEdit(member)} className="size-9 bg-black dark:bg-white text-white dark:text-black rounded-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-lg" title="Editar Perfil">
-                                    <span className="material-symbols-outlined text-base">edit</span>
-                                </button>
-                                {member.role !== 'admin' && (
-                                    <button onClick={() => handleDelete(member.id)} className="size-9 bg-red-500 text-white rounded-xl flex items-center justify-center hover:scale-110 active:scale-95 transition-transform shadow-lg" title="Remover Acesso">
-                                        <span className="material-symbols-outlined text-base">delete</span>
-                                    </button>
-                                )}
-                            </div>
-                        )}
-
-                        <div className="flex items-center gap-4 mb-6">
-                            <div className="size-12 bg-gray-100 dark:bg-[#08112e] rounded-full flex items-center justify-center font-black text-gray-500 uppercase">
-                                {member.full_name?.substring(0, 2) || 'FW'}
-                            </div>
-                            <div>
-                                <h3 className="font-bold text-lg leading-tight flex items-center gap-2">
-                                    {member.full_name || 'Sem Nome'}
-                                    {member.is_active === false && <span className="text-[8px] bg-red-500 text-white px-2 py-0.5 rounded-full uppercase">Restrito</span>}
-                                </h3>
-                                <p className="text-xs text-gray-400 font-medium">{member.email}</p>
-                            </div>
-                        </div>
-
-                        <div className="flex flex-wrap gap-2 mb-6">
-                            <span className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider ${member.role === 'admin' ? 'bg-primary text-black' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>
-                                {member.role}
-                            </span>
-                            {member.is_first_login && (
-                                <span className="px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider bg-yellow-100 text-yellow-700">
-                                    Pendente
-                                </span>
-                            )}
-                            <button
-                                onClick={() => toggleStatus(member)}
-                                className={`px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all shadow-sm active:scale-95 ${member.is_active === false ? 'bg-red-500 text-white' : 'bg-green-500 text-white'}`}
-                            >
-                                {member.is_active === false ? '🔌 Inativo' : '⚡ Ativo'}
-                            </button>
-                        </div>
-
-                        <div className="border-t border-gray-100 dark:border-gray-800 pt-6">
-                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Acessos Permitidos</p>
-                            <div className="flex gap-2 flex-wrap">
-                                {(['orders', 'sales', 'products', 'finance', 'settings', 'team'] as const).map(area => {
-                                    const active = isAreaActive(area, member.permissions || {});
-                                    if (!active && member.role !== 'admin') return null;
-                                    const areaLabel = area === 'products' ? 'Produtos' : area === 'orders' ? 'Pedidos' : area === 'sales' ? 'Vendas' : area === 'finance' ? 'Finanças' : area === 'team' ? 'Equipe' : 'Config';
-                                    return (
-                                        <div key={area} className="flex flex-col gap-1">
-                                            <span className="text-[9px] font-black uppercase text-primary">{areaLabel}</span>
-                                            <div className="flex gap-1 flex-wrap">
-                                                {Object.entries(member.permissions?.[area] || {}).map(([sub, val]) => (
-                                                    val && (
-                                                        <span key={sub} className="text-[8px] font-bold uppercase bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 px-1.5 py-0.5 rounded text-gray-500">
-                                                            {sub}
-                                                        </span>
-                                                    )
-                                                ))}
+                    <div className="p-10 text-center text-gray-400 text-xs font-medium">Carregando dados da equipe...</div>
+                ) : (
+                    <div className="overflow-x-auto">
+                        <table className="admin-table">
+                            <thead>
+                                <tr>
+                                    <th>Colaborador</th>
+                                    <th>Cargo / Função</th>
+                                    <th>Status</th>
+                                    <th>Permissões Ativas</th>
+                                    <th className="text-right">Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {team.map(member => (
+                                    <tr key={member.id}>
+                                        <td>
+                                            <div className="flex items-center gap-3">
+                                                <div className="size-8 rounded bg-gray-100 dark:bg-white/5 flex items-center justify-center text-[10px] font-bold text-gray-400 uppercase">
+                                                    {member.full_name?.substring(0, 2)}
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="font-bold text-gray-900 dark:text-white">{member.full_name}</span>
+                                                    <span className="text-[10px] text-gray-500 font-mono">{member.email}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    );
-                                })}
-                                {userProfile?.role === 'admin' && userProfile.id === member.id && <span className="text-[9px] font-bold text-primary">Acesso Total</span>}
-                            </div>
-                        </div>
-                    </div>
-                ))}
-
-                {error && (
-                    <div className="col-span-full p-8 bg-red-500/10 border border-red-500/20 rounded-2xl text-center">
-                        <p className="text-red-500 font-bold mb-2">Erro ao carregar lista: {error}</p>
-                        <button onClick={loadTeam} className="text-[10px] font-black uppercase text-primary underline underline-offset-4">Tentar Novamente</button>
-                    </div>
-                )}
-
-                {team.length === 0 && !loading && !error && (
-                    <div className="col-span-full p-20 text-center border-2 border-dashed border-gray-200 dark:border-white/5 rounded-[3rem]">
-                        <span className="material-symbols-outlined text-4xl text-gray-300 mb-4">group_off</span>
-                        <p className="text-gray-400 font-bold uppercase tracking-widest text-xs">Nenhum funcionário cadastrado ainda.</p>
-                        <p className="text-[10px] text-gray-500 mt-2">Clique em "Novo Funcionário" para começar.</p>
+                                        </td>
+                                        <td>
+                                            <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-tight ${member.role === 'admin' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
+                                                {member.role}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button
+                                                onClick={() => toggleStatus(member)}
+                                                className={`text-[10px] font-bold flex items-center gap-1.5 ${member.is_active === false ? 'text-red-500' : 'text-green-600'}`}
+                                            >
+                                                <span className={`size-1.5 rounded-full ${member.is_active === false ? 'bg-red-500' : 'bg-green-600'}`}></span>
+                                                {member.is_active === false ? 'Inativo' : 'Ativo'}
+                                            </button>
+                                        </td>
+                                        <td>
+                                            <div className="flex flex-wrap gap-1 max-w-[300px]">
+                                                {(['orders', 'sales', 'products', 'finance', 'settings', 'team'] as const).map(area => {
+                                                    if (!isAreaActive(area, member.permissions || {})) return null;
+                                                    const areaLabel = area === 'products' ? 'Prod' : area === 'orders' ? 'Ped' : area === 'sales' ? 'Vend' : area === 'finance' ? 'Fin' : area === 'team' ? 'Eqp' : 'Cfg';
+                                                    return (
+                                                        <span key={area} className="px-1.5 py-0.5 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 text-[9px] font-bold text-gray-400 rounded">
+                                                            {areaLabel}
+                                                        </span>
+                                                    );
+                                                })}
+                                                {member.role === 'admin' && <span className="text-[9px] font-bold text-blue-600 bg-blue-50 px-1 rounded">Total</span>}
+                                            </div>
+                                        </td>
+                                        <td className="text-right">
+                                            <div className="flex items-center justify-end gap-2">
+                                                <button onClick={() => startEdit(member)} className="text-gray-400 hover:text-blue-600 transition-colors">
+                                                    <span className="material-symbols-outlined text-lg">edit</span>
+                                                </button>
+                                                {member.role !== 'admin' && (
+                                                    <button onClick={() => handleDelete(member.id)} className="text-gray-400 hover:text-red-500 transition-colors">
+                                                        <span className="material-symbols-outlined text-lg">delete</span>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))}
+                                {team.length === 0 && !loading && (
+                                    <tr>
+                                        <td colSpan={5} className="p-10 text-center text-gray-400 text-xs italic">Nenhum membro encontrado.</td>
+                                    </tr>
+                                )}
+                            </tbody>
+                        </table>
                     </div>
                 )}
             </div>
 
             {/* Modal Criar Funcionário */}
             {showModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white dark:bg-[#0d1840] w-full max-w-lg rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 relative max-h-[90vh] overflow-y-auto">
-                        <button onClick={() => setShowModal(false)} className="absolute top-8 right-8 text-gray-400 hover:text-red-500">
-                            <span className="material-symbols-outlined">close</span>
-                        </button>
-                        <h3 className="text-2xl font-black uppercase tracking-tight mb-2">Novo Membro</h3>
-                        <p className="text-xs text-gray-500 font-bold mb-8">Defina os dados de acesso e as permissões iniciais.</p>
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white dark:bg-[#161b22] w-full max-w-lg rounded border border-white/10 shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400">Novo Colaborador</h3>
+                            <button onClick={() => setShowModal(false)} className="text-gray-400 hover:text-red-500">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
 
-                        <form onSubmit={handleCreate} className="flex flex-col gap-6">
+                        <form onSubmit={handleCreate} className="flex flex-col gap-4">
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nome</label>
-                                    <input required type="text" value={newName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewName(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="Ex: Ana Silva" />
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase">Nome</label>
+                                    <input required type="text" value={newName} onChange={(e) => setNewName(e.target.value)} className="bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/5 p-2 rounded text-xs font-medium focus:border-blue-500 outline-none" />
                                 </div>
-                                <div className="flex flex-col gap-2">
-                                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Senha Provisória</label>
-                                    <input required type="text" value={newPass} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewPass(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="Min 6 caracteres" />
+                                <div className="flex flex-col gap-1.5">
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase">Senha Provisória</label>
+                                    <input required type="text" value={newPass} onChange={(e) => setNewPass(e.target.value)} className="bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/5 p-2 rounded text-xs font-medium focus:border-blue-500 outline-none" />
                                 </div>
                             </div>
-                            <div className="flex flex-col gap-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Email Corporativo</label>
-                                <input required type="email" value={newEmail} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewEmail(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" placeholder="ana@brilho.com" />
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-[10px] font-bold text-gray-500 uppercase">Email</label>
+                                <input required type="email" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} className="bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/5 p-2 rounded text-xs font-medium focus:border-blue-500 outline-none" />
                             </div>
 
-                            <div className="bg-gray-50 dark:bg-[#08112e] p-6 rounded-2xl max-h-[300px] overflow-y-auto custom-scrollbar">
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Permissões de Acesso</p>
-                                <PermissionRow area="orders" label="Pedidos" perms={permissions} />
-                                <PermissionRow area="sales" label="Vendas" perms={permissions} />
-                                <PermissionRow area="products" label="Produtos" perms={permissions} />
-                                <PermissionRow area="finance" label="Finanças" perms={permissions} />
-                                <PermissionRow area="settings" label="Configurações" perms={permissions} />
-                                <PermissionRow area="team" label="Equipe" perms={permissions} />
+                            <div className="mt-4">
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-100 dark:border-white/5 pb-1">Configurar Acessos</p>
+                                <div className="flex flex-col gap-1 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                                    <PermissionRow area="orders" label="Pedidos" perms={permissions} />
+                                    <PermissionRow area="sales" label="Vendas" perms={permissions} />
+                                    <PermissionRow area="products" label="Produtos" perms={permissions} />
+                                    <PermissionRow area="finance" label="Finanças" perms={permissions} />
+                                    <PermissionRow area="settings" label="Config" perms={permissions} />
+                                    <PermissionRow area="team" label="Equipe" perms={permissions} />
+                                </div>
                             </div>
 
-                            <button disabled={creating} type="submit" className="bg-black text-white px-8 py-5 rounded-xl font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50">
-                                {creating ? 'Criando Acesso...' : 'Confirmar e Criar'}
+                            <button disabled={creating} type="submit" className="admin-btn-primary w-full py-3 mt-4 text-xs font-bold uppercase tracking-widest">
+                                {creating ? 'Processando...' : 'Criar Acesso'}
                             </button>
                         </form>
                     </div>
@@ -358,31 +349,34 @@ const AdminTeam: React.FC<AdminTeamProps> = ({ userProfile, team, setTeam }: Adm
 
             {/* Modal Editar Funcionário */}
             {editingMember && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-white dark:bg-[#0d1840] w-full max-w-lg rounded-3xl lg:rounded-[2.5rem] p-6 lg:p-10 relative max-h-[90vh] overflow-y-auto">
-                        <button onClick={() => setEditingMember(null)} className="absolute top-8 right-8 text-gray-400 hover:text-red-500">
-                            <span className="material-symbols-outlined">close</span>
-                        </button>
-                        <h3 className="text-2xl font-black uppercase tracking-tight mb-2">Editar Perfil</h3>
-                        <p className="text-xs text-gray-500 font-bold mb-8">Atualize as informações do colaborador.</p>
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-white dark:bg-[#161b22] w-full max-w-lg rounded border border-white/10 shadow-2xl p-6 relative max-h-[90vh] overflow-y-auto">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-sm font-bold uppercase tracking-widest text-gray-400">Editar Perfil</h3>
+                            <button onClick={() => setEditingMember(null)} className="text-gray-400 hover:text-red-500">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
 
-                        <form onSubmit={handleUpdate} className="flex flex-col gap-6">
-                            <div className="flex flex-col gap-2">
-                                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nome Completo</label>
-                                <input required type="text" value={editName} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEditName(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
+                        <form onSubmit={handleUpdate} className="flex flex-col gap-4">
+                            <div className="flex flex-col gap-1.5">
+                                <label className="text-[10px] font-bold text-gray-500 uppercase">Nome Completo</label>
+                                <input required type="text" value={editName} onChange={(e) => setEditName(e.target.value)} className="bg-gray-50 dark:bg-black/20 border border-gray-200 dark:border-white/5 p-2 rounded text-xs font-medium focus:border-blue-500 outline-none" />
                             </div>
 
-                            <div className="bg-gray-50 dark:bg-[#08112e] p-6 rounded-2xl max-h-[300px] overflow-y-auto custom-scrollbar">
-                                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4">Acessos Permitidos</p>
-                                <PermissionRow area="orders" label="Pedidos" perms={editPerms} isEdit />
-                                <PermissionRow area="sales" label="Vendas" perms={editPerms} isEdit />
-                                <PermissionRow area="products" label="Produtos" perms={editPerms} isEdit />
-                                <PermissionRow area="finance" label="Finanças" perms={editPerms} isEdit />
-                                <PermissionRow area="settings" label="Configurações" perms={editPerms} isEdit />
-                                <PermissionRow area="team" label="Equipe" perms={editPerms} isEdit />
+                            <div className="mt-4">
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-3 border-b border-gray-100 dark:border-white/5 pb-1">Permissões de Acesso</p>
+                                <div className="flex flex-col gap-1 max-h-[250px] overflow-y-auto pr-2 custom-scrollbar">
+                                    <PermissionRow area="orders" label="Pedidos" perms={editPerms} isEdit />
+                                    <PermissionRow area="sales" label="Vendas" perms={editPerms} isEdit />
+                                    <PermissionRow area="products" label="Produtos" perms={editPerms} isEdit />
+                                    <PermissionRow area="finance" label="Finanças" perms={editPerms} isEdit />
+                                    <PermissionRow area="settings" label="Config" perms={editPerms} isEdit />
+                                    <PermissionRow area="team" label="Equipe" perms={editPerms} isEdit />
+                                </div>
                             </div>
 
-                            <button disabled={updating} type="submit" className="bg-primary text-black font-black py-4 rounded-2xl uppercase tracking-widest text-[10px] hover:brightness-110 shadow-xl shadow-primary/20 transition-all active:scale-95 disabled:opacity-50 mt-4 flex items-center justify-center gap-2">
+                            <button disabled={updating} type="submit" className="admin-btn-primary w-full py-3 mt-4 text-xs font-bold uppercase tracking-widest">
                                 {updating ? 'Salvando...' : 'Salvar Alterações'}
                             </button>
                         </form>

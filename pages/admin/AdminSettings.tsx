@@ -335,173 +335,151 @@ const AdminSettings: React.FC = () => {
     switch (activeTab) {
       case 0:
         return (
-          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Narrativa do Atelier</h4>
-              <div className="flex flex-col gap-6">
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nome da Marca</label>
-                  <input type="text" value={companyName} onChange={e => setCompanyName(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
-                </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Herança & Filosofia</label>
-                  <textarea rows={4} value={heritage} onChange={e => setHeritage(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none resize-none" />
-                </div>
+          <div className="flex flex-col gap-8 animate-fade-in">
+            <div className="space-y-6">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Identidade Corporativa (Nome da Marca)</label>
+                <input
+                  type="text"
+                  value={companyName}
+                  onChange={e => setCompanyName(e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-3 rounded text-sm font-medium focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                />
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Manifesto & Herança (Bio da Marca)</label>
+                <textarea
+                  rows={4}
+                  value={heritage}
+                  onChange={e => setHeritage(e.target.value)}
+                  className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-3 rounded text-sm font-medium focus:ring-1 focus:ring-blue-500 outline-none resize-none transition-all"
+                />
+                <p className="text-[10px] text-gray-500 italic">Este texto aparecerá na seção "Sobre Nós" e no rodapé institucional.</p>
               </div>
             </div>
           </div>
         );
       case 1:
         return (
-          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            {/* Seção de Logo */}
-            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary !text-2xl">branding_watermark</span>
-                </div>
-                <div>
-                  <h4 className="text-lg font-black uppercase tracking-tight">Logotipo do Atelier</h4>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase">A face da sua marca em todos os dispositivos</p>
-                </div>
+          <div className="flex flex-col gap-10 animate-fade-in">
+            {/* Logo Management */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 border-b border-gray-100 dark:border-white/5 pb-4">
+                <span className="material-symbols-outlined text-blue-600">branding_watermark</span>
+                <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white">Identidade Visual (Logo)</h4>
               </div>
 
-              <div className="flex flex-col md:flex-row items-center gap-10">
-                <div className="w-full md:w-[8cm] h-40 bg-gray-100 dark:bg-white/5 rounded-3xl border-2 border-dashed border-gray-200 dark:border-[#222115] flex items-center justify-center relative group cursor-pointer overflow-hidden shadow-inner">
-                  {logoUrl ? <img src={logoUrl} className={`w-full h-full object-contain p-4 ${isProcessingLogo ? 'opacity-30 blur-sm' : ''}`} /> : <span className="material-symbols-outlined !text-4xl text-gray-300">image</span>}
-                  <input type="file" accept="image/*" className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-wait" onChange={handleLogoUpload} disabled={isProcessingLogo} />
+              <div className="flex flex-col md:flex-row gap-8 items-start">
+                <div className="w-full md:w-64 aspect-square bg-gray-50 dark:bg-white/5 rounded border border-gray-200 dark:border-white/10 flex items-center justify-center relative overflow-hidden group">
+                  {logoUrl ? (
+                    <img src={logoUrl} className={`w-full h-full object-contain p-6 ${isProcessingLogo ? 'opacity-20' : ''}`} />
+                  ) : (
+                    <span className="material-symbols-outlined text-4xl text-gray-300">image</span>
+                  )}
                   {isProcessingLogo && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 dark:bg-black/60 backdrop-blur-[2px] z-50">
-                      <div className="size-10 border-4 border-primary/20 border-t-primary rounded-full animate-spin mb-3"></div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-primary">{logoProgress}%</p>
+                    <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 dark:bg-black/40 backdrop-blur-sm">
+                      <div className="size-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mb-2"></div>
+                      <span className="text-[10px] font-bold text-blue-600">{logoProgress}%</span>
                     </div>
                   )}
                 </div>
-                <div className="flex flex-col gap-4">
-                  <p className="text-xs text-gray-500 font-medium max-w-xs leading-relaxed">Carregue uma imagem em alta resolução. A nossa IA irá processar e otimizar para o melhor desempenho.</p>
-                  <label className="bg-black dark:bg-white text-white dark:text-black px-8 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest cursor-pointer hover:bg-primary hover:text-black transition-all shadow-xl hover:scale-105 active:scale-95 text-center">
-                    Selecionar Nova Logo
+
+                <div className="flex-1 space-y-4">
+                  <p className="text-xs text-gray-500 leading-relaxed uppercase tracking-wide font-medium">Use arquivos PNG ou SVG com fundo transparente. Nossa IA removerá automaticamente qualquer ruído visual.</p>
+                  <label className="inline-flex items-center px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-black text-[11px] font-bold uppercase tracking-widest rounded cursor-pointer hover:bg-blue-600 dark:hover:bg-blue-600 dark:hover:text-white transition-all shadow-sm">
+                    Carregar Logo
                     <input type="file" accept="image/*" className="hidden" onChange={handleLogoUpload} />
                   </label>
                 </div>
               </div>
             </div>
 
-            {/* Seção de Cores */}
-            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary !text-2xl">palette</span>
-                </div>
-                <div>
-                  <h4 className="text-lg font-black uppercase tracking-tight">Paleta de Cores</h4>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase">Defina a cor que personifica o luxo da sua marca</p>
-                </div>
+            {/* Brand Color Management */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 border-b border-gray-100 dark:border-white/5 pb-4">
+                <span className="material-symbols-outlined text-blue-600">palette</span>
+                <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white">Personalização Cromática</h4>
               </div>
 
-              <div className="flex flex-col gap-6">
-                <div className="flex flex-wrap gap-4 items-center">
-                  {['#f2d00d', '#1c1a0d', '#d4af37', '#e5e5e5', '#ff4d4d', '#4d79ff'].map(c => (
-                    <button
-                      key={c}
-                      onClick={() => setBrandColor(c)}
-                      className={`size-12 rounded-full border-4 shadow-lg transition-transform hover:scale-110 ${brandColor === c ? 'border-primary ring-4 ring-primary/20 scale-110' : 'border-white dark:border-[#222115]'}`}
-                      style={{ backgroundColor: c }}
-                    />
-                  ))}
-                  <div className="size-12 rounded-full border-4 border-dashed border-gray-300 flex items-center justify-center relative bg-gray-50 dark:bg-white/5 overflow-hidden group">
-                    <span className="material-symbols-outlined text-gray-400 !text-xl group-hover:text-primary transition-colors">colorize</span>
-                    <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} className="absolute inset-0 opacity-0 cursor-pointer scale-150" />
-                  </div>
+              <div className="flex flex-wrap gap-4 items-center">
+                {['#2563eb', '#1e293b', '#059669', '#dc2626', '#d97706', '#7c3aed'].map(c => (
+                  <button
+                    key={c}
+                    onClick={() => setBrandColor(c)}
+                    className={`size-10 rounded border-2 transition-all ${brandColor === c ? 'border-blue-600 scale-110 shadow-md ring-2 ring-blue-500/20' : 'border-transparent'}`}
+                    style={{ backgroundColor: c }}
+                  />
+                ))}
+                <div className="size-10 rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 flex items-center justify-center relative group">
+                  <span className="material-symbols-outlined text-gray-400 text-sm group-hover:text-blue-600">colorize</span>
+                  <input type="color" value={brandColor} onChange={(e) => setBrandColor(e.target.value)} className="absolute inset-0 opacity-0 cursor-pointer" />
                 </div>
-                <div className="p-4 bg-gray-50 dark:bg-[#08112e] rounded-xl border border-gray-100 dark:border-[#222115] flex items-center gap-4 w-fit">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Código Hex:</p>
-                  <p className="text-sm font-black text-primary font-mono lowercase">{brandColor}</p>
+                <div className="flex items-center gap-2 px-3 py-2 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded">
+                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">HEX:</span>
+                  <span className="text-xs font-mono font-bold text-blue-600">{brandColor.toUpperCase()}</span>
                 </div>
-              </div>
-            </div>
-
-            {/* Atalho IA */}
-            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm opacity-80 hover:opacity-100 transition-opacity">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary !text-3xl">psychology</span>
-                </div>
-                <div>
-                  <h4 className="text-lg font-black uppercase tracking-tight text-primary">Ferramentas de IA</h4>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase">Otimização visual automatizada</p>
-                </div>
-              </div>
-              <div className="p-6 bg-primary/5 rounded-2xl border-2 border-dashed border-primary/20 flex flex-col md:flex-row items-center gap-6 justify-between">
-                <div>
-                  <h5 className="font-black uppercase text-xs tracking-tight">Otimizador de Catálogo IA</h5>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase">Vetorizar todas as imagens de produtos para um visual HD</p>
-                </div>
-                <button onClick={() => setActiveTab(2)} className="bg-primary text-black font-black px-8 py-4 rounded-2xl uppercase tracking-widest text-[9px] shadow-xl hover:scale-105 transition-all">
-                  Gerir Inteligência
-                </button>
               </div>
             </div>
           </div>
         );
-      case 2: // Inteligência IA
+      case 2:
         return (
-          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary !text-3xl">psychology</span>
-                </div>
-                <div>
-                  <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight">Inteligência Artificial</h4>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase">Motor de vetorização e automação</p>
-                </div>
+          <div className="flex flex-col gap-8 animate-fade-in">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 border-b border-gray-100 dark:border-white/5 pb-4">
+                <span className="material-symbols-outlined text-blue-600">psychology</span>
+                <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white">Motor de Inteligência Artificial</h4>
               </div>
-              <div className="flex flex-col gap-8">
-                <div className="p-6 bg-blue-50 dark:bg-blue-900/10 rounded-2xl border border-blue-100 dark:border-blue-800/20">
-                  <p className="text-xs font-bold text-blue-800 dark:text-blue-300">
-                    A IA permite remover fundos de imagens automaticamente para um visual limpo em todo o site.
-                  </p>
+
+              <div className="p-4 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded">
+                <p className="text-xs text-blue-700 dark:text-blue-300 font-medium">
+                  Utilize o motor Brilho-AI para remover fundos de imagens e vetorizar o seu catálogo em tempo real.
+                </p>
+              </div>
+
+              <div className="p-8 border-2 border-dashed border-gray-200 dark:border-white/10 rounded flex flex-col items-center text-center gap-6">
+                <span className="material-symbols-outlined text-5xl text-blue-600 animate-pulse">auto_fix_high</span>
+                <div>
+                  <h5 className="text-sm font-bold uppercase tracking-tight">Vetorizador de Catálogo Bulk</h5>
+                  <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-bold">Processamento em lote de todos os produtos do atelier</p>
                 </div>
-                <div className="p-8 bg-primary/5 rounded-[2.5rem] border-2 border-dashed border-primary/20">
-                  <div className="flex items-center gap-5 mb-6">
-                    <span className="material-symbols-outlined text-primary !text-5xl">auto_fix_high</span>
-                    <div>
-                      <h5 className="font-black uppercase text-sm tracking-tight">Otimizador de Catálogo IA</h5>
-                      <p className="text-[10px] text-gray-500 font-bold uppercase tracking-wider">Processar todas as imagens existentes</p>
+
+                {isBulkProcessing ? (
+                  <div className="w-full max-w-md space-y-3">
+                    <div className="w-full h-2 bg-gray-100 dark:bg-white/5 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-blue-600 transition-all duration-300"
+                        style={{ width: `${(bulkCurrent / (bulkTotal || 1)) * 100}%` }}
+                      ></div>
                     </div>
+                    <p className="text-[10px] font-bold text-blue-600 uppercase tracking-widest">Sincronizando {bulkCurrent} / {bulkTotal} ativos...</p>
                   </div>
-                  {isBulkProcessing ? (
-                    <div className="flex flex-col gap-4">
-                      <div className="w-full h-4 bg-gray-100 dark:bg-black/40 rounded-full overflow-hidden">
-                        <div className="h-full bg-primary transition-all duration-300" style={{ width: `${(bulkCurrent / (bulkTotal || 1)) * 100}%` }}></div>
-                      </div>
-                      <p className="text-xs font-black uppercase tracking-widest text-primary animate-pulse">Processando {bulkCurrent} de {bulkTotal} imagens...</p>
-                    </div>
-                  ) : (
-                    <button onClick={handleBulkVectorize} className="w-full bg-primary text-black font-black py-5 rounded-2xl uppercase tracking-widest text-[11px] shadow-xl hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-4">
-                      <span className="material-symbols-outlined !text-xl">magic_button</span>
-                      Vetorizar Todo o Catálogo Agora
-                    </button>
-                  )}
-                </div>
+                ) : (
+                  <button
+                    onClick={handleBulkVectorize}
+                    className="flex items-center gap-3 px-8 py-3 bg-blue-600 text-white text-[11px] font-bold uppercase tracking-widest rounded shadow-lg hover:bg-blue-700 transition-all"
+                  >
+                    <span className="material-symbols-outlined text-sm">bolt</span>
+                    Iniciar Otimização Global
+                  </button>
+                )}
               </div>
             </div>
           </div>
         );
       case 3:
         return (
-          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Políticas de Serviço</h4>
-              <div className="flex flex-col gap-6">
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">WhatsApp de Suporte</label>
-                  <input type="text" value={companyPhone} onChange={e => setCompanyPhone(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
+          <div className="flex flex-col gap-8 animate-fade-in">
+            <div className="space-y-6">
+              <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white border-b border-gray-100 dark:border-white/5 pb-4">Canais de Apoio ao Cliente</h4>
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">WhatsApp de Suporte Técnico</label>
+                  <input type="text" value={companyPhone} onChange={e => setCompanyPhone(e.target.value)} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-3 rounded text-sm font-medium focus:ring-1 focus:ring-blue-500 outline-none transition-all" />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Política de Envio</label>
-                  <textarea rows={3} value={shippingPolicy} onChange={e => setShippingPolicy(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none resize-none" />
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Política de Envio (Termos)</label>
+                  <textarea rows={3} value={shippingPolicy} onChange={e => setShippingPolicy(e.target.value)} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-3 rounded text-sm font-medium focus:ring-1 focus:ring-blue-500 outline-none resize-none transition-all" />
                 </div>
               </div>
             </div>
@@ -509,25 +487,31 @@ const AdminSettings: React.FC = () => {
         );
       case 4:
         return (
-          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Fiscalidade & Moeda</h4>
-              <div className="flex flex-col gap-2">
-                <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Taxa de IVA (%)</label>
-                <input type="number" value={taxRate} onChange={e => setTaxRate(e.target.value)} className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none" />
+          <div className="flex flex-col gap-8 animate-fade-in">
+            <div className="space-y-6">
+              <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white border-b border-gray-100 dark:border-white/5 pb-4">Fiscalidade & Operações Financeiras</h4>
+              <div className="flex flex-col gap-1.5 max-w-xs">
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Taxa de IVA Aplicável (%)</label>
+                <input type="number" value={taxRate} onChange={e => setTaxRate(e.target.value)} className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-3 rounded text-sm font-medium focus:ring-1 focus:ring-blue-500 outline-none transition-all" />
               </div>
             </div>
           </div>
         );
       case 5:
         return (
-          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <h4 className="text-lg lg:text-xl font-black uppercase tracking-tight mb-6 lg:mb-8">Zonas de Entrega</h4>
-              <div className="flex flex-col gap-4">
-                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-[#08112e] rounded-xl">
-                  <label className="text-xs font-black uppercase tracking-widest">Luanda (Capital)</label>
-                  <input type="number" value={shippingLuanda} onChange={e => setShippingLuanda(e.target.value)} className="w-32 bg-white dark:bg-[#0d1840] p-2 rounded-lg text-right font-bold" />
+          <div className="flex flex-col gap-8 animate-fade-in">
+            <div className="space-y-6">
+              <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white border-b border-gray-100 dark:border-white/5 pb-4">Logística & Zonas de Entrega</h4>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between p-4 bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/10 rounded">
+                  <div>
+                    <p className="text-xs font-bold text-gray-800 dark:text-gray-200 uppercase tracking-tight">Luanda (Província Sede)</p>
+                    <p className="text-[10px] text-gray-500 uppercase font-bold tracking-widest">Entrega Base</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Kz</span>
+                    <input type="number" value={shippingLuanda} onChange={e => setShippingLuanda(e.target.value)} className="w-24 bg-white dark:bg-[#0d1117] border border-gray-200 dark:border-white/10 p-2 rounded text-right font-bold text-xs" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -537,91 +521,79 @@ const AdminSettings: React.FC = () => {
         if (!currentUser && activeTab === 6) {
           return (
             <div className="flex flex-col items-center justify-center p-20 gap-4">
-              <div className="size-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin"></div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">Carregando Perfil de Segurança...</p>
+              <div className="size-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">Autenticando Perfil...</p>
             </div>
           );
         }
         return (
-          <div className="flex flex-col gap-6 lg:gap-8 animate-slide-in">
-            {/* Perfil Atual */}
-            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary !text-2xl">account_circle</span>
+          <div className="flex flex-col gap-10 animate-fade-in">
+            {/* Identity Form */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 border-b border-gray-100 dark:border-white/5 pb-4">
+                <span className="material-symbols-outlined text-blue-600">badge</span>
+                <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white">Credenciais do Utilizador</h4>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="p-4 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded">
+                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">ID de Acesso / Email</p>
+                  <p className="text-sm font-mono font-bold text-gray-700 dark:text-gray-200 uppercase">{currentUser?.email || 'OFFLINE'}</p>
                 </div>
-                <div>
-                  <h4 className="text-lg font-black uppercase tracking-tight">O Meu Perfil</h4>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase">Dados de identificação no Atelier</p>
+                <div className="p-4 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded">
+                  <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest mb-1">Nível de Permissão</p>
+                  <p className="text-sm font-bold text-blue-600 uppercase tracking-tight">{currentUser?.role || 'CONVIDADO'}</p>
                 </div>
               </div>
 
-              <div className="flex flex-col gap-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="p-5 bg-gray-50 dark:bg-[#08112e] rounded-2xl border border-gray-100 dark:border-[#222115]">
-                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Email de Acesso</p>
-                    <p className="text-sm font-bold text-gray-800 dark:text-gray-200">{currentUser?.email || 'N/A'}</p>
-                  </div>
-                  <div className="p-5 bg-gray-50 dark:bg-[#08112e] rounded-2xl border border-gray-100 dark:border-[#222115]">
-                    <p className="text-[9px] font-black text-gray-400 uppercase tracking-widest mb-1">Função / Role</p>
-                    <p className="text-sm font-bold text-primary uppercase">{currentUser?.role || 'N/A'}</p>
-                  </div>
+              <form onSubmit={handleUpdateName} className="space-y-4 max-w-sm">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Nome de Exibição</label>
+                  <input
+                    type="text"
+                    value={userName}
+                    onChange={e => setUserName(e.target.value)}
+                    className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-3 rounded text-sm font-medium focus:ring-1 focus:ring-blue-500 outline-none transition-all"
+                  />
                 </div>
-
-                <form onSubmit={handleUpdateName} className="flex flex-col gap-4 max-w-md">
-                  <div className="flex flex-col gap-2">
-                    <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest pl-1">Nome Completo</label>
-                    <input
-                      type="text"
-                      value={userName}
-                      onChange={e => setUserName(e.target.value)}
-                      className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none"
-                    />
-                  </div>
-                  {nameError && <p className="text-red-500 text-[10px] font-bold uppercase">{nameError}</p>}
-                  {nameSuccess && <p className="text-green-500 text-[10px] font-bold uppercase">{nameSuccess}</p>}
-                  <button
-                    type="submit"
-                    disabled={isUpdatingName}
-                    className="bg-black dark:bg-white text-white dark:text-black font-black py-4 rounded-xl uppercase tracking-widest text-[10px] shadow-lg hover:scale-[1.02] active:scale-95 transition-all w-fit px-8"
-                  >
-                    {isUpdatingName ? 'Gravando...' : 'Atualizar Nome'}
-                  </button>
-                </form>
-              </div>
+                {nameError && <p className="text-red-500 text-[10px] font-bold uppercase">{nameError}</p>}
+                {nameSuccess && <p className="text-green-500 text-[10px] font-bold uppercase">{nameSuccess}</p>}
+                <button
+                  type="submit"
+                  disabled={isUpdatingName}
+                  className="px-6 py-2 bg-gray-900 dark:bg-white text-white dark:text-black text-[11px] font-bold uppercase tracking-widest rounded shadow hover:bg-blue-600 dark:hover:bg-blue-600 dark:hover:text-white transition-all disabled:opacity-50"
+                >
+                  {isUpdatingName ? 'Sincronizando...' : 'Atualizar Identidade'}
+                </button>
+              </form>
             </div>
 
-            {/* Alterar Senha */}
-            <div className="bg-white dark:bg-[#0d1840] p-6 lg:p-10 rounded-2xl lg:rounded-[2.5rem] border border-gray-100 dark:border-[#222115] shadow-sm">
-              <div className="flex items-center gap-4 mb-8">
-                <div className="size-12 bg-primary/10 rounded-2xl flex items-center justify-center">
-                  <span className="material-symbols-outlined text-primary !text-2xl">lock_reset</span>
-                </div>
-                <div>
-                  <h4 className="text-lg font-black uppercase tracking-tight">Alterar Senha</h4>
-                  <p className="text-[10px] text-gray-500 font-bold uppercase">Mantenha a sua conta protegida</p>
-                </div>
+            {/* Password Reset */}
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 border-b border-gray-100 dark:border-white/5 pb-4">
+                <span className="material-symbols-outlined text-blue-600">lock_reset</span>
+                <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white">Segurança de Acesso</h4>
               </div>
 
-              <form onSubmit={handleUpdatePassword} className="flex flex-col gap-6 max-w-md">
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Nova Senha</label>
+              <form onSubmit={handleUpdatePassword} className="space-y-4 max-w-sm">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Nova Chave de Acesso</label>
                   <input
                     type="password"
                     value={newPassword}
                     onChange={e => setNewPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none"
+                    className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-3 rounded text-sm font-medium focus:ring-1 focus:ring-blue-500 outline-none transition-all"
                   />
                 </div>
-                <div className="flex flex-col gap-2">
-                  <label className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Confirmar Nova Senha</label>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest pl-1">Confirmar Chave</label>
                   <input
                     type="password"
                     value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="bg-gray-50 dark:bg-[#08112e] border-none p-4 rounded-xl text-sm font-bold focus:ring-2 focus:ring-primary outline-none"
+                    className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 p-3 rounded text-sm font-medium focus:ring-1 focus:ring-blue-500 outline-none transition-all"
                   />
                 </div>
 
@@ -631,27 +603,29 @@ const AdminSettings: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isUpdatingPassword}
-                  className="bg-primary text-black font-black py-4 rounded-xl uppercase tracking-widest text-[10px] shadow-lg hover:scale-[1.02] active:scale-95 transition-all mt-2"
+                  className="w-full px-6 py-3 bg-blue-600 text-white text-[11px] font-bold uppercase tracking-widest rounded shadow hover:bg-blue-700 transition-all disabled:opacity-50"
                 >
-                  {isUpdatingPassword ? 'A Processar...' : 'Atualizar Dados de Acesso'}
+                  {isUpdatingPassword ? 'Resetando...' : 'Efetuar Reset de Segurança'}
                 </button>
               </form>
             </div>
 
-            {/* Logout Secundário */}
             <div className="flex justify-start">
-              <button onClick={async () => {
-                const { signOut } = await import('../../services/supabase');
-                try {
-                  await signOut();
-                  localStorage.removeItem('user_profile');
-                  window.location.href = '/';
-                } catch (err) {
-                  window.location.href = '/';
-                }
-              }} className="text-gray-400 hover:text-red-500 flex items-center gap-2 font-black uppercase text-[9px] tracking-widest transition-colors">
+              <button
+                onClick={async () => {
+                  const { signOut } = await import('../../services/supabase');
+                  try {
+                    await signOut();
+                    localStorage.removeItem('user_profile');
+                    window.location.href = '/';
+                  } catch (err) {
+                    window.location.href = '/';
+                  }
+                }}
+                className="text-gray-400 hover:text-red-500 flex items-center gap-2 font-bold uppercase text-[9px] tracking-widest transition-colors"
+              >
                 <span className="material-symbols-outlined !text-sm">logout</span>
-                Terminar Sessão de Segurança
+                Terminar Sessão Operacional
               </button>
             </div>
           </div>
@@ -661,29 +635,42 @@ const AdminSettings: React.FC = () => {
   };
 
   return (
-    <div className="p-4 md:p-8 lg:p-12">
-      <div className="hidden md:block mb-8 lg:mb-12">
-        <h2 className="text-2xl lg:text-3xl font-black uppercase tracking-tighter">Mestre de <span className="text-primary italic">Configurações</span></h2>
-        <p className="text-[11px] lg:text-sm text-gray-500 font-medium">Controle total sobre o Atelier.</p>
+    <div className="flex flex-col gap-6 animate-fade-in">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white uppercase tracking-tight">Configurações do Sistema</h2>
+          <p className="text-xs text-gray-500 mt-1 uppercase tracking-widest font-bold">Gestão global de identidade, segurança e logística</p>
+        </div>
+        {activeTab !== 6 && (
+          <button
+            onClick={handleSave}
+            disabled={isSaving}
+            className={`px-6 py-2 rounded bg-blue-600 text-white text-[11px] font-bold uppercase tracking-widest shadow-sm hover:bg-blue-700 transition-colors ${isSaving ? 'opacity-50 cursor-not-allowed' : ''}`}
+          >
+            {isSaving ? 'Sincronizando...' : 'Publicar Alterações'}
+          </button>
+        )}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-        <nav className="flex flex-row lg:flex-col gap-2 overflow-x-auto pb-4 lg:pb-0 shrink-0 border-b lg:border-b-0 border-gray-100 dark:border-white/5 mb-4 lg:mb-0">
+
+      <div className="flex flex-col lg:flex-row gap-8">
+        {/* Navigation Sidebar */}
+        <nav className="flex flex-row lg:flex-col gap-1 overflow-x-auto pb-2 lg:pb-0 shrink-0 lg:w-64">
           {visibleTabs.map((tab) => (
-            <button key={tab.originalIndex} onClick={() => setActiveTab(tab.originalIndex)} className={`text-left px-5 lg:px-6 py-3.5 lg:py-5 rounded-xl lg:rounded-2xl font-bold flex items-center gap-3 lg:gap-4 transition-all whitespace-nowrap lg:whitespace-normal ${activeTab === tab.originalIndex ? 'bg-primary text-black shadow-lg shadow-primary/10' : 'text-gray-500 hover:bg-primary/5'}`}>
-              <span className="material-symbols-outlined !text-xl lg:!text-base">{tab.icon}</span>
-              <span className="text-[10px] lg:text-[11px] font-black uppercase tracking-widest">{tab.name}</span>
+            <button
+              key={tab.originalIndex}
+              onClick={() => setActiveTab(tab.originalIndex)}
+              className={`flex items-center gap-3 px-4 py-3 rounded text-left transition-all whitespace-nowrap ${activeTab === tab.originalIndex ? 'bg-blue-50 dark:bg-blue-500/10 text-blue-600 border-l-4 border-blue-600' : 'text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5'}`}
+            >
+              <span className="material-symbols-outlined text-lg">{tab.icon}</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider">{tab.name}</span>
             </button>
           ))}
         </nav>
-        <div className="lg:col-span-2 flex flex-col gap-8">
+
+        {/* Content Area */}
+        <div className="flex-1 bg-white dark:bg-[#0d1117] rounded border border-gray-200 dark:border-white/10 p-6 lg:p-10 shadow-sm min-h-[500px]">
           {renderTabContent()}
-          {activeTab !== 6 && (
-            <div className="flex justify-end pt-4">
-              <button onClick={handleSave} disabled={isSaving} className={`bg-black dark:bg-white text-white dark:text-black font-black px-12 py-5 rounded-2xl uppercase tracking-widest text-[11px] shadow-xl hover:scale-105 active:scale-95 transition-all ${isSaving ? 'animate-pulse' : ''}`}>
-                {isSaving ? 'Gravando...' : 'Salvar Alterações'}
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </div>

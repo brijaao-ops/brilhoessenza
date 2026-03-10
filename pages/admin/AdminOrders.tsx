@@ -98,354 +98,166 @@ const AdminOrders: React.FC<AdminOrdersProps> = ({ orders, setOrders, products, 
   };
 
   return (
-    <div className="p-4 md:p-8 lg:p-12 animate-fade-in">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8 lg:mb-12">
+    <div className="flex flex-col gap-6 animate-fade-in">
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-3xl font-black uppercase tracking-tighter">Gestão de <span className="text-primary italic">Pedidos</span></h2>
-          <p className="text-sm text-gray-500 font-medium">Gerencie solicitações e atribua entregas.</p>
+          <h2 className="text-xl font-bold text-gray-900 dark:text-white">Fluxo de Pedidos</h2>
+          <p className="text-xs text-gray-500 mt-1">Gestão de solicitações e logística de entrega</p>
         </div>
-        <div className="flex gap-2 bg-white dark:bg-[#0d1840] p-1.5 rounded-2xl border border-gray-100 dark:border-[#222115]">
+
+        <div className="flex p-1 bg-gray-100 dark:bg-white/5 rounded">
           <button
             onClick={() => setActiveTab('requests')}
-            className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all flex items-center gap-2 ${activeTab === 'requests' ? 'bg-black text-white shadow-lg' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5'}`}
+            className={`px-4 py-1.5 rounded text-[11px] font-bold uppercase transition-all flex items-center gap-2 ${activeTab === 'requests' ? 'bg-white dark:bg-[#161b22] text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
           >
-            Novos Pedidos
-            <span className={`px-1.5 py-0.5 rounded-md text-[9px] ${activeTab === 'requests' ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'}`}>{pendingRequests.length}</span>
+            Novos
+            <span className={`px-1.5 py-0.5 rounded-full text-[9px] ${activeTab === 'requests' ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-500'}`}>{pendingRequests.length}</span>
           </button>
           <button
             onClick={() => setActiveTab('processing')}
-            className={`px-6 py-2.5 rounded-xl text-[10px] font-black uppercase transition-all flex items-center gap-2 ${activeTab === 'processing' ? 'bg-black text-white shadow-lg' : 'text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5'}`}
+            className={`px-4 py-1.5 rounded text-[11px] font-bold uppercase transition-all flex items-center gap-2 ${activeTab === 'processing' ? 'bg-white dark:bg-[#161b22] text-blue-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'}`}
           >
-            Em Processamento
-            <span className={`px-1.5 py-0.5 rounded-md text-[9px] ${activeTab === 'processing' ? 'bg-white/20 text-white' : 'bg-gray-100 text-gray-500'}`}>{processingOrders.length}</span>
+            Processamento
+            <span className={`px-1.5 py-0.5 rounded-full text-[9px] ${activeTab === 'processing' ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-500'}`}>{processingOrders.length}</span>
           </button>
         </div>
       </div>
 
-      <div className="bg-white dark:bg-[#0d1840] rounded-[2.5rem] border border-gray-100 dark:border-[#222115] overflow-hidden shadow-sm">
+      <div className="admin-table-container">
         {activeTab === 'requests' ? (
-          <div className="flex flex-col">
-            {/* Desktop Table */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
-                    <th className="px-8 py-6">Produto(s)</th>
-                    <th className="px-8 py-6">Cliente</th>
-                    <th className="px-8 py-6">Local de Entrega</th>
-                    <th className="px-8 py-6">Contacto</th>
-                    <th className="px-8 py-6">Data & Hora</th>
-                    <th className="px-8 py-6 text-right">Ações</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50 dark:divide-[#222115]">
-                  {pendingRequests.map((o) => {
-                    const orderItems = getProductDetails(o);
-                    return (
-                      <tr key={o.id} className="hover:bg-gray-50/50 dark:hover:bg-white/[0.01] transition-all">
-                        <td className="px-8 py-5">
-                          <div className="flex flex-col gap-2">
-                            {orderItems.length > 0 ? orderItems.map((item: any, idx: number) => (
-                              <div key={`${o.id}-${idx}`} className="flex items-center gap-3">
-                                {item.image && (
-                                  <div className="size-10 rounded-lg bg-gray-100 overflow-hidden shrink-0 border border-gray-200">
-                                    <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                                  </div>
-                                )}
-                                <div className="flex flex-col">
-                                  <span className="text-xs font-black truncate max-w-[200px]">{item.name}</span>
-                                  <div className="flex items-center gap-2 text-[9px] text-gray-400 font-bold uppercase">
-                                    <span>Qtd: {item.quantity}</span>
-                                    {item.price > 0 && (
-                                      <>
-                                        <span>•</span>
-                                        <span>{item.price.toLocaleString()} Kz</span>
-                                        <span>•</span>
-                                        <span className="text-gray-600 dark:text-gray-300">Sub: {(item.price * item.quantity).toLocaleString()} Kz</span>
-                                      </>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                            )) : <span className="text-xs text-gray-400 italic">Sem detalhes</span>}
-                          </div>
-                        </td>
-                        <td className="px-8 py-5 font-bold text-sm">{o.customer}</td>
-                        <td className="px-8 py-5">
-                          <div className="flex flex-col gap-1">
-                            <span className="text-xs font-black text-gray-800 dark:text-gray-200">{o.neighborhood || '---'}</span>
-                            <span className="text-[9px] font-black uppercase text-gray-400 tracking-wider">{(o.municipality || '')} {o.province && `| ${o.province}`}</span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-5">
-                          <div className="flex flex-col gap-1">
-                            <span className="text-xs font-bold text-gray-500">{o.phone || 'Sem contacto'}</span>
-                            {o.phone && (
-                              <div className="flex gap-2">
-                                <a href={`tel:${o.phone.replace(/\D/g, '')}`} className="text-primary hover:underline text-[9px] font-black uppercase">Ligar</a>
-                                <a href={`https://wa.me/${o.phone.replace(/\D/g, '')}`} target="_blank" rel="noopener noreferrer" className="text-green-500 hover:underline text-[9px] font-black uppercase">Zap</a>
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-8 py-5">
-                          <div className="flex flex-col">
-                            <span className="text-xs font-bold text-gray-400">{o.date}</span>
-                            <span className="text-[10px] font-black italic">{o.time || '---'}</span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-5 text-right">
-                          {(userProfile?.role === 'admin' || userProfile?.permissions?.orders?.edit) && (
-                            <button
-                              onClick={() => convertToSale(o.id)}
-                              className="bg-primary text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-wider hover:scale-105 transition-all shadow-lg"
-                            >
-                              Converter em Venda
-                            </button>
-                          )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile Cards */}
-            <div className="md:hidden flex flex-col divide-y divide-gray-50 dark:divide-white/5">
-              {pendingRequests.map((o) => {
-                const orderItems = getProductDetails(o);
-                return (
-                  <div key={o.id} className="p-5 flex flex-col gap-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="text-sm font-black text-navy dark:text-white uppercase leading-none mb-1">{o.customer}</p>
-                        <p className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">{o.date} às {o.time}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <a href={`tel:${o.phone?.replace(/\D/g, '')}`} className="size-8 bg-gray-50 dark:bg-white/5 rounded-lg flex items-center justify-center text-primary border border-gray-100 dark:border-white/10"><span className="material-symbols-outlined !text-base">call</span></a>
-                        <a href={`https://wa.me/${o.phone?.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="size-8 bg-green-500/10 rounded-lg flex items-center justify-center text-green-500 border border-green-500/20"><span className="material-symbols-outlined !text-base">chat</span></a>
-                      </div>
-                    </div>
-
-                    <div className="bg-gray-50/50 dark:bg-white/[0.02] p-3 rounded-xl border border-gray-100 dark:border-white/5 space-y-3">
-                      {orderItems.map((item: any, idx: number) => (
-                        <div key={idx} className="flex gap-3">
-                          <img src={item.image} className="size-10 rounded-lg object-cover bg-white" alt="" />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[10px] font-black uppercase leading-tight truncate">{item.name}</p>
-                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">{item.quantity}x {item.price.toLocaleString()} Kz</p>
+          <div className="overflow-x-auto">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Items</th>
+                  <th>Cliente / Contacto</th>
+                  <th>Localização</th>
+                  <th>Data/Hora</th>
+                  <th className="text-center">Ações</th>
+                </tr>
+              </thead>
+              <tbody>
+                {pendingRequests.map((o) => {
+                  const orderItems = getProductDetails(o);
+                  return (
+                    <tr key={o.id}>
+                      <td className="max-w-[300px]">
+                        <div className="flex flex-col gap-1">
+                          {orderItems.map((item: any, idx: number) => (
+                            <div key={idx} className="flex items-center gap-2">
+                              <span className="text-[10px] font-bold text-blue-600 bg-blue-50 px-1 rounded">{item.quantity}x</span>
+                              <span className="text-[11px] font-medium truncate" title={item.name}>{item.name}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </td>
+                      <td>
+                        <div className="flex flex-col">
+                          <p className="font-bold text-gray-900 dark:text-white">{o.customer}</p>
+                          <div className="flex items-center gap-2 text-[10px] text-blue-600 font-bold">
+                            <a href={`tel:${o.phone?.replace(/\D/g, '')}`} className="hover:underline">Ligar</a>
+                            <span>•</span>
+                            <a href={`https://wa.me/${o.phone?.replace(/\D/g, '')}`} target="_blank" rel="noreferrer" className="text-green-600 hover:underline">WhatsApp</a>
                           </div>
                         </div>
-                      ))}
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                      <p className="text-[8px] font-black text-gray-400 uppercase tracking-[0.2em]">Entrega em:</p>
-                      <p className="text-[10px] font-bold text-gray-600 dark:text-gray-300">{o.neighborhood}, {o.municipality}</p>
-                    </div>
-
-                    {(userProfile?.role === 'admin' || userProfile?.permissions?.orders?.edit) && (
-                      <button
-                        onClick={() => convertToSale(o.id)}
-                        className="w-full bg-primary text-black font-black py-3 rounded-xl text-[10px] font-black uppercase tracking-widest shadow-lg shadow-primary/20"
-                      >
-                        Converter em Venda
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+                      </td>
+                      <td>
+                        <p className="font-medium text-gray-700 dark:text-gray-300">{o.neighborhood}</p>
+                        <p className="text-[10px] text-gray-400">{o.municipality}</p>
+                      </td>
+                      <td>
+                        <p className="font-medium">{o.date}</p>
+                        <p className="text-[10px] text-gray-400">{o.time}</p>
+                      </td>
+                      <td className="text-center">
+                        {(userProfile?.role === 'admin' || userProfile?.permissions?.orders?.edit) && (
+                          <button onClick={() => convertToSale(o.id)} className="admin-btn-primary py-1 px-3 text-[10px] whitespace-nowrap">
+                            Autorizar Venda
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         ) : (
-          <div className="flex flex-col">
-            {/* Desktop Table */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full text-left">
-                <thead>
-                  <tr className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] border-b">
-                    <th className="px-8 py-6">ID & Detalhes</th>
-                    <th className="px-8 py-6">Cliente</th>
-                    <th className="px-8 py-6">Status</th>
-                    <th className="px-8 py-6">Entregador Responsável</th>
-                    <th className="px-8 py-6 text-right">Ações</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50 dark:divide-[#222115]">
-                  {processingOrders.map((o) => {
-                    const orderItems = getProductDetails(o);
-                    return (
-                      <tr key={o.id} className="hover:bg-gray-50/50 dark:hover:bg-white/[0.01] transition-all">
-                        <td className="px-8 py-5">
-                          <div className="flex flex-col gap-2">
-                            <span className="text-[9px] text-gray-400 font-mono">#{o.id.slice(0, 8)}</span>
-                            {orderItems.length > 0 ? orderItems.map((item: any, idx: number) => (
-                              <div key={idx} className="flex items-center gap-2">
-                                {item.image && (
-                                  <img
-                                    src={item.image}
-                                    alt={item.name}
-                                    className="size-8 rounded-full border-2 border-white dark:border-black object-cover shrink-0"
-                                  />
-                                )}
-                                <div className="flex flex-col">
-                                  <span className="text-[10px] font-bold truncate max-w-[160px]">{item.name}</span>
-                                  <span className="text-[9px] text-gray-400">
-                                    {item.quantity}x {item.price > 0 ? `${item.price.toLocaleString()} Kz` : ''}
-                                    {item.price > 0 && <span className="font-bold text-gray-500"> = {(item.price * item.quantity).toLocaleString()} Kz</span>}
-                                  </span>
-                                </div>
-                              </div>
-                            )) : <span className="text-[9px] text-gray-400 italic">Sem detalhes</span>}
-                          </div>
-                        </td>
-                        <td className="px-8 py-5">
-                          <div className="flex flex-col">
-                            <span className="text-xs font-bold">{o.customer}</span>
-                            <span className="text-[10px] text-gray-400">{o.phone}</span>
-                          </div>
-                        </td>
-                        <td className="px-8 py-5">
-                          <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${o.status === 'ENVIADO' ? 'bg-blue-100 text-blue-600' :
-                            o.status === 'PAGO' ? 'bg-green-100 text-green-600' :
-                              'bg-orange-100 text-orange-600'
-                            }`}>
-                            {o.status}
-                          </span>
-                        </td>
-                        <td className="px-8 py-5">
-                          {(userProfile?.role === 'admin' || userProfile?.permissions?.orders?.edit) ? (
-                            <select
-                              value={o.driver_id || ''}
-                              onChange={(e) => handleAssignDriver(o.id, e.target.value)}
-                              className="bg-gray-50 border border-gray-200 text-gray-900 text-xs rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary dark:focus:border-primary font-medium"
-                            >
-                              <option value="">Selecione um entregador...</option>
-                              {drivers.filter(d => d.active && d.verified).map((driver) => (
-                                <option key={driver.id} value={driver.id}>
-                                  {driver.name} ({driver.transport_type})
-                                </option>
-                              ))}
-                            </select>
-                          ) : (
-                            <span className="text-xs text-gray-500 italic">
-                              {drivers.find(d => d.id === o.driver_id)?.name || 'Não atribuído'}
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-8 py-5 text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            {o.status === 'PENDENTE' && (
-                              <button
-                                onClick={() => handleManualStatusUpdate(o.id, 'ENVIADO')}
-                                className="bg-blue-500 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider hover:bg-blue-600 transition-all"
-                              >
-                                Marcar Enviado
-                              </button>
-                            )}
-                            {o.status === 'ENVIADO' && (
-                              <button
-                                onClick={() => handleManualStatusUpdate(o.id, 'PAGO')}
-                                className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-wider hover:bg-green-700 transition-all"
-                              >
-                                Marcar Pago
-                              </button>
-                            )}
-                            <button
-                              onClick={() => { if (confirm('Remover este pedido?')) setOrders(prev => prev.filter(x => x.id !== o.id)); }}
-                              className="text-gray-400 hover:text-red-500 transition-colors"
-                            >
-                              <span className="material-symbols-outlined !text-lg">delete</span>
-                            </button>
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Mobile Cards */}
-            <div className="md:hidden flex flex-col divide-y divide-gray-50 dark:divide-white/5">
-              {processingOrders.map((o) => {
-                const orderItems = getProductDetails(o);
-                return (
-                  <div key={o.id} className="p-5 flex flex-col gap-4">
-                    <div className="flex justify-between items-center text-[10px] font-black uppercase tracking-widest text-gray-400">
-                      <span className="font-mono">#{o.id.slice(0, 8)}</span>
-                      <span className={`px-2 py-0.5 rounded-full ${o.status === 'ENVIADO' ? 'bg-blue-100 text-blue-600' :
-                        o.status === 'PAGO' ? 'bg-green-100 text-green-600' :
-                          'bg-orange-100 text-orange-600'
-                        }`}>
-                        {o.status}
-                      </span>
-                    </div>
-
-                    <div className="flex flex-col">
-                      <p className="text-sm font-black uppercase leading-none mb-1">{o.customer}</p>
-                      <p className="text-[10px] font-bold text-gray-400">{o.phone || '---'}</p>
-                    </div>
-
-                    <div className="bg-gray-50/50 dark:bg-white/[0.02] p-3 rounded-xl border border-gray-100 dark:border-white/5 space-y-3">
-                      {orderItems.map((item: any, idx: number) => (
-                        <div key={idx} className="flex gap-3">
-                          <img src={item.image} className="size-8 rounded-full object-cover bg-white" alt="" />
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[10px] font-black uppercase leading-tight truncate">{item.name}</p>
-                            <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest mt-1">{item.quantity}x {item.price.toLocaleString()} Kz</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-
-                    {(userProfile?.role === 'admin' || userProfile?.permissions?.orders?.edit) && (
-                      <div className="flex flex-col gap-2">
-                        <label className="text-[8px] font-black text-gray-400 uppercase tracking-widest leading-none">Atribuir Entregador</label>
-                        <select
-                          value={o.driver_id || ''}
-                          onChange={(e) => handleAssignDriver(o.id, e.target.value)}
-                          className="bg-gray-50 dark:bg-white/5 border-none text-[10px] font-black uppercase tracking-widest rounded-xl p-3 w-full"
-                        >
-                          <option value="">Nenhum...</option>
-                          {drivers.filter(d => d.active && d.verified).map((driver) => (
-                            <option key={driver.id} value={driver.id}>
-                              {driver.name}
-                            </option>
+          <div className="overflow-x-auto">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>ID / Items</th>
+                  <th>Status</th>
+                  <th>Logística (Entregador)</th>
+                  <th className="text-center">Ações Rápidas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {processingOrders.map((o) => {
+                  const orderItems = getProductDetails(o);
+                  return (
+                    <tr key={o.id}>
+                      <td>
+                        <div className="flex flex-col gap-1">
+                          <code className="text-[9px] text-gray-400 bg-gray-50 dark:bg-white/5 px-1 rounded mb-1 w-fit">{o.id.slice(0, 8)}</code>
+                          {orderItems.map((item: any, idx: number) => (
+                            <p key={idx} className="text-[10px] font-medium truncate max-w-[200px]">
+                              {item.quantity}x {item.name}
+                            </p>
                           ))}
-                        </select>
-                      </div>
-                    )}
-
-                    <div className="flex gap-2">
-                      {o.status === 'PENDENTE' && (
-                        <button
-                          onClick={() => handleManualStatusUpdate(o.id, 'ENVIADO')}
-                          className="flex-1 bg-blue-500 text-white font-black py-3 rounded-xl text-[10px] uppercase tracking-widest shadow-lg shadow-blue-500/20"
-                        >
-                          Marcar como Enviado
-                        </button>
-                      )}
-                      {o.status === 'ENVIADO' && (
-                        <button
-                          onClick={() => handleManualStatusUpdate(o.id, 'PAGO')}
-                          className="flex-1 bg-green-600 text-white font-black py-3 rounded-xl text-[10px] uppercase tracking-widest shadow-lg shadow-green-600/20"
-                        >
-                          Confirmar Pagamento
-                        </button>
-                      )}
-                      <button
-                        onClick={() => { if (confirm('Remover este pedido?')) setOrders(prev => prev.filter(x => x.id !== o.id)); }}
-                        className="size-11 flex items-center justify-center bg-red-500/10 text-red-500 rounded-xl border border-red-500/20"
-                      >
-                        <span className="material-symbols-outlined !text-base">delete</span>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                        </div>
+                      </td>
+                      <td>
+                        <span className={`px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-tight ${o.status === 'ENVIADO' ? 'bg-blue-100 text-blue-700' :
+                            o.status === 'PAGO' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'
+                          }`}>
+                          {o.status}
+                        </span>
+                      </td>
+                      <td>
+                        {(userProfile?.role === 'admin' || userProfile?.permissions?.orders?.edit) ? (
+                          <select
+                            value={o.driver_id || ''}
+                            onChange={(e) => handleAssignDriver(o.id, e.target.value)}
+                            className="bg-gray-50 border border-gray-200 text-gray-900 text-[10px] rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-1 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                          >
+                            <option value="">Nenhum entregador...</option>
+                            {drivers.filter(d => d.active && d.verified).map((driver) => (
+                              <option key={driver.id} value={driver.id}>
+                                {driver.name}
+                              </option>
+                            ))}
+                          </select>
+                        ) : (
+                          <span className="text-[10px] text-gray-500 italic">
+                            {drivers.find(d => d.id === o.driver_id)?.name || 'Não atribuído'}
+                          </span>
+                        )}
+                      </td>
+                      <td className="text-center">
+                        <div className="flex items-center justify-center gap-2">
+                          {o.status === 'PENDENTE' && (
+                            <button onClick={() => handleManualStatusUpdate(o.id, 'ENVIADO')} className="text-xs font-bold text-blue-600 hover:text-blue-800 transition-colors">
+                              Despachar
+                            </button>
+                          )}
+                          {o.status === 'ENVIADO' && (
+                            <button onClick={() => handleManualStatusUpdate(o.id, 'PAGO')} className="text-xs font-bold text-green-600 hover:text-green-800 transition-colors">
+                              Liquidar
+                            </button>
+                          )}
+                          <button onClick={() => { if (confirm('Mover para histórico?')) setOrders(prev => prev.filter(x => x.id !== o.id)); }} className="text-gray-400 hover:text-red-500 transition-colors">
+                            <span className="material-symbols-outlined text-lg">delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
           </div>
         )}
       </div>
