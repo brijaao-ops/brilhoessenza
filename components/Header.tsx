@@ -106,21 +106,8 @@ const Header: React.FC<HeaderProps> = ({
       )}
 
       <div className="relative">
-        {/* Logo Background Gradient - Premium Transition */}
-        <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden">
-          <div className="absolute inset-y-0 left-0 w-[50%] lg:w-[40%] bg-gradient-to-r from-white via-white/95 to-transparent"></div>
-          {/* Floral Watermark Texture */}
-          <div
-            className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
-            style={{
-              backgroundImage: 'url(/assets/floral_watermark.png)',
-              backgroundSize: '300px',
-              backgroundRepeat: 'repeat'
-            }}
-          ></div>
-        </div>
 
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-0 flex items-center justify-between gap-4 sm:gap-12 relative z-10">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-12 py-0 flex items-center justify-between gap-4 sm:gap-12">
           {/* Boutique Branding */}
           <Link to="/" onClick={() => { onReset(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="flex items-center gap-4 group shrink-0">
             <div className="w-28 h-14 flex items-center justify-center font-black group-hover:scale-105 transition-all overflow-hidden bg-transparent">
@@ -129,29 +116,30 @@ const Header: React.FC<HeaderProps> = ({
           </Link>
 
           {/* Curator Navigation - Desktop Only */}
-          <nav className="hidden lg:flex items-center gap-10">
-            {menuItems.map((item) => (
-              <button
-                key={item.value}
-                onClick={() => ensureHomeAndAction(() => onCategoryChange(item.value))}
-                className={`text-[10px] font-black uppercase tracking-[0.2em] transition-all relative py-2 ${selectedCategory === item.value
-                  ? 'text-primary'
-                  : 'text-gray-300 hover:text-primary'
-                  }`}
-              >
-                {item.label}
-                {selectedCategory === item.value && (
-                  <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-1 h-1 bg-primary rounded-full"></span>
-                )}
-              </button>
-            ))}
-            <Link
-              to="/driver/login"
-              className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-gray-300 hover:text-primary transition-all border border-primary/20 px-3 py-2 rounded-xl hover:border-primary/50"
-            >
-              <span className="material-symbols-outlined !text-sm">local_shipping</span>
-              Entregador
-            </Link>
+          <nav className="hidden lg:flex items-center gap-2">
+            {menuItems.map((item) => {
+              const iconMap: Record<string, string> = {
+                'Fragrâncias': 'water_drop',
+                'Cuidados com a Pele': 'face',
+                'Maquiagem': 'palette',
+                'Acessórios': 'watch',
+              };
+              const icon = iconMap[item.value] || 'category';
+              const isActive = selectedCategory === item.value;
+              return (
+                <button
+                  key={item.value}
+                  onClick={() => ensureHomeAndAction(() => onCategoryChange(item.value))}
+                  className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] transition-all px-3 py-2 rounded-xl border ${isActive
+                      ? 'bg-primary/10 border-primary text-primary'
+                      : 'border-white/10 text-gray-300 hover:border-primary/50 hover:text-primary'
+                    }`}
+                >
+                  <span className="material-symbols-outlined !text-sm">{icon}</span>
+                  {item.label}
+                </button>
+              );
+            })}
           </nav>
 
           {/* Actions & Concierge Search */}
