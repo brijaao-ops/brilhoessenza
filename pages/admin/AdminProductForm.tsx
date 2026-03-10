@@ -4,7 +4,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Product, UserProfile, Category } from '../../types';
 import { fetchCategories, supabase } from '../../services/supabase';
 import { useToast } from '../../contexts/ToastContext';
-import { ImageUpload } from '../../components/admin/ImageUpload';
+import { MultiImageUpload } from '../../components/admin/MultiImageUpload';
 import { PricingFields } from '../../components/admin/PricingFields';
 import { CategorySelect } from '../../components/admin/CategorySelect';
 
@@ -44,7 +44,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
     description: '',
     bestSeller: false,
     notes: { top: '', heart: '', base: '' },
-    deliveryCommission: 0
+    deliveryCommission: 0,
+    images: []
   });
 
   useEffect(() => {
@@ -92,7 +93,8 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
               createdByName: product.createdByName,
               lastEditedBy: product.lastEditedBy,
               notes: product.notes || { top: '', heart: '', base: '' },
-              deliveryCommission: product.deliveryCommission || 0
+              deliveryCommission: product.deliveryCommission || 0,
+              images: product.images || []
             });
           }
         }
@@ -138,7 +140,9 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
       createdByName: isEditing
         ? (products.find(p => p.id === id)?.createdByName || userProfile?.full_name || 'Desconhecido')
         : (userProfile?.full_name || 'Desconhecido'),
-      lastEditedBy: userProfile?.full_name || 'Desconhecido'
+      lastEditedBy: userProfile?.full_name || 'Desconhecido',
+      // Update legacy image field to the one marked as main
+      image: formData.images?.find(img => img.is_main)?.url || formData.images?.[0]?.url || formData.image
     };
 
     try {
@@ -203,11 +207,9 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
 
         {/* LEFT COLUMN — image on mobile compact, full on desktop */}
         <div className="lg:col-span-4 flex flex-col gap-5">
-          <ImageUpload
-            image={formData.image}
-            onImageChange={(url) => setFormData(prev => ({ ...prev, image: url }))}
-            imageMode={imageMode}
-            setImageMode={setImageMode}
+          <MultiImageUpload
+            images={formData.images || []}
+            onImagesChange={(imgs) => setFormData(prev => ({ ...prev, images: imgs }))}
           />
           {/* Pricing hidden below image only on desktop; on mobile it comes after catalog card */}
           <div className="hidden lg:block">

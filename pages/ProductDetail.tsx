@@ -15,6 +15,12 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
   const navigate = useNavigate();
   const [isAdded, setIsAdded] = useState(false);
   const [quantity, setQuantity] = useState(1);
+  const product = products.find(p => String(p.id) === String(id));
+  const [selectedImage, setSelectedImage] = useState(product?.image || '');
+
+  useEffect(() => {
+    if (product) setSelectedImage(product.image);
+  }, [product]);
 
   const handleAddToCart = () => {
     if (product && product.stock > 0) {
@@ -35,7 +41,6 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
       setQuantity(prev => prev - 1);
     }
   };
-  const product = products.find(p => String(p.id) === String(id));
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -82,13 +87,34 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 sm:gap-20 lg:gap-32 items-start">
         {/* Galeria de Produto Ultra-Clean */}
-        <div className="aspect-[4/5] bg-white dark:bg-[#0d1840] rounded-[2.5rem] sm:rounded-[4rem] relative overflow-hidden flex items-center justify-center p-8 sm:p-16 luxury-shadow border border-gray-100 dark:border-white/5 group">
-          <div className="absolute inset-0 bg-gray-50/30 dark:bg-black/20"></div>
-          <img src={product.image} className="w-full h-full object-contain relative z-10 group-hover:scale-110 transition-transform duration-[1.5s]" alt={product.name} />
+        <div className="flex flex-col gap-6">
+          <div className="aspect-[4/5] bg-white dark:bg-[#0d1840] rounded-[2.5rem] sm:rounded-[4rem] relative overflow-hidden flex items-center justify-center p-8 sm:p-16 luxury-shadow border border-gray-100 dark:border-white/5 group">
+            <div className="absolute inset-0 bg-gray-50/30 dark:bg-black/20"></div>
+            <img
+              src={selectedImage}
+              className="w-full h-full object-contain relative z-10 hover:scale-110 transition-transform duration-[1.5s]"
+              alt={product.name}
+            />
 
-          {product.bestSeller && (
-            <div className="absolute top-6 sm:top-10 left-6 sm:left-10 glass-effect px-4 sm:px-6 py-2 sm:py-3 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-[0.3em] sm:tracking-[0.4em] z-20 shadow-2xl text-primary border border-primary/20">
-              Signature Piece
+            {product.bestSeller && (
+              <div className="absolute top-6 sm:top-10 left-6 sm:left-10 glass-effect px-4 sm:px-6 py-2 sm:py-3 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-[0.3em] sm:tracking-[0.4em] z-20 shadow-2xl text-primary border border-primary/20">
+                Signature Piece
+              </div>
+            )}
+          </div>
+
+          {/* Thumbnails */}
+          {product.images && product.images.length > 1 && (
+            <div className="flex gap-4 justify-center">
+              {product.images.map((img, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setSelectedImage(img.url)}
+                  className={`size-16 sm:size-24 rounded-2xl border-2 overflow-hidden bg-white dark:bg-[#0d1840] transition-all ${selectedImage === img.url ? 'border-primary scale-105 shadow-lg' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                >
+                  <img src={img.url} className="w-full h-full object-contain p-2" alt={`${product.name} ${idx + 1}`} />
+                </button>
+              ))}
             </div>
           )}
         </div>

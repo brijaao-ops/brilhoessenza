@@ -183,9 +183,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                         src={product?.image || ''}
                         alt={product?.name || 'Produto'}
                         loading="lazy"
-                        className={`max-w-full max-h-full w-auto h-auto object-contain object-center transition-all duration-700 mix-blend-multiply contrast-[1.08] brightness-[1.02] ${product?.stock === 0 ? 'grayscale opacity-50' : 'group-hover:scale-110'}`}
+                        className={`max-w-full max-h-full w-auto h-auto object-contain object-center transition-all duration-700 mix-blend-multiply contrast-[1.08] brightness-[1.02] ${product?.stock === 0 ? 'grayscale opacity-50' : 'group-hover:scale-110'} ${product.images && product.images.length > 1 ? 'group-hover:opacity-0' : ''}`}
                         style={{ maxHeight: '180px' }}
                     />
+                    {product.images && product.images.length > 1 && (
+                        <img
+                            src={product.images[1]?.url || product.images[0]?.url}
+                            alt={`${product.name} - Vista Alternativa`}
+                            loading="lazy"
+                            className="absolute inset-0 max-w-full max-h-full w-auto h-auto object-contain object-center transition-all duration-700 mix-blend-multiply opacity-0 group-hover:opacity-100 scale-95 group-hover:scale-105 pointer-events-none"
+                            style={{ maxHeight: '180px', margin: 'auto' }}
+                        />
+                    )}
                     {product.stock === 0 && (
                         <div className="absolute inset-0 flex items-center justify-center z-10 bg-black/10 dark:bg-black/30">
                             <span className="bg-black/85 text-white px-3 py-1.5 text-[8px] sm:text-[10px] font-black uppercase tracking-[0.3em] rounded-full backdrop-blur-sm transform -rotate-12 border border-white/20 shadow-xl">

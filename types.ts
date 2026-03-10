@@ -1,4 +1,12 @@
 
+export interface ProductImage {
+  id?: string;
+  product_id?: string;
+  url: string;
+  is_main: boolean;
+  order_index?: number;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -8,7 +16,8 @@ export interface Product {
   reviewsCount: number;
   category: string; // Changed from literal type to string to support dynamic categories
   subCategory?: string;
-  image: string;
+  image: string; // Keep for backward compatibility (primary image)
+  images?: ProductImage[];
   description: string;
   stock: number;
   bestSeller?: boolean;

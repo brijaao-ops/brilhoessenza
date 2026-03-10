@@ -173,7 +173,12 @@ export const updateUserPassword = async (password: string) => {
 export const fetchProducts = async (limit?: number): Promise<Product[]> => {
     let query = supabase
         .from('products')
-        .select('id, name, description, price, sale_price, image, category, sub_category, gender, stock, best_seller, notes, reviews_count, created_at, created_by_name, cost_price, delivery_commission, last_edited_by')
+        .select(`
+            id, name, description, price, sale_price, image, category, sub_category, 
+            gender, stock, best_seller, notes, reviews_count, created_at, 
+            created_by_name, cost_price, delivery_commission, last_edited_by,
+            images:product_images(*)
+        `)
         .order('created_at', { ascending: false });
 
     if (limit) query = query.limit(limit);
@@ -199,7 +204,8 @@ export const fetchProducts = async (limit?: number): Promise<Product[]> => {
         deliveryCommission: Number(p.delivery_commission || 0),
         createdByName: p.created_by_name,
         lastEditedBy: p.last_edited_by,
-        stock: Number(p.stock || 0)
+        stock: Number(p.stock || 0),
+        images: (p.images || []).sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
     }));
 };
 
@@ -232,6 +238,26 @@ export const addProduct = async (product: Omit<Product, 'id'>) => {
         .single();
 
     if (error) throw error;
+
+    // Handle multiple images if present
+    if (product.images && product.images.length > 0) {
+        const productImages = product.images.map((img, index) => ({
+            product_id: data.id,
+            url: img.url,
+            is_main: img.is_main,
+            order_index: index
+        }));
+
+        const { error: imgError } = await supabase
+            .from('product_images')
+            .insert(productImages);
+
+        if (imgError) {
+            console.error('Error adding product images:', imgError);
+            // We don't throw here to avoid failing the whole product creation if only images fail
+        }
+    }
+
     return data;
 };
 
@@ -260,6 +286,32 @@ export const updateProduct = async (id: string, product: Partial<Product>) => {
         .eq('id', id);
 
     if (error) throw error;
+
+    // Synchronize images if present
+    if (product.images !== undefined) {
+        // Simple approach: delete all and re-insert
+        await supabase
+            .from('product_images')
+            .delete()
+            .eq('product_id', id);
+
+        if (product.images.length > 0) {
+            const productImages = product.images.map((img, index) => ({
+                product_id: id,
+                url: img.url,
+                is_main: img.is_main,
+                order_index: index
+            }));
+
+            const { error: imgError } = await supabase
+                .from('product_images')
+                .insert(productImages);
+
+            if (imgError) {
+                console.error('Error updating product images:', imgError);
+            }
+        }
+    }
 };
 
 export const deleteProduct = async (id: string) => {
