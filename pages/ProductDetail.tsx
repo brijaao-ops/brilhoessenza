@@ -122,7 +122,7 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
           {/* RIGHT COLUMN: Product Info & Purchase */}
           <div className="lg:col-span-5 flex flex-col gap-8">
             <div className="flex flex-col gap-2">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tighter leading-tight text-navy dark:text-white">
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tighter leading-tight text-navy dark:text-white">
                 {product.name}
               </h1>
               <div className="flex items-center gap-4">
@@ -142,10 +142,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
             {/* Price Zone */}
             <div className="flex flex-col gap-1">
               <div className="flex items-baseline gap-2">
-                <span className="text-4xl lg:text-5xl font-black tracking-tighter text-navy dark:text-white">
+                <span className="text-5xl lg:text-6xl font-black tracking-tighter text-navy dark:text-white">
                   {(product.salePrice || product.price).toLocaleString()}
                 </span>
-                <span className="text-sm font-black uppercase tracking-widest text-gray-500">AKZ</span>
+                <span className="text-base font-black uppercase tracking-widest text-gray-500">AKZ</span>
               </div>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                 Preço com IVA Incluído à taxa em vigor
@@ -177,8 +177,8 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
                   onClick={handleAddToCart}
                   disabled={product.stock <= 0}
                   className={`flex-1 h-14 rounded-2xl border-2 border-[#007ace] font-black uppercase tracking-widest text-[11px] transition-all flex items-center justify-center gap-2 ${isAdded
-                      ? 'bg-green-500 border-green-500 text-white'
-                      : 'text-[#007ace] hover:bg-[#007ace] hover:text-white'
+                    ? 'bg-green-500 border-green-500 text-white'
+                    : 'text-[#007ace] hover:bg-[#007ace] hover:text-white'
                     } disabled:opacity-50 disabled:grayscale`}
                 >
                   <span className="material-symbols-outlined !text-lg">

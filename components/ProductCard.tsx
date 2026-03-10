@@ -144,10 +144,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
                             </span>
                         )}
                         <div className="flex items-baseline gap-0.5">
-                            <span className="text-sm sm:text-base font-black tracking-tighter">
+                            <span className="text-base sm:text-lg font-black tracking-tighter">
                                 {displayPrice.toLocaleString()}
                             </span>
-                            <span className="text-[8px] font-black uppercase">Kz</span>
+                            <span className="text-[9px] font-black uppercase">Kz</span>
                         </div>
                     </div>
                 </div>
@@ -225,7 +225,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product, onAddToCart }) => {
 
                 {/* Product name + Cart button row */}
                 <div className="flex items-end justify-between gap-2 pointer-events-none">
-                    <h3 className="text-xs sm:text-[13px] font-black uppercase tracking-tight text-navy dark:text-white leading-tight line-clamp-2 flex-1 min-w-0">
+                    <h3 className="text-sm sm:text-base font-black uppercase tracking-tight text-navy dark:text-white leading-tight line-clamp-2 flex-1 min-w-0">
                         {product.name || 'Produto'}
                     </h3>
 
