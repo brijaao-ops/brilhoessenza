@@ -122,17 +122,17 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
           {/* RIGHT COLUMN: Product Info & Purchase */}
           <div className="lg:col-span-5 flex flex-col gap-8">
             <div className="flex flex-col gap-2">
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black uppercase tracking-tighter leading-none text-navy dark:text-white" style={{ textShadow: '0.5px 0 0.5px currentColor' }}>
+              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tighter leading-tight text-navy dark:text-white">
                 {product.name}
               </h1>
               <div className="flex items-center gap-4">
                 {product.sku && (
-                  <p className="text-xs sm:text-sm font-black uppercase tracking-widest text-gray-400">
+                  <p className="text-[11px] sm:text-xs font-black uppercase tracking-widest text-gray-400">
                     referência: <span className="text-gray-600 dark:text-gray-300 ml-1">{product.sku}</span>
                   </p>
                 )}
                 {product.stock <= 5 && product.stock > 0 && (
-                  <span className="text-[11px] font-black uppercase tracking-widest text-red-500 bg-red-500/10 px-3 py-1.5 rounded-full">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-red-500 bg-red-500/10 px-2.5 py-1 rounded-full">
                     Poucas unidades!
                   </span>
                 )}
@@ -142,10 +142,10 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ onAddToCart, products }) 
             {/* Price Zone */}
             <div className="flex flex-col gap-1">
               <div className="flex items-baseline gap-2">
-                <span className="text-7xl lg:text-8xl font-black tracking-tighter text-navy dark:text-white" style={{ textShadow: '1px 0 1px currentColor' }}>
+                <span className="text-5xl lg:text-6xl font-black tracking-tighter text-navy dark:text-white">
                   {(product.salePrice || product.price).toLocaleString()}
                 </span>
-                <span className="text-xl sm:text-2xl font-black uppercase tracking-widest text-gray-500">AKZ</span>
+                <span className="text-lg sm:text-xl font-black uppercase tracking-widest text-gray-500">AKZ</span>
               </div>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                 Preço com IVA Incluído à taxa em vigor
