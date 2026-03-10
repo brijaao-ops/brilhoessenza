@@ -97,8 +97,8 @@ const Home: React.FC<HomeProps> = ({
     <div className="pb-24">
       {/* Seção Hero de Luxo */}
       {!searchTerm && !selectedCategory && (
-        <section className="pt-4 pb-12 relative group px-4">
-          <div className="relative overflow-hidden rounded-[2.5rem] md:rounded-[3.5rem] bg-background-dark min-h-[350px] sm:min-h-[400px] lg:min-h-[500px] flex items-center shadow-2xl border border-white/5">
+        <section className="pt-3 pb-6 sm:pb-12 relative group px-3 sm:px-4">
+          <div className="relative overflow-hidden rounded-[2rem] md:rounded-[3.5rem] bg-background-dark min-h-[220px] sm:min-h-[400px] lg:min-h-[500px] flex items-center shadow-2xl border border-white/5">
             {slides.length > 0 ? (
               slides.map((slide, index) => (
                 <div
@@ -186,10 +186,10 @@ const Home: React.FC<HomeProps> = ({
       )}
 
       {/* Listagem de Produtos Estilo Boutique */}
-      <section className="py-12 sm:py-20" id="produtos">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 sm:mb-20 px-4 gap-8">
-          <div className="flex flex-col gap-3 sm:gap-4">
-            <h3 className="text-4xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-navy dark:text-white leading-[0.85]">
+      <section className="py-6 sm:py-20" id="produtos">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-5 sm:mb-20 px-3 sm:px-4 gap-3 sm:gap-8">
+          <div className="flex flex-col gap-2 sm:gap-4">
+            <h3 className="text-2xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-navy dark:text-white leading-[0.9]">
               {searchTerm
                 ? `Resultados: "${searchTerm}"`
                 : selectedCategory
@@ -201,15 +201,15 @@ const Home: React.FC<HomeProps> = ({
               <p className="text-[9px] sm:text-[11px] font-black text-gray-400 uppercase tracking-[0.4em] sm:tracking-[0.5em]">Beleza & Brilho</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 bg-white/40 backdrop-blur-md dark:bg-white/5 p-1.5 sm:p-2 rounded-2xl border border-white/20 dark:border-white/5 overflow-x-auto max-w-full no-scrollbar">
-            <button onClick={() => onCategorySelect(null)} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${!selectedCategory ? 'bg-white dark:bg-navy text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Todos</button>
-            <button onClick={() => onCategorySelect('Novidades')} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Novidades' ? 'bg-white dark:bg-navy text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Novidades</button>
-            <button onClick={() => onCategorySelect('Ofertas')} className={`whitespace-nowrap px-4 sm:px-5 py-2 text-[9px] sm:text-[10px] font-black uppercase rounded-xl shadow-sm transition-colors ${selectedCategory === 'Ofertas' ? 'bg-white dark:bg-navy text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Ofertas</button>
+          <div className="flex items-center gap-1.5 sm:gap-2 bg-white/40 backdrop-blur-md dark:bg-white/5 p-1 sm:p-2 rounded-xl sm:rounded-2xl border border-white/20 dark:border-white/5 overflow-x-auto max-w-full no-scrollbar">
+            <button onClick={() => onCategorySelect(null)} className={`whitespace-nowrap px-3 sm:px-5 py-1.5 sm:py-2 text-[8px] sm:text-[10px] font-black uppercase rounded-lg sm:rounded-xl shadow-sm transition-colors ${!selectedCategory ? 'bg-white dark:bg-navy text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Todos</button>
+            <button onClick={() => onCategorySelect('Novidades')} className={`whitespace-nowrap px-3 sm:px-5 py-1.5 sm:py-2 text-[8px] sm:text-[10px] font-black uppercase rounded-lg sm:rounded-xl shadow-sm transition-colors ${selectedCategory === 'Novidades' ? 'bg-white dark:bg-navy text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Novidades</button>
+            <button onClick={() => onCategorySelect('Ofertas')} className={`whitespace-nowrap px-3 sm:px-5 py-1.5 sm:py-2 text-[8px] sm:text-[10px] font-black uppercase rounded-lg sm:rounded-xl shadow-sm transition-colors ${selectedCategory === 'Ofertas' ? 'bg-white dark:bg-navy text-primary' : 'text-gray-400 hover:text-black dark:hover:text-white'}`}>Ofertas</button>
           </div>
         </div>
 
         {isLoading && products.length === 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-10 gap-y-10 sm:gap-y-24 px-3 sm:px-0">
             {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
               <ProductSkeleton key={i} />
             ))}
@@ -278,7 +278,7 @@ const Home: React.FC<HomeProps> = ({
 
               {/* Products on the right or full width if no video */}
               <div className="flex-1">
-                <div className={`grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-24`}>
+                <div className={`grid grid-cols-2 sm:grid-cols-2 gap-x-3 sm:gap-x-10 gap-y-10 sm:gap-y-24 px-3 sm:px-0`}>
                   {(videoSlides && videoSlides.length > 0 && videoSlides.some(s => s.active) ? filteredProducts.slice(0, 4) : filteredProducts.slice(0, 4)).map((p) => (
                     <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} />
                   ))}
@@ -288,7 +288,7 @@ const Home: React.FC<HomeProps> = ({
 
             {/* Remaining Products below */}
             {filteredProducts.length > 4 && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-24">
+              <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-x-3 sm:gap-x-10 gap-y-10 sm:gap-y-24 px-3 sm:px-0">
                 {filteredProducts.slice(4).map((p) => (
                   <ProductCard key={p.id} product={p} onAddToCart={onAddToCart} />
                 ))}
@@ -312,9 +312,9 @@ const Home: React.FC<HomeProps> = ({
       </section>
 
       {/* Newsletter / Branding Section */}
-      <section className="py-12 px-4">
-        <div className="bg-primary/5 rounded-[4rem] p-12 lg:p-24 text-center border border-primary/10">
-          <h4 className="text-4xl font-black uppercase tracking-tighter mb-6">Mantenha-se <span className="text-primary italic">Exclusivo</span></h4>
+      <section className="py-8 sm:py-12 px-3 sm:px-4">
+        <div className="bg-primary/5 rounded-[2rem] sm:rounded-[4rem] p-8 sm:p-12 lg:p-24 text-center border border-primary/10">
+          <h4 className="text-2xl sm:text-4xl font-black uppercase tracking-tighter mb-4 sm:mb-6">Mantenha-se <span className="text-primary italic">Exclusivo</span></h4>
           <p className="text-gray-500 font-medium mb-12 max-w-lg mx-auto leading-relaxed">Assine para receber convites para lançamentos privados e acesso antecipado a novas coleções.</p>
 
           <form onSubmit={handleSubscribe} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto relative">

@@ -131,8 +131,8 @@ const Header: React.FC<HeaderProps> = ({
                   key={item.value}
                   onClick={() => ensureHomeAndAction(() => onCategoryChange(item.value))}
                   className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.15em] transition-all px-3 py-2 rounded-xl border ${isActive
-                      ? 'bg-primary/10 border-primary text-primary'
-                      : 'border-white/10 text-gray-300 hover:border-primary/50 hover:text-primary'
+                    ? 'bg-primary/10 border-primary text-primary'
+                    : 'border-white/10 text-gray-300 hover:border-primary/50 hover:text-primary'
                     }`}
                 >
                   <span className="material-symbols-outlined !text-sm">{icon}</span>
@@ -208,6 +208,25 @@ const Header: React.FC<HeaderProps> = ({
               </button>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Mobile search bar — always visible, no menu needed */}
+      <div className="md:hidden px-3 pb-2 bg-[#060e1e]">
+        <div className="relative w-full group">
+          <span className="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-primary transition-colors !text-base">search</span>
+          <input
+            value={searchTerm}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            className="w-full pl-10 pr-8 py-2.5 bg-white/5 border border-primary/10 rounded-2xl focus:ring-1 focus:ring-primary/40 text-xs font-bold outline-none transition-all placeholder:text-gray-500 text-white"
+            placeholder="Encontrar sua essência..."
+            type="text"
+          />
+          {searchTerm && (
+            <button onClick={() => handleSearchChange('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white">
+              <span className="material-symbols-outlined !text-sm">close</span>
+            </button>
+          )}
         </div>
       </div>
 
