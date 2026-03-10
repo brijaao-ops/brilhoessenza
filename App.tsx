@@ -808,6 +808,7 @@ const AppContent: React.FC = () => {
         <main className="flex-1">
           <Routes>
             <Route path="/driver/login" element={<DriverLogin />} />
+            <Route path="/driver/registrar" element={<DriverRegistration />} />
             <Route path="/driver/dashboard" element={<DriverDashboard />} />
             <Route path="/driver/perfil" element={<DriverProfile />} />
             <Route path="/entregador/cadastro" element={<DriverRegistration />} />
