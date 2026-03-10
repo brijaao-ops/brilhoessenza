@@ -199,6 +199,15 @@ const DriverRegistration: React.FC = () => {
 
     return (
         <div className="min-h-screen bg-[#fcfbf8] dark:bg-[#08112e] flex items-center justify-center p-6 py-20 relative">
+            {/* Back to home */}
+            <button
+                onClick={() => navigate('/')}
+                className="absolute top-6 left-6 flex items-center gap-2 text-gray-400 hover:text-navy dark:hover:text-white transition-colors text-[10px] font-black uppercase tracking-widest z-20"
+            >
+                <span className="material-symbols-outlined !text-sm">arrow_back</span>
+                Página Principal
+            </button>
+
             {cameraState.isOpen && (
                 <IdentityCamera
                     type={cameraState.type}

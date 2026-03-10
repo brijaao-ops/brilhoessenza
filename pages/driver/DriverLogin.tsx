@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { signIn } from '../../services/supabase';
 
 const DriverLogin: React.FC = () => {
@@ -17,9 +17,6 @@ const DriverLogin: React.FC = () => {
         try {
             const { user } = await signIn(email, password);
             if (user) {
-                // Check if user is actually a driver? 
-                // For now, any auth user can try, but dashboard might be empty if not linked.
-                // Ideally we verify role, but let's redirect to dashboard first.
                 navigate('/driver/dashboard');
             }
         } catch (err: any) {
@@ -34,6 +31,12 @@ const DriverLogin: React.FC = () => {
             {/* Background Effects */}
             <div className="absolute top-[-20%] right-[-10%] size-[500px] bg-primary/20 rounded-full blur-[120px] pointer-events-none"></div>
             <div className="absolute bottom-[-10%] left-[-10%] size-[300px] bg-primary/10 rounded-full blur-[100px] pointer-events-none"></div>
+
+            {/* Back to Home */}
+            <Link to="/" className="absolute top-6 left-6 flex items-center gap-2 text-gray-400 hover:text-white transition-colors text-[10px] font-black uppercase tracking-widest z-20">
+                <span className="material-symbols-outlined !text-sm">arrow_back</span>
+                Página Principal
+            </Link>
 
             <div className="w-full max-w-md z-10">
                 <div className="text-center mb-12">
@@ -88,6 +91,12 @@ const DriverLogin: React.FC = () => {
 
                     <p className="text-center text-[10px] text-gray-500 font-medium">
                         Esqueceu sua senha? Contate a Mesa de Gestão.
+                    </p>
+                    <p className="text-center text-[10px] text-gray-500 font-medium">
+                        Ainda não é parceiro?{' '}
+                        <Link to="/driver/registrar" className="text-primary hover:brightness-125 font-black">
+                            Registar aqui
+                        </Link>
                     </p>
                 </form>
             </div>
