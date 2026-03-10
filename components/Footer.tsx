@@ -1,5 +1,5 @@
 ﻿import React, { useMemo } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface FooterProps {
   onCategorySelect?: (cat: string | null) => void;
@@ -7,6 +7,7 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
   const currentYear = new Date().getFullYear();
+  const navigate = useNavigate();
 
   const settings = useMemo(() => {
     return JSON.parse(localStorage.getItem('brilho_essenza_settings') || '{}');
@@ -29,10 +30,12 @@ const Footer: React.FC<FooterProps> = ({ onCategorySelect }) => {
   };
 
   const handleCategoryClick = (cat: string | null) => {
-    if (onCategorySelect) {
-      onCategorySelect(cat);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    navigate('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Apply category filter after navigation so home page is mounted
+    setTimeout(() => {
+      if (onCategorySelect) onCategorySelect(cat);
+    }, 50);
   };
 
   return (
