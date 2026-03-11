@@ -18,6 +18,7 @@ const AdminSettings: React.FC = () => {
   // Storage Metrics State
   const [metrics, setMetrics] = useState<StorageMetrics | null>(null);
   const [isLoadingMetrics, setIsLoadingMetrics] = useState(false);
+  const [metricsError, setMetricsError] = useState<string | null>(null);
 
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
@@ -198,11 +199,14 @@ const AdminSettings: React.FC = () => {
 
   const loadStorageMetrics = async () => {
     setIsLoadingMetrics(true);
+    setMetricsError(null);
     try {
       const data = await fetchStorageMetrics();
+      if (!data) throw new Error("Nenhum dado retornado do servidor.");
       setMetrics(data);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Error loading metrics", err);
+      setMetricsError(err.message || "Erro desconhecido ao carregar métricas.");
     } finally {
       setIsLoadingMetrics(false);
     }
@@ -570,6 +574,19 @@ const AdminSettings: React.FC = () => {
                   <span className={`material-symbols-outlined text-lg text-gray-400 group-hover:text-blue-600 ${isLoadingMetrics ? 'animate-spin' : ''}`}>refresh</span>
                 </button>
               </div>
+
+              {metricsError && (
+                <div className="p-4 bg-red-50 dark:bg-red-500/10 border border-red-100 dark:border-red-500/20 rounded-xl flex items-start gap-4 animate-shake">
+                  <span className="material-symbols-outlined text-red-500 mt-1">error</span>
+                  <div>
+                    <p className="text-xs text-red-800 dark:text-red-300 font-bold uppercase tracking-tight">Erro na Sincronização</p>
+                    <p className="text-[11px] text-red-700/70 dark:text-red-300/60 mt-1 leading-relaxed">
+                      {metricsError}. <br/>
+                      <span className="font-bold">Dica:</span> Certifique-se de que o script SQL foi executado corretamente no Editor SQL do Supabase.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 {/* Database Metrics */}
