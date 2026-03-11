@@ -300,26 +300,36 @@ const Header: React.FC<HeaderProps> = ({
                     <p className="text-sm font-black uppercase tracking-tighter">{userProfile.full_name}</p>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <Link
-                    to="/admin"
-                    onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 bg-primary text-black py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest"
-                  >
-                    <span className="material-symbols-outlined !text-sm">dashboard</span> Gestão
-                  </Link>
-                  <button
-                    onClick={() => {
-                      onLogout?.();
-                      setIsMenuOpen(false);
-                    }}
-                    className="flex items-center justify-center gap-2 bg-red-500/10 text-red-500 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest"
-                  >
-                    <span className="material-symbols-outlined !text-sm">logout</span> Sair
-                  </button>
-                </div>
+                <Link
+                  to="/admin"
+                  onClick={() => setIsMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 bg-primary text-black py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest mt-2"
+                >
+                  <span className="material-symbols-outlined !text-sm">dashboard</span> Gestão
+                </Link>
               </div>
             )}
+
+            {/* Global Exit App Button */}
+            <div className="mt-auto pt-8 pb-12">
+              <button
+                onClick={() => {
+                  if (window.confirm("Deseja realmente sair do aplicativo?")) {
+                    onLogout?.();
+                    setIsMenuOpen(false);
+                    // Standard way to "exit" a PWA or web tab
+                    window.close();
+                    // Fallback if window.close is blocked
+                    navigate('/');
+                  }
+                }}
+                className="w-full flex items-center justify-center gap-3 bg-red-500/10 text-red-500 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-[10px] border border-red-500/20 hover:bg-red-500 hover:text-white transition-all shadow-xl shadow-red-500/5 group"
+              >
+                <span className="material-symbols-outlined !text-lg group-hover:rotate-90 transition-transform">power_settings_new</span>
+                Sair do Aplicativo
+              </button>
+              <p className="text-center text-[8px] font-black uppercase tracking-[0.4em] text-gray-600 mt-6">Brilho Essenza Luxury v1.0</p>
+            </div>
           </nav>
         </div>
       )}
