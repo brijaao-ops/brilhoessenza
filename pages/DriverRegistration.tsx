@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createDriver, uploadImage } from '../services/supabase';
 import { useNavigate } from 'react-router-dom';
 import IdentityCamera from '../components/IdentityCamera';
@@ -108,7 +108,7 @@ const DriverRegistration: React.FC = () => {
                 try {
                     // Basic client-side compression before upload
                     const compressed = await compressImage(task.file);
-                    return await uploadImage(compressed, 'slides'); // 'slides' bucket exists and is public
+                    return await uploadImage(compressed, 'drivers'); // 'drivers' bucket matched with SQL policies
                 } catch (err: any) {
                     throw new Error(`Erro ao enviar ${task.field}: ${err.message || err}`);
                 }
