@@ -140,3 +140,11 @@ export interface VideoSlide {
   order_index: number;
   created_at?: string;
 }
+
+export interface StorageMetrics {
+  database_size: number;
+  database_limit: number;
+  storage_size: number;
+  storage_limit: number;
+  last_updated: string;
+}

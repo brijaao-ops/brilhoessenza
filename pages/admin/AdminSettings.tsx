@@ -1,5 +1,6 @@
-﻿import React, { useState, useEffect } from 'react';
-import { supabase, UserProfile, fetchProfile, updateAppSetting, updateUserPassword } from '../../services/supabase';
+import React, { useState, useEffect } from 'react';
+import { supabase, UserProfile, fetchProfile, updateAppSetting, updateUserPassword, fetchStorageMetrics } from '../../services/supabase';
+import { StorageMetrics } from '../../types';
 import { removeImageBackground, blobToBase64, resizeImage } from '../../services/imageProcessing';
 
 const AdminSettings: React.FC = () => {
@@ -13,6 +14,10 @@ const AdminSettings: React.FC = () => {
   const [bulkTotal, setBulkTotal] = useState(0);
   const [bulkCurrent, setBulkCurrent] = useState(0);
   const [bulkErrors, setBulkErrors] = useState(0);
+  
+  // Storage Metrics State
+  const [metrics, setMetrics] = useState<StorageMetrics | null>(null);
+  const [isLoadingMetrics, setIsLoadingMetrics] = useState(false);
 
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(null);
 
@@ -126,7 +131,8 @@ const AdminSettings: React.FC = () => {
     { name: 'Apoio ao Cliente', icon: 'support_agent', perm: 'settings' },
     { name: 'Pagamentos & Taxas', icon: 'payments', perm: 'finance' },
     { name: 'Logística de Envio', icon: 'local_shipping', perm: 'settings' },
-    { name: 'Segurança & Acesso', icon: 'security', perm: 'all' }
+    { name: 'Segurança & Acesso', icon: 'security', perm: 'all' },
+    { name: 'Capacidade & Infra', icon: 'database', perm: 'settings' }
   ];
 
   const visibleTabs = allTabs.map((t, idx) => ({ ...t, originalIndex: idx })).filter(t => {
@@ -189,6 +195,26 @@ const AdminSettings: React.FC = () => {
       setIsUpdatingName(false);
     }
   };
+
+  const loadStorageMetrics = async () => {
+    setIsLoadingMetrics(true);
+    try {
+      const data = await fetchStorageMetrics();
+      setMetrics(data);
+    } catch (err) {
+      console.error("Error loading metrics", err);
+    } finally {
+      setIsLoadingMetrics(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 7) {
+      loadStorageMetrics();
+      const interval = setInterval(loadStorageMetrics, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [activeTab]);
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -514,6 +540,129 @@ const AdminSettings: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        );
+      case 7:
+        const formatSize = (bytes: number) => {
+          if (bytes === 0) return '0 B';
+          const k = 1024;
+          const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+          const i = Math.floor(Math.log(bytes) / Math.log(k));
+          return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        };
+
+        const dbPercent = metrics ? (metrics.database_size / metrics.database_limit) * 100 : 0;
+        const storagePercent = metrics ? (metrics.storage_size / metrics.storage_limit) * 100 : 0;
+
+        return (
+          <div className="flex flex-col gap-10 animate-fade-in pb-10">
+            <div className="space-y-6">
+              <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/5 pb-4">
+                <div className="flex items-center gap-3">
+                  <span className="material-symbols-outlined text-blue-600">database</span>
+                  <h4 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white">Capacidade de Infraestrutura</h4>
+                </div>
+                <button 
+                  onClick={loadStorageMetrics}
+                  className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors group"
+                >
+                  <span className={`material-symbols-outlined text-lg text-gray-400 group-hover:text-blue-600 ${isLoadingMetrics ? 'animate-spin' : ''}`}>refresh</span>
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                {/* Database Metrics */}
+                <div className="bg-gray-50 dark:bg-white/5 p-6 rounded-2xl border border-gray-100 dark:border-white/10 relative overflow-hidden group">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-blue-600"></div>
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h5 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Banco de Dados</h5>
+                      <p className="text-lg font-bold text-gray-900 dark:text-white mt-1">Core Engine</p>
+                    </div>
+                    <span className="material-symbols-outlined text-blue-100 dark:text-blue-900/40 text-4xl">storage</span>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-end justify-between">
+                      <p className="text-2xl font-black text-gray-900 dark:text-white">
+                        {metrics ? formatSize(metrics.database_size) : '---'}
+                      </p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                        Limite: {metrics ? formatSize(metrics.database_limit) : '---'}
+                      </p>
+                    </div>
+                    
+                    <div className="w-full h-3 bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full transition-all duration-1000 ease-out ${dbPercent > 90 ? 'bg-red-500' : dbPercent > 70 ? 'bg-orange-500' : 'bg-blue-600'}`}
+                        style={{ width: `${Math.min(dbPercent, 100)}%` }}
+                      ></div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{dbPercent.toFixed(1)}% Usado</span>
+                      <span className={`text-[9px] font-bold uppercase p-1 px-2 rounded ${dbPercent > 90 ? 'bg-red-500/10 text-red-500' : 'bg-blue-500/10 text-blue-500'}`}>
+                        {dbPercent > 90 ? 'Crítico' : 'Estável'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* File Storage Metrics */}
+                <div className="bg-gray-50 dark:bg-white/5 p-6 rounded-2xl border border-gray-100 dark:border-white/10 relative overflow-hidden group">
+                  <div className="absolute top-0 left-0 w-1 h-full bg-blue-600"></div>
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h5 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Armazenamento</h5>
+                      <p className="text-lg font-bold text-gray-900 dark:text-white mt-1">Media Assets</p>
+                    </div>
+                    <span className="material-symbols-outlined text-blue-100 dark:text-blue-900/40 text-4xl">cloud_queue</span>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-end justify-between">
+                      <p className="text-2xl font-black text-gray-900 dark:text-white">
+                        {metrics ? formatSize(metrics.storage_size) : '---'}
+                      </p>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                        Limite: {metrics ? formatSize(metrics.storage_limit) : '---'}
+                      </p>
+                    </div>
+                    
+                    <div className="w-full h-3 bg-gray-200 dark:bg-white/10 rounded-full overflow-hidden">
+                      <div 
+                        className={`h-full transition-all duration-1000 ease-out ${storagePercent > 90 ? 'bg-red-500' : storagePercent > 70 ? 'bg-orange-500' : 'bg-blue-600'}`}
+                        style={{ width: `${Math.min(storagePercent, 100)}%` }}
+                      ></div>
+                    </div>
+                    
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{storagePercent.toFixed(1)}% Usado</span>
+                      <span className="text-[9px] font-bold uppercase p-1 px-2 rounded bg-blue-500/10 text-blue-500">
+                        Sincronizando
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Info Card */}
+              <div className="p-4 bg-blue-50 dark:bg-blue-500/10 border border-blue-100 dark:border-blue-500/20 rounded-xl flex items-start gap-4">
+                <span className="material-symbols-outlined text-blue-600 mt-1">info</span>
+                <div>
+                  <p className="text-xs text-blue-800 dark:text-blue-300 font-bold uppercase tracking-tight">Otimização em Tempo Real</p>
+                  <p className="text-[11px] text-blue-700/70 dark:text-blue-300/60 mt-1 leading-relaxed">
+                    O armazenamento é monitorado a cada 30 segundos. Para liberar espaço, você pode utilizar a ferramenta de <strong>Vetorização IA</strong> na aba Inteligência IA para comprimir imagens antigas do catálogo.
+                  </p>
+                </div>
+              </div>
+
+              {metrics && (
+                <p className="text-center text-[10px] text-gray-400 uppercase font-black tracking-[0.3em] py-4">
+                  Última Sincronização: {new Date(metrics.last_updated).toLocaleTimeString()}
+                </p>
+              )}
             </div>
           </div>
         );

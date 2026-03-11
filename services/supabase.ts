@@ -888,3 +888,12 @@ export const updateAppSetting = async (key: string, value: string) => {
 };
 
 
+
+export const fetchStorageMetrics = async (): Promise<StorageMetrics> => {
+    const { data, error } = await supabase.rpc('get_storage_metrics');
+    if (error) {
+        console.error('Error fetching storage metrics:', error);
+        throw error;
+    }
+    return data as StorageMetrics;
+};
