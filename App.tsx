@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { HashRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -376,20 +376,23 @@ const AppContent: React.FC = () => {
     } catch (e) {
       console.warn('Sign out error:', e);
     }
+    
+    // Clear all potential session/profile cache
     setIsAuthenticated(false);
     setUserProfile(null);
     localStorage.removeItem('user_profile');
-    // Clear all caches so next load is always fresh from DB
     localStorage.removeItem('brilho_products_v5');
     localStorage.removeItem('brilho_categories_v4');
     localStorage.removeItem('brilho_slides_v4');
-    // Navigate home and re-fetch as anonymous user
-    navigate('/');
+    
+    // Standard "Exit" behavior: Force a hard reload to the home page.
+    // This wipes all React state and ensures the next load is completely fresh.
+    window.location.href = window.location.origin + '/#/';
+    
+    // Fallback reload if href change doesn't trigger immediately
     setTimeout(() => {
-      setProducts([]);
-      setOrders([]);
-      loadPublicData(true);
-    }, 100);
+      window.location.reload();
+    }, 200);
   };
 
   // Data synchronization is now handled in the main useEffect with loadAllData logic

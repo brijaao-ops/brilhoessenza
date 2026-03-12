@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { Category, UserProfile } from '../types';
@@ -34,6 +34,7 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const [isDark, setIsDark] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -95,7 +96,11 @@ const Header: React.FC<HeaderProps> = ({
               Gestão
             </Link>
             <button
-              onClick={onLogout}
+              onClick={() => {
+                if (window.confirm("Deseja encerrar sua sessão?")) {
+                  onLogout?.();
+                }
+              }}
               className="bg-red-500 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-red-600 transition-all flex items-center gap-1.5 shadow-lg shadow-red-500/20"
             >
               <span className="material-symbols-outlined !text-xs">logout</span>
@@ -313,20 +318,38 @@ const Header: React.FC<HeaderProps> = ({
             {/* Global Exit App Button */}
             <div className="mt-auto pt-8 pb-12">
               <button
-                onClick={() => {
+                disabled={isExiting}
+                onClick={async () => {
                   if (window.confirm("Deseja realmente sair do aplicativo?")) {
-                    onLogout?.();
-                    setIsMenuOpen(false);
-                    // Standard way to "exit" a PWA or web tab
-                    window.close();
-                    // Fallback if window.close is blocked
-                    navigate('/');
+                    setIsExiting(true);
+                    try {
+                      // 1. Perform logout (clears session in Supabase and local state)
+                      await onLogout?.();
+                      
+                      // 2. Attempt to close (works in some PWA/Standalone modes)
+                      window.close();
+                      
+                      // 3. Fallback: Hard redirect to home - handled by onLogout in App.tsx
+                    } catch (err) {
+                      console.error("Exit error:", err);
+                      // Force failure recovery: hard refresh
+                      window.location.href = '/';
+                    } finally {
+                      setIsMenuOpen(false);
+                      setIsExiting(false);
+                    }
                   }
                 }}
-                className="w-full flex items-center justify-center gap-3 bg-red-500/10 text-red-500 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-[10px] border border-red-500/20 hover:bg-red-500 hover:text-white transition-all shadow-xl shadow-red-500/5 group"
+                className={`w-full flex items-center justify-center gap-3 py-5 rounded-[2rem] font-black uppercase tracking-[0.2em] text-[10px] border transition-all shadow-xl group ${
+                  isExiting 
+                    ? 'bg-gray-500/20 text-gray-400 border-gray-500/20' 
+                    : 'bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500 hover:text-white shadow-red-500/5'
+                }`}
               >
-                <span className="material-symbols-outlined !text-lg group-hover:rotate-90 transition-transform">power_settings_new</span>
-                Sair do Aplicativo
+                <span className={`material-symbols-outlined !text-lg transition-transform ${isExiting ? 'animate-spin' : 'group-hover:rotate-90'}`}>
+                  {isExiting ? 'sync' : 'power_settings_new'}
+                </span>
+                {isExiting ? 'Saindo...' : 'Sair do Aplicativo'}
               </button>
               <p className="text-center text-[8px] font-black uppercase tracking-[0.4em] text-gray-600 mt-6">Brilho Essenza Luxury v1.0</p>
             </div>

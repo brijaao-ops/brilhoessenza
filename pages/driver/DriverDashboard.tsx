@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase, signOut, getCurrentUser, fetchOrdersByDriver, fetchProducts, updateUserPassword } from '../../services/supabase';
 import { Order, Product } from '../../types';
@@ -113,13 +113,14 @@ const DriverDashboard: React.FC = () => {
     const handleLogout = async () => {
         try {
             await signOut();
-            localStorage.removeItem('user_profile');
-            navigate('/driver/login');
         } catch (err) {
             console.error("Logout error:", err);
-            // Fallback redirect even if signOut fails
-            navigate('/driver/login');
         }
+        localStorage.removeItem('user_profile');
+        
+        // Hard refresh to home to ensure clean state
+        window.location.href = window.location.origin + '/#/';
+        setTimeout(() => window.location.reload(), 200);
     };
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
