@@ -1,4 +1,4 @@
-﻿
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
 import { Product, UserProfile, Category } from '../../types';
@@ -166,7 +166,7 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
         setNameError(msg);
         showToast(msg, 'error');
       } else {
-        showToast('Erro ao salvar produto.', 'error');
+        showToast(`Erro ao salvar produto: ${error?.message || 'Verifique sua conexão'}`, 'error');
       }
       console.error(error);
     } finally {
@@ -264,7 +264,6 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
                 }}
                 className={`bg-gray-50 dark:bg-[#08112e] px-4 py-3.5 rounded-xl font-bold text-base outline-none border-2 transition-all w-full ${nameError ? 'border-red-400 bg-red-50 dark:bg-red-950/20' : 'border-transparent focus:border-primary/30'}`}
                 placeholder="Ex: Rose Velour Parfum"
-                required
               />
               {nameError && (
                 <p className="text-red-500 text-xs font-bold flex items-center gap-1.5">

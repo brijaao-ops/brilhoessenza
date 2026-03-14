@@ -1,4 +1,4 @@
-﻿
+
 import React from 'react';
 
 interface PricingFieldsProps {
@@ -78,7 +78,6 @@ export const PricingFields: React.FC<PricingFieldsProps> = ({
                     onChange={e => onChange('price', Number(e.target.value))}
                     className="bg-gray-50 dark:bg-[#08112e] px-4 py-3 rounded-xl font-black text-2xl outline-none w-full focus:ring-2 focus:ring-primary/30 transition-all"
                     placeholder="0"
-                    required
                 />
             </Field>
 
@@ -103,7 +102,6 @@ export const PricingFields: React.FC<PricingFieldsProps> = ({
                     onChange={e => onChange('costPrice', Number(e.target.value))}
                     className="bg-amber-50 dark:bg-amber-950/20 px-4 py-3 rounded-xl font-black text-2xl outline-none w-full text-amber-700 dark:text-amber-400 focus:ring-2 focus:ring-amber-400/30 transition-all"
                     placeholder="0"
-                    required
                 />
             </Field>
 
@@ -116,7 +114,6 @@ export const PricingFields: React.FC<PricingFieldsProps> = ({
                     onChange={e => onChange('stock', Number(e.target.value))}
                     className="bg-gray-50 dark:bg-[#08112e] px-4 py-3 rounded-xl font-bold text-2xl outline-none w-full focus:ring-2 focus:ring-primary/30 transition-all"
                     placeholder="0"
-                    required
                 />
             </Field>
 
@@ -165,7 +162,6 @@ export const PricingFields: React.FC<PricingFieldsProps> = ({
                     onChange={e => onChange('deliveryCommission', Number(e.target.value))}
                     className="bg-white dark:bg-green-950/30 px-4 py-3 rounded-xl font-black text-2xl outline-none w-full text-green-600 focus:ring-2 focus:ring-green-400/30 transition-all"
                     placeholder="0"
-                    required
                 />
                 {deliveryCommission > 0 && price > 0 && (
                     <p className="text-[10px] text-green-600 font-bold flex items-center gap-1.5">
