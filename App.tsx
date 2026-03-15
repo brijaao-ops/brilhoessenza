@@ -18,6 +18,7 @@ import AdminLogistics from './pages/admin/AdminLogistics';
 import AdminCustomers from './pages/admin/AdminCustomers';
 import AdminSettings from './pages/admin/AdminSettings';
 import AdminAnalytics from './pages/admin/AdminAnalytics';
+import Goodbye from './pages/Goodbye';
 import AdminLogin from './pages/admin/AdminLogin';
 import AdminTeam from './pages/admin/AdminTeam';
 import AdminSlides from './pages/admin/AdminSlides';
@@ -388,7 +389,7 @@ const AppContent: React.FC = () => {
     // Removed reload to prevent session loss/delays
   };
 
-  const handleLogout = async () => {
+  const handleLogout = async (shouldExit: boolean = false) => {
     try {
       await signOut();
     } catch (e) {
@@ -403,14 +404,19 @@ const AppContent: React.FC = () => {
     localStorage.removeItem('brilho_categories_v4');
     localStorage.removeItem('brilho_slides_v4');
     
-    // Standard "Exit" behavior: Force a hard reload to the home page.
-    // This wipes all React state and ensures the next load is completely fresh.
-    window.location.href = window.location.origin + '/#/';
-    
-    // Fallback reload if href change doesn't trigger immediately
-    setTimeout(() => {
-      window.location.reload();
-    }, 200);
+    if (shouldExit) {
+        // Navigate to the goodbye page for a premium "Exit" experience
+        navigate('/goodbye');
+    } else {
+        // Standard "Logout" behavior: Force a hard reload to the home page.
+        // This wipes all React state and ensures the next load is completely fresh.
+        window.location.href = window.location.origin + '/#/';
+        
+        // Fallback reload if href change doesn't trigger immediately
+        setTimeout(() => {
+          window.location.reload();
+        }, 200);
+    }
   };
 
   // Data synchronization is now handled in the main useEffect with loadAllData logic
@@ -723,7 +729,7 @@ const AppContent: React.FC = () => {
                   <span className="material-symbols-outlined text-xl">settings</span>
                   <span>Configurações</span>
                 </Link>
-                <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 rounded-md text-xs font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/5 transition-all text-left">
+                <button onClick={() => handleLogout()} className="flex items-center gap-3 px-3 py-2 rounded-md text-xs font-semibold text-red-500 hover:bg-red-50 dark:hover:bg-red-500/5 transition-all text-left">
                   <span className="material-symbols-outlined text-xl">logout</span>
                   <span>Sair do Atelier</span>
                 </button>
@@ -873,6 +879,7 @@ const AppContent: React.FC = () => {
               <Route path="/atelier" element={<AtelierInfo />} />
               <Route path="/admin/login" element={<AdminLogin onLogin={handleLogin} />} />
               <Route path="/checkout/confirmacao/:token" element={<OrderConfirmation />} />
+              <Route path="/goodbye" element={<Goodbye />} />
               <Route path="/driver/registrar" element={<DriverRegistration />} />
             </Routes>
           </main>

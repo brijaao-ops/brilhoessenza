@@ -14,7 +14,7 @@ interface HeaderProps {
   categories: Category[];
   isAuthenticated?: boolean;
   userProfile?: UserProfile | null;
-  onLogout?: () => void;
+  onLogout?: (shouldExit?: boolean) => void;
   logoUrl?: string | null;
 }
 
@@ -98,7 +98,7 @@ const Header: React.FC<HeaderProps> = ({
             <button
               onClick={() => {
                 if (window.confirm("Deseja encerrar sua sessão?")) {
-                  onLogout?.();
+                  onLogout?.(false);
                 }
               }}
               className="bg-red-500 text-white px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-red-600 transition-all flex items-center gap-1.5 shadow-lg shadow-red-500/20"
@@ -177,7 +177,7 @@ const Header: React.FC<HeaderProps> = ({
                       <span className="material-symbols-outlined !text-sm text-primary group-hover:scale-110 transition-transform">dashboard</span>
                     </Link>
                     <button
-                      onClick={onLogout}
+                      onClick={() => onLogout?.(false)}
                       className="size-8 bg-red-500/10 hover:bg-red-500/20 rounded-xl flex items-center justify-center transition-all group"
                       title="Terminar Sessão"
                     >
@@ -324,7 +324,7 @@ const Header: React.FC<HeaderProps> = ({
                     setIsExiting(true);
                     try {
                       // 1. Perform logout (clears session in Supabase and local state)
-                      await onLogout?.();
+                      await onLogout?.(true);
                       
                       // 2. Attempt to close (works in some PWA/Standalone modes)
                       window.close();
