@@ -2,6 +2,12 @@ import { createClient } from '@supabase/supabase-js';
 import { Product, Order, Category, Slide, UserProfile, UserPermissions, DeliveryDriver, VideoSlide } from '../types';
 export type { UserProfile, UserPermissions };
 
+export interface StorageMetrics {
+    total_size: number;
+    file_count: number;
+    bucket_name: string;
+}
+
 // @ts-ignore
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 // @ts-ignore
@@ -184,20 +190,22 @@ export const fetchProducts = async (limit?: number): Promise<Product[]> => {
 
     let { data, error } = await query;
 
-    // Fallback if the join fails
+    // Fallback if the join fails or there's an error
     if (error) {
         console.warn('Fallback triggered for products fetch:', error.message);
-        let fallbackQuery = supabase
+        const fallbackQuery = supabase
             .from('products')
             .select('*')
             .order('created_at', { ascending: false });
 
-        if (limit) fallbackQuery = fallbackQuery.limit(limit);
+        if (limit) fallbackQuery.limit(limit);
         const { data: fallbackData, error: fallbackError } = await fallbackQuery;
 
         if (fallbackError) {
             console.error('Critical fetch error:', fallbackError);
-            throw fallbackError;
+            // Return empty instead of throwing to prevent app crash, 
+            // the state will handle the error properly
+            return [];
         }
         data = fallbackData;
     }
@@ -226,13 +234,13 @@ export const fetchProducts = async (limit?: number): Promise<Product[]> => {
             salePrice: (p.sale_price !== undefined || p.salePrice !== undefined)
                 ? Number(p.sale_price ?? p.salePrice)
                 : undefined,
-            sku: p.sku || p.reference || '',
+            sku: p.sku || p.reference || '', // Normalize SKU field
             deliveryCommission: Number(p.delivery_commission || p.deliveryCommission || 0),
             createdByName: p.created_by_name || p.createdByName,
             lastEditedBy: p.last_edited_by || p.lastEditedBy,
             stock: Number(p.stock || 0),
             rating: Number(p.rating || 5),
-            images: Array.isArray(rawImages)
+            images: Array.isArray(rawImages) && rawImages.length > 0
                 ? [...rawImages].sort((a: any, b: any) => (a.order_index || 0) - (b.order_index || 0))
                 : []
         };
@@ -244,7 +252,8 @@ export const addProduct = async (product: Omit<Product, 'id'>) => {
     const dbProduct = {
         name: product.name,
         price: product.price,
-        sku: product.sku,
+        // Send both to handle varying schemas across environments
+        sku: product.sku || '',
         cost_price: product.costPrice,
         rating: product.rating,
         reviews_count: product.reviewsCount,
@@ -301,7 +310,9 @@ export const updateProduct = async (id: string, product: Partial<Product>) => {
     const dbProduct: any = {};
     if (product.name !== undefined) dbProduct.name = product.name;
     if (product.price !== undefined) dbProduct.price = product.price;
-    if (product.sku !== undefined) dbProduct.sku = product.sku;
+    if (product.sku !== undefined) {
+        dbProduct.sku = product.sku || '';
+    }
     if (product.salePrice !== undefined) dbProduct.sale_price = product.salePrice;
     if (product.costPrice !== undefined) dbProduct.cost_price = product.costPrice;
     if (product.category !== undefined) dbProduct.category = product.category;

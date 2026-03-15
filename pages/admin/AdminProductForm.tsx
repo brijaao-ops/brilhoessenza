@@ -122,10 +122,11 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
     // --- Required fields ---
     const errors: string[] = [];
     if (!formData.name.trim()) errors.push('Nome do produto');
+    if (!formData.category) errors.push('Categoria');
     if (!formData.price || formData.price <= 0) errors.push('Preço de venda');
     if (!formData.costPrice || formData.costPrice <= 0) errors.push('Custo do produto');
     if (!formData.deliveryCommission || formData.deliveryCommission <= 0) errors.push('% Entregador');
-    if (!formData.stock || formData.stock <= 0) errors.push('Quantidade em estoque');
+    if (!formData.stock || formData.stock < 0) errors.push('Quantidade em estoque');
     if (errors.length > 0) {
       showToast(`Obrigatórios em falta: ${errors.join(', ')}.`, 'error');
       return;
@@ -301,12 +302,18 @@ const AdminProductForm: React.FC<AdminProductFormProps> = ({ onSave, products = 
             </div>
 
             {/* Category */}
-            <CategorySelect
-              category={formData.category}
-              subCategory={formData.subCategory || ''}
-              categories={categories}
-              onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
-            />
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center justify-between gap-2">
+                <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Categoria</label>
+                <RequiredBadge />
+              </div>
+              <CategorySelect
+                category={formData.category}
+                subCategory={formData.subCategory || ''}
+                categories={categories}
+                onChange={(field, value) => setFormData(prev => ({ ...prev, [field]: value }))}
+              />
+            </div>
 
             {/* Description */}
             <div className="flex flex-col gap-2">

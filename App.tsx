@@ -79,13 +79,31 @@ const AppContent: React.FC = () => {
 
       const [pSuccess, cDb, sDb, vsDb] = await Promise.all([productPromise, categoryPromise, slidePromise, videoSlidePromise]);
 
-      if (Array.isArray(cDb)) setCategories(cDb);
-      if (Array.isArray(sDb)) setSlides(sDb);
-      if (Array.isArray(vsDb)) setVideoSlides(vsDb);
+      if (Array.isArray(cDb)) {
+        setCategories(cDb);
+        localStorage.setItem('brilho_categories_v4', JSON.stringify(cDb));
+      }
+      if (Array.isArray(sDb)) {
+        setSlides(sDb);
+        localStorage.setItem('brilho_slides_v4', JSON.stringify(sDb));
+      }
+      if (Array.isArray(vsDb)) {
+        setVideoSlides(vsDb);
+        localStorage.setItem('brilho_video_slides_v4', JSON.stringify(vsDb));
+      }
 
-      if (!pSuccess && products.length === 0) setHasLoadError(true);
+      // If product fetch failed but we have cached data, we're still okay
+      if (!pSuccess && products.length === 0) {
+        const cached = localStorage.getItem('brilho_products_v5');
+        if (cached) {
+            setProducts(JSON.parse(cached));
+        } else {
+            setHasLoadError(true);
+        }
+      }
     } catch (e) {
       console.error("Public load error", e);
+      setHasLoadError(true);
     } finally {
       setLoading(false);
     }
